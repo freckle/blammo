@@ -36,17 +36,18 @@ library:
     - text
     - time
 
-# tests:
-#   spec:
-#     main: Spec.hs
-#     source-dirs: tests
-#     dependencies:
-#       - hspec
-#       - logging
+tests:
+  # spec:
+  #   main: Spec.hs
+  #   source-dirs: tests
+  #   dependencies:
+  #     - hspec
+  #     - logging
 
-#   readme:
-#     main: README.lhs
-#     ghc-options: -pgmL markdown-unlit
-#     dependencies:
-#       - markdown-unlit
-#       - logging
+  readme:
+    main: README.lhs
+    ghc-options: -pgmL markdown-unlit
+    dependencies:
+      - logging
+      - markdown-unlit
+      - text
