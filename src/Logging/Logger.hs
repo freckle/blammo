@@ -17,12 +17,12 @@ import Logging.Settings
 import Logging.Terminal
 import System.IO (stderr, stdout)
 import System.Log.FastLogger
-    ( LoggerSet
-    , defaultBufSize
-    , newFileLoggerSet
-    , newStderrLoggerSet
-    , newStdoutLoggerSet
-    )
+  ( LoggerSet
+  , defaultBufSize
+  , newFileLoggerSet
+  , newStderrLoggerSet
+  , newStdoutLoggerSet
+  )
 
 data Logger = Logger
     { lLoggerSet :: LoggerSet
