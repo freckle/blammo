@@ -24,6 +24,7 @@ default-extensions:
   - NoImplicitPrelude
   - OverloadedStrings
   - RecordWildCards
+  - TypeApplications
 
 library:
   source-dirs: src
@@ -35,6 +36,13 @@ library:
     - monad-logger-aeson
     - text
     - time
+
+    # For the wai Middleware
+    - case-insensitive
+    - clock
+    - http-types
+    - unliftio-core
+    - wai
 
 tests:
   # spec:

@@ -22,36 +22,51 @@ import Data.Text (Text)
 import Logging
 ```
 
+Throughout your application, you should write against the ubiquitous
+`MonadLogger` interface, but using the recently released
+[`monad-logger-aeson`][monad-logger-aeson]:
+
+[monad-logger-aeson]: https://jship.github.io/posts/2022-05-17-announcing-monad-logger-aeson/
+
 ```haskell
 action :: MonadLogger m => m ()
 action = do
   logInfo "This is a message sans details"
-  logError $ "Something went wrong" :# ["error" .= ("oops" :: Text)]
-  logDebug "This won't be seen in default settings"
 
+  logError $ "Something went wrong" :# ["error" .= ("oops" :: Text)]
+
+  logDebug "This won't be seen in default settings"
+```
+
+When you run your transformer stack, use `runLoggerLoggingT` with a value that
+has a `HasLogger` instance. The `Logger` type itself has such an instance, and
+this minimal example takes advantage of that:
+
+```haskell
 runner1 :: LoggingT IO a -> IO a
 runner1 f = do
   logger <- newLogger defaultLogSettings
   runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
 ```
 
-Running this basic example produces,
+These defaults are good for CLI applications, producing colourful output (if
+connected to a terminal device) suitable for a human:
+
+`main = runner1 action`:
 
 ![](files/readme-terminal.png)
 
-In production, you probably want to configure your structured logs for JSON, to
-be ingested by some service.
+In production, you'll probably want to configure your structured logs for JSON,
+to be ingested by some service:
 
 ```haskell
 runner2 :: LoggingT IO a -> IO a
 runner2 f = do
-  logger <- newLogger
-    . setLogSettingsFormat LogFormatJSON
-    $ defaultLogSettings
+  logger <- newLogger $ setLogSettingsFormat LogFormatJSON defaultLogSettings
   runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
 ```
 
-Running this example produces,
+`main = runner2 action`:
 
 ![](files/readme-json.png)
 
