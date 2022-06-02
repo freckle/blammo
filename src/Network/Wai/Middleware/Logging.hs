@@ -16,16 +16,16 @@ import Logging
 import Network.HTTP.Types.Header (Header, HeaderName)
 import Network.HTTP.Types.Status (Status(..))
 import Network.Wai
-    ( Middleware
-    , Request
-    , Response
-    , rawPathInfo
-    , rawQueryString
-    , requestHeaders
-    , requestMethod
-    , responseHeaders
-    , responseStatus
-    )
+  ( Middleware
+  , Request
+  , Response
+  , rawPathInfo
+  , rawQueryString
+  , requestHeaders
+  , requestMethod
+  , responseHeaders
+  , responseStatus
+  )
 import qualified System.Clock as Clock
 
 requestLogger :: HasLogger env => env -> Middleware
