@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    branches: main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - if: false # Remove when ready to release
+      - uses: actions/checkout@v2
+
+      - id: tag
+        uses: freckle/haskell-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: steps.tag.outputs.tag
+        uses: freckle/stack-upload-action@v2
+        env:
+          HACKAGE_API_KEY: ${{ secrets.HACKAGE_UPLOAD_API_KEY }}
