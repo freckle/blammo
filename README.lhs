@@ -11,12 +11,12 @@ module Main (module Main) where
 
 import Prelude
 
+import Data.Text (Text)
 import Text.Markdown.Unlit ()
 ```
 -->
 
 ```haskell
-import Data.Text (Text)
 import Logging
 import qualified Logging.Settings.Env as Env
 ```
@@ -38,27 +38,38 @@ action = do
 ```
 
 When you run your transformer stack, use `runLoggerLoggingT` with a value that
-has a `HasLogger` instance. The `Logger` type itself has such an instance, and
-this minimal example takes advantage of that:
+has a `HasLogger` instance. You can use `withThreadContext` here (or anywhere)
+to add details that will appear in all the logged messages within that scope.
+Placing one of these at the very top-level can provide details suitable for all
+logged messages. The `Logger` type itself has a `HasLogger` instance, and this
+minimal example takes advantage of that:
 
 ```haskell
 runner :: LoggingT IO a -> IO a
 runner f = do
   logger <- newLogger =<< Env.parse
   runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
-```
 
-These defaults are good for CLI applications, producing colourful output (if
-connected to a terminal device) suitable for a human:
-
-```haskell
 main :: IO ()
 main = runner action
 ```
 
+The defaults are good for CLI applications, producing colourful output (if
+connected to a terminal device) suitable for a human:
+
 ![](files/readme-terminal.png)
 
-![](files/readme-json.png)
+`Logging.Settings.Env` uses [`envparse`][envparse] to configure logging. This
+means we can adjust `LOG_LEVEL`:
+
+[envparse]: https://hackage.haskell.org/package/envparse
+
+![](files/readme-terminal-debug.png)
+
+In production, you will probably want to set `LOG_DESTINATION=json` and ship
+logs to some aggregator like Datadog or Mezmo (formerly LogDNA):
+
+![](files/readme-terminal-json.png)
 
 ## More Advanced Usage
 
