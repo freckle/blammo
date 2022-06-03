@@ -17,8 +17,7 @@ import Text.Markdown.Unlit ()
 -->
 
 ```haskell
-import Logging
-import qualified Logging.Settings.Env as Env
+import Logging.Simple
 ```
 
 Throughout your application, you should write against the ubiquitous
@@ -37,18 +36,18 @@ action = do
   logDebug "This won't be seen in default settings"
 ```
 
-When you run your transformer stack, use `runLoggerLoggingT` with a value that
-has a `HasLogger` instance. You can use `withThreadContext` here (or anywhere)
-to add details that will appear in all the logged messages within that scope.
-Placing one of these at the very top-level can provide details suitable for all
-logged messages. The `Logger` type itself has a `HasLogger` instance, and this
-minimal example takes advantage of that:
+When you run your transformer stack, wrap it in `runLoggerLoggingT` with a value
+that has a `HasLogger` instance. The `Logger` type itself has such an instance,
+and we provide `runSimpleLoggingT` for the simplest case: it creates one
+configured via environment variables and then calls `runLoggerLoggingT` with it.
+
+You can use `withThreadContext` to add details that will appear in all the
+logged messages within that scope. Placing one of these at the very top-level
+can provide details suitable for all logged messages.
 
 ```haskell
 runner :: LoggingT IO a -> IO a
-runner f = do
-  logger <- newLogger =<< Env.parse
-  runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
+runner = runSimpleLoggingT . withThreadContext ["app" .= ("example" :: Text)]
 
 main :: IO ()
 main = runner action
@@ -59,21 +58,22 @@ connected to a terminal device) suitable for a human:
 
 ![](files/readme-terminal.png)
 
-`Logging.Settings.Env` uses [`envparse`][envparse] to configure logging. This
-means we can adjust `LOG_LEVEL`:
+Under the hood, `Logging.Settings.Env` is using [`envparse`][envparse] to
+configure logging. See that module for full details. One thing we can adjust is
+`LOG_LEVEL`:
 
 [envparse]: https://hackage.haskell.org/package/envparse
 
 ![](files/readme-terminal-debug.png)
 
-In production, you will probably want to set `LOG_DESTINATION=json` and ship
-logs to some aggregator like Datadog or Mezmo (formerly LogDNA):
+In production, you will probably want to set `LOG_FORMAT=json` and ship logs to
+some aggregator like Datadog or Mezmo (formerly LogDNA):
 
 ![](files/readme-terminal-json.png)
 
 ## More Advanced Usage
 
-## Environment-based Configuration
+TODO
 
 ## Integration with RIO
 
@@ -104,18 +104,16 @@ awsDiscover = do
     pure $ env
         { AWS.envLogger = \level msg -> do
             monadLoggerLog
-                defaultLoc
+                defaultLoc -- TODO: there may be a way to get a CallStack/Loc
                 "Amazonka"
-                (fromLevel level)
+                (\case
+                    AWS.Info -> LevelInfo
+                    AWS.Error -> LevelError
+                    AWS.Debug -> LevelDebug
+                    AWS.Trace -> LevelDebug
+                )
                 (toLogStr msg)
         }
-
-fromLevel :: AWS.LogLevel -> LogLevel
-fromLevel = \case
-    AWS.Info -> LevelInfo
-    AWS.Error -> LevelError
-    AWS.Debug -> LevelDebug
-    AWS.Trace -> LevelDebug
 ```
 
 ## Integration with WAI

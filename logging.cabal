@@ -17,6 +17,7 @@ library
       Logging.Logger
       Logging.Settings
       Logging.Settings.Env
+      Logging.Simple
       Logging.Terminal
       Network.Wai.Middleware.Logging
   other-modules:
