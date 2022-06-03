@@ -71,7 +71,7 @@ requestLogger env app req respond =
  where
   getTime = Clock.getTime Clock.Monotonic
 
-  toMillis x = fromIntegral @_ @Double (Clock.toNanoSecs x) / 10000
+  toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
 
 logResponse :: MonadLogger m => Double -> Request -> Response -> m ()
 logResponse duration req resp
@@ -112,3 +112,6 @@ headerObject redact = Object . KeyMap.fromList . map (mung . hide)
   hide (k, v)
     | k `elem` redact = (k, "***")
     | otherwise = (k, v)
+
+nsPerMs :: Double
+nsPerMs = 1000000
