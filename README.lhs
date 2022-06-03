@@ -162,9 +162,6 @@ instance HasLogger App where
 
 instance Yesod App where
     -- ...
-    makeLogger App {..} = do
-        logger <- defaultMakeLogger
-        pure $ logger { Y.loggerSet = getLoggerLoggerSet appLogger }
 
     messageLoggerSource app _logger loc source level msg =
         runLoggerLoggingT app $ monadLoggerLog loc source level msg
