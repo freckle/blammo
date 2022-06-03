@@ -8,13 +8,15 @@ ghc-options:
   - -Weverything
   - -Wno-missing-exported-signatures # re-enables missing-signatures
   - -Wno-missing-import-lists
-  - -Wno-missing-kind-signatures
   - -Wno-missing-local-signatures
   - -Wno-monomorphism-restriction
   - -Wno-unsafe
   - -Wno-safe
 
 when:
+  - condition: "impl(ghc >= 9.2)"
+    ghc-options:
+      - -Wno-missing-kind-signatures
   - condition: "impl(ghc >= 8.10)"
     ghc-options:
       - -Wno-missing-safe-haskell-mode
