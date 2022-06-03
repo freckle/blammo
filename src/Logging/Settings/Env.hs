@@ -1,3 +1,31 @@
+-- | Produce a 'LogSettings' by reading environment variables
+--
+-- - @LOG_LEVEL@: a known log level (case insensitive). Unrecognized values will
+--   become 'LevelOther' (preserving case).
+--
+-- - @LOG_DESTINATION@: the string @stderr@ or @stdout@ (case sensitive).
+--   Unrecognized values will be treated as a file path destination (without
+--   checking if it exists).
+--
+-- - @LOG_FORMAT@: the string @tty@ or @json@. Unrecognized values will produce
+--   an error.
+--
+-- - @LOG_COLOR@: the string @auto@, @always@, or @never@. Other values may be
+--   recognized (e.g. @yes@ or @no@) but should not be relied on. Unrecognized
+--   values will produce an error
+--
+-- This module is meant to be imported @qualified@.
+--
+-- @
+-- import Logging
+-- import qualified Logging.Settings.Env as Env
+--
+-- main :: IO ()
+-- main = do
+--   logger <- 'newLogger' =<< Env.'parse'
+--   'runLoggerLoggingT' logger $ -- ...
+-- @
+--
 module Logging.Settings.Env
   ( parse
   , parser

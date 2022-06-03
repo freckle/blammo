@@ -3,7 +3,7 @@
 A batteries-included Structured Logging toolkit for writing to a single logging
 abstraction in CLI apps and production services in Haskell.
 
-## Example
+## Simple Usage
 
 <!--
 ```haskell
@@ -21,8 +21,7 @@ import Logging.Simple
 ```
 
 Throughout your application, you should write against the ubiquitous
-`MonadLogger` interface, but using the recently released
-[`monad-logger-aeson`][monad-logger-aeson]:
+`MonadLogger` interface, but using [`monad-logger-aeson`][monad-logger-aeson]:
 
 [monad-logger-aeson]: https://jship.github.io/posts/2022-05-17-announcing-monad-logger-aeson/
 
@@ -36,14 +35,15 @@ action = do
   logDebug "This won't be seen in default settings"
 ```
 
-When you run your transformer stack, wrap it in `runLoggerLoggingT` with a value
-that has a `HasLogger` instance. The `Logger` type itself has such an instance,
-and we provide `runSimpleLoggingT` for the simplest case: it creates one
-configured via environment variables and then calls `runLoggerLoggingT` with it.
+When you run your transformer stack, wrap it in `runLoggerLoggingT` providing
+any value with a `HasLogger` instance (such as your main `App`). The `Logger`
+type itself has such an instance, and we provide `runSimpleLoggingT` for the
+simplest case: it creates one configured via environment variables and then
+calls `runLoggerLoggingT` with it.
 
-You can use `withThreadContext` to add details that will appear in all the
-logged messages within that scope. Placing one of these at the very top-level
-can provide details suitable for all logged messages.
+You can use `withThreadContext` (from `monad-logger-aeson`) to add details that
+will appear in all the logged messages within that scope. Placing one of these
+at the very top-level adds details to all logged messages.
 
 ```haskell
 runner :: LoggingT IO a -> IO a
@@ -59,8 +59,8 @@ connected to a terminal device) suitable for a human:
 ![](files/readme-terminal.png)
 
 Under the hood, `Logging.Settings.Env` is using [`envparse`][envparse] to
-configure logging. See that module for full details. One thing we can adjust is
-`LOG_LEVEL`:
+configure logging through environment variables. See that module for full
+details. One thing we can adjust is `LOG_LEVEL`:
 
 [envparse]: https://hackage.haskell.org/package/envparse
 
@@ -71,7 +71,7 @@ some aggregator like Datadog or Mezmo (formerly LogDNA):
 
 ![](files/readme-terminal-json.png)
 
-## More Advanced Usage
+## Advanced Usage
 
 TODO
 

@@ -1,6 +1,38 @@
+-- | Log requests (more accurately, responses) as they happen
+--
+-- In JSON format, logged messages look like:
+--
+-- @
+-- {
+--   ...
+--   message: {
+--     text: "GET /foo/bar => 200 OK",
+--     meta: {
+--       method: "GET",
+--       path: "/foo/bar",
+--       query: "?baz=bat&quix=quo",
+--       status: {
+--         code: 200,
+--         message: "OK"
+--       },
+--       durationMs: 1322.2,
+--       requestHeaders: {
+--         Authorization: "***",
+--         Accept: "text/html",
+--         Cookie: "***"
+--       },
+--       responseHeaders: {
+--         Set-Cookie: "***",
+--         Expires: "never"
+--       }
+--     }
+--   }
+-- }
+-- @
+--
 module Network.Wai.Middleware.Logging
-    ( requestLogger
-    ) where
+  ( requestLogger
+  ) where
 
 import Prelude
 
@@ -30,54 +62,53 @@ import qualified System.Clock as Clock
 
 requestLogger :: HasLogger env => env -> Middleware
 requestLogger env app req respond =
-    runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
-        begin <- getTime
-        app req $ \resp -> do
-            recvd <- respond resp
-            duration <- toMillis . subtract begin <$> getTime
-            recvd <$ runInIO (logResponse duration req resp)
-  where
-    getTime = Clock.getTime Clock.Monotonic
+  runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
+    begin <- getTime
+    app req $ \resp -> do
+      recvd <- respond resp
+      duration <- toMillis . subtract begin <$> getTime
+      recvd <$ runInIO (logResponse duration req resp)
+ where
+  getTime = Clock.getTime Clock.Monotonic
 
-    toMillis x = fromIntegral @_ @Double (Clock.toNanoSecs x) / 10000
+  toMillis x = fromIntegral @_ @Double (Clock.toNanoSecs x) / 10000
 
 logResponse :: MonadLogger m => Double -> Request -> Response -> m ()
 logResponse duration req resp
-    | statusCode status >= 500 = logError $ message :# details
-    | statusCode status == 404 = logDebug $ message :# details
-    | statusCode status >= 400 = logWarn $ message :# details
-    | otherwise = logDebug $ message :# details
-  where
-    message =
-        decodeUtf8 (requestMethod req)
-            <> " "
-            <> decodeUtf8 (rawPathInfo req)
-            <> " => "
-            <> pack (show $ statusCode status)
-            <> " "
-            <> decodeUtf8 (statusMessage status)
+  | statusCode status >= 500 = logError $ message :# details
+  | statusCode status == 404 = logDebug $ message :# details
+  | statusCode status >= 400 = logWarn $ message :# details
+  | otherwise = logDebug $ message :# details
+ where
+  message =
+    decodeUtf8 (requestMethod req)
+      <> " "
+      <> decodeUtf8 (rawPathInfo req)
+      <> " => "
+      <> pack (show $ statusCode status)
+      <> " "
+      <> decodeUtf8 (statusMessage status)
 
-    details =
-        [ "method" .= decodeUtf8 (requestMethod req)
-        , "path" .= decodeUtf8 (rawPathInfo req)
-        , "query" .= decodeUtf8 (rawQueryString req)
-        , "status" .= object
-            [ "code" .= statusCode status
-            , "message" .= decodeUtf8 (statusMessage status)
-            ]
-        , "durationMs" .= duration
-        , "requestHeaders"
-            .= headerObject ["authorization", "cookie"] (requestHeaders req)
-        , "responseHeaders"
-            .= headerObject ["set-cookie"] (responseHeaders resp)
-        ]
+  details =
+    [ "method" .= decodeUtf8 (requestMethod req)
+    , "path" .= decodeUtf8 (rawPathInfo req)
+    , "query" .= decodeUtf8 (rawQueryString req)
+    , "status" .= object
+      [ "code" .= statusCode status
+      , "message" .= decodeUtf8 (statusMessage status)
+      ]
+    , "durationMs" .= duration
+    , "requestHeaders"
+      .= headerObject ["authorization", "cookie"] (requestHeaders req)
+    , "responseHeaders" .= headerObject ["set-cookie"] (responseHeaders resp)
+    ]
 
-    status = responseStatus resp
+  status = responseStatus resp
 
 headerObject :: [HeaderName] -> [Header] -> Value
 headerObject redact = Object . KeyMap.fromList . map (mung . hide)
-  where
-    mung = Key.fromText . decodeUtf8 . CI.foldedCase *** String . decodeUtf8
-    hide (k, v)
-        | k `elem` redact = (k, "***")
-        | otherwise = (k, v)
+ where
+  mung = Key.fromText . decodeUtf8 . CI.foldedCase *** String . decodeUtf8
+  hide (k, v)
+    | k `elem` redact = (k, "***")
+    | otherwise = (k, v)
