@@ -8,6 +8,7 @@ ghc-options:
   - -Weverything
   - -Wno-missing-exported-signatures # re-enables missing-signatures
   - -Wno-missing-import-lists
+  - -Wno-missing-kind-signatures
   - -Wno-missing-local-signatures
   - -Wno-monomorphism-restriction
   - -Wno-unsafe

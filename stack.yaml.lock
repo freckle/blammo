@@ -20,7 +20,7 @@ packages:
     hackage: context-0.2.0.0
 snapshots:
 - completed:
-    size: 618506
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/8.yaml
-    sha256: f1c4aca9b9b81afbb9db55571acb0690cdc01ac97a178234de281f9dc075e95e
-  original: lts-19.8
+    size: 618507
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/9.yaml
+    sha256: 190a93d09d9d7bccc78a0f00d6fc0350eed76bc533611e5971202800805dd00e
+  original: lts-19.9
