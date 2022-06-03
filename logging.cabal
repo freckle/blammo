@@ -47,6 +47,7 @@ library
     , time
     , unliftio-core
     , unordered-containers
+    , vector
     , wai
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
@@ -67,7 +68,8 @@ test-suite readme
       TypeApplications
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe -pgmL markdown-unlit
   build-depends:
-      base >4 && <5
+      aeson
+    , base >4 && <5
     , logging
     , markdown-unlit
     , text

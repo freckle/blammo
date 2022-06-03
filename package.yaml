@@ -41,6 +41,7 @@ library:
     - monad-logger-aeson
     - text
     - time
+    - vector
 
     # For the wai Middleware
     - case-insensitive
@@ -64,6 +65,7 @@ tests:
     main: README.lhs
     ghc-options: -pgmL markdown-unlit
     dependencies:
+      - aeson
       - logging
       - markdown-unlit
       - text

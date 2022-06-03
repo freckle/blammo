@@ -11,6 +11,7 @@ module Main (module Main) where
 
 import Prelude
 
+import Data.Aeson
 import Data.Text (Text)
 import Text.Markdown.Unlit ()
 ```
@@ -30,7 +31,13 @@ action :: MonadLogger m => m ()
 action = do
   logInfo "This is a message sans details"
 
-  logError $ "Something went wrong" :# ["error" .= ("oops" :: Text)]
+  logError
+    $ "Something went wrong"
+    :# [ "error" .= object
+          [ "code" .= (100 :: Int)
+          , "messages" .= (["x", "y"] :: [Text])
+          ]
+       ]
 
   logDebug "This won't be seen in default settings"
 ```
