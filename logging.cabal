@@ -12,6 +12,7 @@ build-type:     Simple
 
 library
   exposed-modules:
+      Data.Aeson.Compat
       Logging
       Logging.Colors
       Logging.Logger
@@ -30,7 +31,7 @@ library
       OverloadedStrings
       RecordWildCards
       TypeApplications
-  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-unsafe -Wno-safe
+  ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
       aeson
     , base >4 && <5
@@ -45,6 +46,7 @@ library
     , text
     , time
     , unliftio-core
+    , unordered-containers
     , wai
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
@@ -63,7 +65,7 @@ test-suite readme
       OverloadedStrings
       RecordWildCards
       TypeApplications
-  ghc-options: -Weverything -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-unsafe -Wno-safe -pgmL markdown-unlit
+  ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe -pgmL markdown-unlit
   build-depends:
       base >4 && <5
     , logging

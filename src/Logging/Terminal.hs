@@ -23,9 +23,10 @@ module Logging.Terminal
 import Prelude
 
 import Control.Monad.Logger.Aeson
-import Control.Monad.Logger.Aeson.Internal (KeyMap)
-import qualified Control.Monad.Logger.Aeson.Internal as Aeson
 import Data.Aeson
+import Data.Aeson.Compat (KeyMap)
+import qualified Data.Aeson.Compat as Key
+import qualified Data.Aeson.Compat as KeyMap
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe (fromMaybe)
@@ -35,11 +36,6 @@ import Data.Text.Encoding (encodeUtf8)
 import Data.Time (defaultTimeLocale, formatTime)
 import Logging.Colors
 
--- TODO: Control.Monad.Logger.Aeson.Internal exposes compatibility functions for
--- everything but this. If we want to support aeson-1.x, I think we'll need our
--- own CPP. (At which point, I would probably stop using the .Internal too).
-import qualified Data.Aeson.Key as Aeson (toText)
-
 reformatTerminal :: Bool -> LogLevel -> ByteString -> ByteString
 reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do
   LoggedMessage {..} <- decode $ BSL.fromStrict bytes
@@ -48,19 +44,17 @@ reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do
     colors@Colors {..} = getColors useColor
 
     logTimestampText =
-      pack $ formatTime defaultTimeLocale "%F %X" loggedMessageTimestamp
+      dim $ pack $ formatTime defaultTimeLocale "%F %X" loggedMessageTimestamp
 
     logLevelText = case logLevel of
-      LevelDebug -> lightgray $ padTo 9 "debug"
+      LevelDebug -> gray $ padTo 9 "debug"
       LevelInfo -> green $ padTo 9 "info"
       LevelWarn -> yellow $ padTo 9 "warn"
       LevelError -> red $ padTo 9 "error"
       LevelOther x -> blue $ padTo 9 x
 
-    loggedSourceAsMap = maybe
-      Aeson.emptyKeyMap
-      (\s -> Aeson.keyMapFromList [("source", String s)])
-      loggedMessageLogSource
+    loggedSourceAsMap =
+      maybe mempty (KeyMap.singleton "source" . String) loggedMessageLogSource
 
   pure $ encodeUtf8 $ mconcat
     [ logTimestampText <> " "
@@ -73,12 +67,12 @@ reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do
 
 colorizeKeyMap :: Colors -> KeyMap Value -> Text
 colorizeKeyMap Colors {..} km
-  | km == Aeson.emptyKeyMap = ""
+  | KeyMap.null km = ""
   | otherwise = " " <> T.intercalate " " keyValues
  where
-  keyValues = map (uncurry fromKeyValue) $ Aeson.keyMapToList km
+  keyValues = map (uncurry fromKeyValue) $ KeyMap.toList km
 
-  fromKeyValue k v = cyan (Aeson.toText k) <> "=" <> magenta (fromValue v)
+  fromKeyValue k v = cyan (Key.toText k) <> "=" <> magenta (fromValue v)
 
   fromValue :: Value -> Text
   fromValue = \case

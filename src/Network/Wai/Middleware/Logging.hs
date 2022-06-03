@@ -39,8 +39,8 @@ import Prelude
 import Control.Arrow ((***))
 import Control.Monad.IO.Unlift (withRunInIO)
 import Data.Aeson
-import qualified Data.Aeson.Key as Key
-import qualified Data.Aeson.KeyMap as KeyMap
+import qualified Data.Aeson.Compat as Key
+import qualified Data.Aeson.Compat as KeyMap
 import qualified Data.CaseInsensitive as CI
 import Data.Text (pack)
 import Data.Text.Encoding (decodeUtf8)
