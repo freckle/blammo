@@ -64,7 +64,12 @@ readLogDestination :: String -> Either String LogDestination
 readLogDestination = \case
   "stdout" -> Right LogDestinationStdout
   "stderr" -> Right LogDestinationStderr
-  x -> Right $ LogDestinationFile x
+  ('@' : path) -> Right $ LogDestinationFile path
+  x ->
+    Left
+      $ "Invalid log destination "
+      <> x
+      <> ", must be stdout, stderr, or @{path}"
 
 data LogFormat
     = LogFormatJSON
