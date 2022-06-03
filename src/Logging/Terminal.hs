@@ -88,8 +88,7 @@ colorizeKeyMap Colors {..} km
   sci = dropSuffix ".0" . pack . show
 
 dropSuffix :: Text -> Text -> Text
-dropSuffix suffix x =
-  T.reverse $ fromMaybe x $ T.stripPrefix (T.reverse suffix) $ T.reverse x
+dropSuffix suffix t = fromMaybe t $ T.stripSuffix suffix t
 
 padTo :: Int -> Text -> Text
 padTo n t = t <> T.replicate pad " " where pad = max 0 $ n - T.length t
