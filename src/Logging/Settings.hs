@@ -5,28 +5,28 @@ module Logging.Settings
   , LogFormat(..)
   , LogColor(..)
 
-    -- * Reading settings, e.g. from @ENV@
+  -- * Reading settings, e.g. from @ENV@
   , readLogLevel
   , readLogDestination
   , readLogFormat
   , readLogColor
 
-    -- * Construction
+  -- * Construction
   , defaultLogSettings
 
-    -- * Modify
+  -- * Modify
   , setLogSettingsLevel
   , setLogSettingsDestination
   , setLogSettingsFormat
   , setLogSettingsColor
 
-    -- * Access
+  -- * Access
   , getLogSettingsLevel
   , getLogSettingsDestination
   , getLogSettingsFormat
   , getLogSettingsColor
 
-    -- * Logic
+  -- * Logic
   , shouldLogLevel
   , shouldColorAuto
   , shouldColorHandle

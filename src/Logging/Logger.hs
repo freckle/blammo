@@ -1,11 +1,11 @@
 module Logging.Logger
-    ( Logger
-    , HasLogger(..)
-    , newLogger
-    , getLoggerLoggerSet
-    , getLoggerReformat
-    , getLoggerShouldLog
-    ) where
+  ( Logger
+  , HasLogger(..)
+  , newLogger
+  , getLoggerLoggerSet
+  , getLoggerReformat
+  , getLoggerShouldLog
+  ) where
 
 import Prelude
 
@@ -25,10 +25,10 @@ import System.Log.FastLogger
   )
 
 data Logger = Logger
-    { lLoggerSet :: LoggerSet
-    , lReformat :: LogLevel -> ByteString -> ByteString
-    , lShouldLog :: LogSource -> LogLevel -> Bool
-    }
+  { lLoggerSet :: LoggerSet
+  , lReformat :: LogLevel -> ByteString -> ByteString
+  , lShouldLog :: LogSource -> LogLevel -> Bool
+  }
 
 getLoggerLoggerSet :: Logger -> LoggerSet
 getLoggerLoggerSet = lLoggerSet
@@ -43,29 +43,29 @@ class HasLogger env where
     loggerL :: Lens' env Logger
 
 instance HasLogger Logger where
-    loggerL = id
+  loggerL = id
 
 newLogger :: MonadIO m => LogSettings -> m Logger
 newLogger settings = do
-    (lLoggerSet, useColor) <-
-        liftIO $ case getLogSettingsDestination settings of
-            LogDestinationStdout ->
-                (,)
-                    <$> newStdoutLoggerSet defaultBufSize
-                    <*> shouldColorHandle settings stdout
-            LogDestinationStderr ->
-                (,)
-                    <$> newStderrLoggerSet defaultBufSize
-                    <*> shouldColorHandle settings stderr
-            LogDestinationFile path ->
-                (,) <$> newFileLoggerSet defaultBufSize path <*> shouldColorAuto
-                    settings
-                    (pure False)
+  (lLoggerSet, useColor) <- liftIO $ case getLogSettingsDestination settings of
+    LogDestinationStdout ->
+      (,)
+        <$> newStdoutLoggerSet defaultBufSize
+        <*> shouldColorHandle settings stdout
+    LogDestinationStderr ->
+      (,)
+        <$> newStderrLoggerSet defaultBufSize
+        <*> shouldColorHandle settings stderr
+    LogDestinationFile path ->
+      (,) <$> newFileLoggerSet defaultBufSize path <*> shouldColorAuto
+        settings
+        (pure False)
 
-    let lReformat = case getLogSettingsFormat settings of
-            LogFormatJSON -> const id -- Color is ignored
-            LogFormatTerminal -> reformatTerminal useColor
+  let
+    lReformat = case getLogSettingsFormat settings of
+      LogFormatJSON -> const id -- Color is ignored
+      LogFormatTerminal -> reformatTerminal useColor
 
-        lShouldLog = shouldLogLevel settings
+    lShouldLog = shouldLogLevel settings
 
-    pure $ Logger { .. }
+  pure $ Logger { .. }
