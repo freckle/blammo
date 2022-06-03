@@ -16,6 +16,7 @@ library
       Logging.Colors
       Logging.Logger
       Logging.Settings
+      Logging.Settings.Env
       Logging.Terminal
       Network.Wai.Middleware.Logging
   other-modules:
@@ -35,6 +36,7 @@ library
     , bytestring
     , case-insensitive
     , clock
+    , envparse
     , fast-logger
     , http-types
     , lens

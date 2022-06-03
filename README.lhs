@@ -15,11 +15,10 @@ import Text.Markdown.Unlit ()
 ```
 -->
 
-Minimal usage will only require the top-level library:
-
 ```haskell
 import Data.Text (Text)
 import Logging
+import qualified Logging.Settings.Env as Env
 ```
 
 Throughout your application, you should write against the ubiquitous
@@ -43,75 +42,27 @@ has a `HasLogger` instance. The `Logger` type itself has such an instance, and
 this minimal example takes advantage of that:
 
 ```haskell
-runner1 :: LoggingT IO a -> IO a
-runner1 f = do
-  logger <- newLogger defaultLogSettings
+runner :: LoggingT IO a -> IO a
+runner f = do
+  logger <- newLogger =<< Env.parse
   runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
 ```
 
 These defaults are good for CLI applications, producing colourful output (if
 connected to a terminal device) suitable for a human:
 
-`main = runner1 action`:
+```haskell
+main :: IO ()
+main = runner action
+```
 
 ![](files/readme-terminal.png)
 
-In production, you'll probably want to configure your structured logs for JSON,
-to be ingested by some service:
-
-```haskell
-runner2 :: LoggingT IO a -> IO a
-runner2 f = do
-  logger <- newLogger $ setLogSettingsFormat LogFormatJSON defaultLogSettings
-  runLoggerLoggingT logger $ withThreadContext ["app" .= ("example" :: Text)] f
-```
-
-`main = runner2 action`:
-
 ![](files/readme-json.png)
-
-```haskell
-main :: IO ()
-main = do
-  runner1 action
-  runner2 action
-```
 
 ## More Advanced Usage
 
 ## Environment-based Configuration
-
-The `Logging.Settings` module exposes an `Either`-based reader function for each
-field on the `LogSettings` type. These could be used manually:
-
-```hs
-eLogLevel <- readLogLevel <$> getEnv "LOG_LEVEL"
-```
-
-Or in something more involved, like [`envparse`][envparse]:
-
-[envparse]: https://hackage.haskell.org/package/envparse
-
-```hs
-import Env
-
-envLogSettings :: IO LogSettings
-envLogSettings = parse id $ build
-    <$> var (eitherReader readLogLevel) "LOG_LEVEL" (def LevelInfo)
-    <*> var (eitherReader readLogDestination) "LOG_DESTINATION" (def LogDestinationStdout)
-    <*> var (eitherReader readLogFormat) "LOG_FORMAT" (def LogFormatTerminal)
-    <*> var (eitherReader readLogColor) "LOG_COLOR" (def LogColorAuto)
-  where
-    build level destination format color =
-        setLogSettingsLevel level
-            . setLogSettingsDestination destination
-            . setLogSettingsFormat format
-            . setLogSettingsColor color
-            $ defaultLogSettings
-
-eitherReader :: AsUnread e => (String -> Either String a) -> Reader e a
-eitherReader f = first unread . f
-```
 
 ## Integration with RIO
 
