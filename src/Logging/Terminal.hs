@@ -54,7 +54,7 @@ reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do
       LevelOther x -> blue $ padTo 9 x
 
     loggedSourceAsMap =
-      maybe mempty (KeyMap.singleton "source" . String) loggedMessageLogSource
+      foldMap (KeyMap.singleton "source" . String) loggedMessageLogSource
 
   pure $ encodeUtf8 $ mconcat
     [ logTimestampText <> " "
