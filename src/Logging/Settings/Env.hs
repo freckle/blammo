@@ -3,9 +3,9 @@
 -- - @LOG_LEVEL@: a known log level (case insensitive). Unrecognized values will
 --   become 'LevelOther' (preserving case).
 --
--- - @LOG_DESTINATION@: the string @stderr@ or @stdout@ (case sensitive).
---   Unrecognized values will be treated as a file path destination (without
---   checking if it exists).
+-- - @LOG_DESTINATION@: the string @stderr@ or @stdout@ (case sensitive), or
+--   @\@{path}@ to log to the file at @path@. Unrecognized values will produce
+--   and error.
 --
 -- - @LOG_FORMAT@: the string @tty@ or @json@. Unrecognized values will produce
 --   an error.
