@@ -7,12 +7,17 @@ abstraction in CLI apps and production services in Haskell.
 
 <!--
 ```haskell
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
+
 module Main (module Main) where
 
 import Prelude
 
 import Data.Aeson
 import Data.Text (Text)
+import GHC.Generics (Generic)
 import Text.Markdown.Unlit ()
 ```
 -->
@@ -22,23 +27,29 @@ import Logging.Simple
 ```
 
 Throughout your application, you should write against the ubiquitous
-`MonadLogger` interface, but using [`monad-logger-aeson`][monad-logger-aeson]:
+`MonadLogger` interface:
+
+```haskell
+action1 :: MonadLogger m => m ()
+action1 = do
+  logInfo "This is a message sans details"
+```
+
+Make use of [`monad-logger-aeson`][monad-logger-aeson] for structured details:
 
 [monad-logger-aeson]: https://jship.github.io/posts/2022-05-17-announcing-monad-logger-aeson/
 
 ```haskell
-action :: MonadLogger m => m ()
-action = do
-  logInfo "This is a message sans details"
+data MyError = MyError
+  { code :: Int
+  , messages :: [Text]
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
 
-  logError
-    $ "Something went wrong"
-    :# [ "error" .= object
-          [ "code" .= (100 :: Int)
-          , "messages" .= (["x", "y"] :: [Text])
-          ]
-       ]
-
+action2 :: MonadLogger m => m ()
+action2 = do
+  logError $ "Something went wrong" :# ["error" .= MyError 100 ["x", "y"]]
   logDebug "This won't be seen in default settings"
 ```
 
@@ -57,7 +68,9 @@ runner :: LoggingT IO a -> IO a
 runner = runSimpleLoggingT . withThreadContext ["app" .= ("example" :: Text)]
 
 main :: IO ()
-main = runner action
+main = runner $ do
+  action1
+  action2
 ```
 
 The defaults are good for CLI applications, producing colorful output (if
