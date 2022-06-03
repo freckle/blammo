@@ -53,7 +53,7 @@ main :: IO ()
 main = runner action
 ```
 
-The defaults are good for CLI applications, producing colourful output (if
+The defaults are good for CLI applications, producing colorful output (if
 connected to a terminal device) suitable for a human:
 
 ![](files/readme-terminal.png)
