@@ -76,7 +76,7 @@ details. One thing we can adjust is `LOG_LEVEL`:
 In production, you will probably want to set `LOG_FORMAT=json` and ship logs to
 some aggregator like Datadog or Mezmo (formerly LogDNA):
 
-![](files/readme-terminal-json.png)
+![](files/readme-json.png)
 
 ## Advanced Usage
 
