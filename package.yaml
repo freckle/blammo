@@ -1,0 +1,71 @@
+name: logging
+version: 0.0.0.0
+
+dependencies:
+  - base > 4 && < 5
+
+ghc-options:
+  - -Weverything
+  - -Wno-all-missed-specialisations
+  - -Wno-missing-exported-signatures # re-enables missing-signatures
+  - -Wno-missing-import-lists
+  - -Wno-missing-local-signatures
+  - -Wno-monomorphism-restriction
+  - -Wno-safe
+  - -Wno-unsafe
+
+when:
+  - condition: "impl(ghc >= 9.2)"
+    ghc-options:
+      - -Wno-missing-kind-signatures
+  - condition: "impl(ghc >= 8.10)"
+    ghc-options:
+      - -Wno-missing-safe-haskell-mode
+      - -Wno-prepositive-qualified-module
+
+default-extensions:
+  - LambdaCase
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - RecordWildCards
+  - TypeApplications
+
+library:
+  source-dirs: src
+  dependencies:
+    - aeson
+    - bytestring
+    - envparse
+    - fast-logger
+    - lens
+    - monad-logger-aeson
+    - text
+    - time
+    - vector
+
+    # For the wai Middleware
+    - case-insensitive
+    - clock
+    - http-types
+    - unliftio-core
+    - wai
+
+    # For aeson 1.x
+    - unordered-containers
+
+tests:
+  # spec:
+  #   main: Spec.hs
+  #   source-dirs: tests
+  #   dependencies:
+  #     - hspec
+  #     - logging
+
+  readme:
+    main: README.lhs
+    ghc-options: -pgmL markdown-unlit
+    dependencies:
+      - aeson
+      - logging
+      - markdown-unlit
+      - text
