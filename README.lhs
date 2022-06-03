@@ -105,19 +105,18 @@ runApp f = do
 
 awsDiscover :: (MonadIO m, MonadLoggerIO m) => m AWS.Env
 awsDiscover = do
-  monadLoggerLog <- askLoggerIO
-
+  loggerIO <- askLoggerIO
   env <- liftIO $ AWS.newEnv AWS.discover
   pure $ env
     { AWS.envLogger = \level msg -> do
-      monadLoggerLog
+      loggerIO
         defaultLoc -- TODO: there may be a way to get a CallStack/Loc
         "Amazonka"
         (\case
-            AWS.Info -> LevelInfo
-            AWS.Error -> LevelError
-            AWS.Debug -> LevelDebug
-            AWS.Trace -> LevelDebug
+          AWS.Info -> LevelInfo
+          AWS.Error -> LevelError
+          AWS.Debug -> LevelDebug
+          AWS.Trace -> LevelDebug
         )
         (toLogStr msg)
     }
