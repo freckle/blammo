@@ -105,22 +105,22 @@ runApp f = do
 
 awsDiscover :: (MonadIO m, MonadLoggerIO m) => m AWS.Env
 awsDiscover = do
-    monadLoggerLog <- askLoggerIO
+  monadLoggerLog <- askLoggerIO
 
-    env <- liftIO $ AWS.newEnv AWS.discover
-    pure $ env
-        { AWS.envLogger = \level msg -> do
-            monadLoggerLog
-                defaultLoc -- TODO: there may be a way to get a CallStack/Loc
-                "Amazonka"
-                (\case
-                    AWS.Info -> LevelInfo
-                    AWS.Error -> LevelError
-                    AWS.Debug -> LevelDebug
-                    AWS.Trace -> LevelDebug
-                )
-                (toLogStr msg)
-        }
+  env <- liftIO $ AWS.newEnv AWS.discover
+  pure $ env
+    { AWS.envLogger = \level msg -> do
+      monadLoggerLog
+        defaultLoc -- TODO: there may be a way to get a CallStack/Loc
+        "Amazonka"
+        (\case
+            AWS.Info -> LevelInfo
+            AWS.Error -> LevelError
+            AWS.Debug -> LevelDebug
+            AWS.Trace -> LevelDebug
+        )
+        (toLogStr msg)
+    }
 ```
 
 ## Integration with WAI
@@ -143,13 +143,13 @@ instance HasLogger App where
 
 warpSettings :: App -> Settings
 warpSettings app = setOnException onEx $ defaultSettings
-  where
-    onEx _req ex =
-        when (defaultShouldDisplayException ex)
-            $ runLoggerLoggingT app
-            $ logError
-            $ "Warp exception"
-            :# ["exception" .= displayException ex]
+ where
+  onEx _req ex =
+    when (defaultShouldDisplayException ex)
+      $ runLoggerLoggingT app
+      $ logError
+      $ "Warp exception"
+      :# ["exception" .= displayException ex]
 ```
 
 ## Integration with Yesod
@@ -158,13 +158,13 @@ warpSettings app = setOnException onEx $ defaultSettings
 import Logging.Logger (getLoggerLoggerSet)
 
 instance HasLogger App where
- -- ...
+  -- ...
 
 instance Yesod App where
-    -- ...
+  -- ...
 
-    messageLoggerSource app _logger loc source level msg =
-        runLoggerLoggingT app $ monadLoggerLog loc source level msg
+  messageLoggerSource app _logger loc source level msg =
+    runLoggerLoggingT app $ monadLoggerLog loc source level msg
 ```
 
 ---
