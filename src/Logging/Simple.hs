@@ -9,7 +9,7 @@ import Prelude
 
 import Control.Monad.IO.Class (MonadIO(..))
 import Logging
-import qualified Logging.Settings.Env as Env
+import qualified Logging.LogSettings.Env as Env
 
 -- | Construct a 'Logger' configured via environment variables
 newLoggerEnv :: MonadIO m => m Logger

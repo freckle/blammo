@@ -18,7 +18,7 @@
 --
 -- @
 -- import Logging
--- import qualified Logging.Settings.Env as Env
+-- import qualified Logging.LogSettings.Env as Env
 --
 -- main :: IO ()
 -- main = do
@@ -26,7 +26,7 @@
 --   'runLoggerLoggingT' logger $ -- ...
 -- @
 --
-module Logging.Settings.Env
+module Logging.LogSettings.Env
   ( parse
   , parser
   ) where
@@ -37,7 +37,7 @@ import Data.Bifunctor (first)
 import Data.Semigroup (Endo(..))
 import Env hiding (parse)
 import qualified Env
-import Logging.Settings
+import Logging.LogSettings
 
 parse :: IO LogSettings
 parse = Env.parse id parser

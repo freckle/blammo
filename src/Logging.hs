@@ -40,7 +40,7 @@ import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.ByteString (ByteString)
 import Logging.Logger
-import Logging.Settings
+import Logging.LogSettings
 import System.Log.FastLogger (LoggerSet, flushLogStr, pushLogStrLn)
 
 runLoggerLoggingT :: (MonadIO m, HasLogger env) => env -> LoggingT m a -> m a

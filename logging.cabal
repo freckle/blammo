@@ -16,8 +16,8 @@ library
       Logging
       Logging.Colors
       Logging.Logger
-      Logging.Settings
-      Logging.Settings.Env
+      Logging.LogSettings
+      Logging.LogSettings.Env
       Logging.Simple
       Logging.Terminal
       Network.Wai.Middleware.Logging

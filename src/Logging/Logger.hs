@@ -13,7 +13,7 @@ import Control.Lens (Lens')
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
 import Data.ByteString (ByteString)
-import Logging.Settings
+import Logging.LogSettings
 import Logging.Terminal
 import System.IO (stderr, stdout)
 import System.Log.FastLogger

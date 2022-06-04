@@ -1,4 +1,4 @@
-module Logging.Settings
+module Logging.LogSettings
   ( LogSettings
   , LogLevel(..)
   , LogDestination(..)
