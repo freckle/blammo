@@ -42,6 +42,7 @@ library
     , clock
     , containers
     , envparse
+    , exceptions
     , fast-logger
     , http-types
     , lens

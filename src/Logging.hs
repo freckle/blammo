@@ -15,10 +15,18 @@ module Logging
   , runLoggerLoggingT
 
   -- * Re-exports from "Control.Monad.Logger.Aeson"
+  -- ** Messages
   , Message(..)
   , (.=)
   , Series
+
+  -- ** Thread Context
+  , MonadMask
   , withThreadContext
+  , myThreadContext
+  , Pair
+
+  -- ** Transformer
   , MonadLogger(..)
   , MonadLoggerIO(..)
   , LoggingT
@@ -44,9 +52,11 @@ module Logging
 import Prelude
 
 import Control.Lens ((^.))
+import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
+import Data.Aeson.Types (Pair)
 import Data.ByteString (ByteString)
 import Logging.LogSettings
 import Logging.Logger
