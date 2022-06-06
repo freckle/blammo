@@ -24,6 +24,7 @@ when:
       - -Wno-prepositive-qualified-module
 
 default-extensions:
+  - DerivingStrategies
   - LambdaCase
   - NoImplicitPrelude
   - OverloadedStrings
@@ -35,6 +36,7 @@ library:
   dependencies:
     - aeson
     - bytestring
+    - containers
     - envparse
     - fast-logger
     - lens
@@ -54,12 +56,12 @@ library:
     - unordered-containers
 
 tests:
-  # spec:
-  #   main: Spec.hs
-  #   source-dirs: tests
-  #   dependencies:
-  #     - hspec
-  #     - logging
+  spec:
+    main: Spec.hs
+    source-dirs: tests
+    dependencies:
+      - hspec
+      - logging
 
   readme:
     main: README.lhs

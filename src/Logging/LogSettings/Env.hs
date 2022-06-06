@@ -1,7 +1,7 @@
 -- | Produce a 'LogSettings' by reading environment variables
 --
--- - @LOG_LEVEL@: a known log level (case insensitive). Unrecognized values will
---   become 'LevelOther' (preserving case).
+-- - @LOG_LEVEL@: a known log level (case insensitive) and optional levels by
+--   source. See "Logging.LogSettings.LogLevels".
 --
 -- - @LOG_DESTINATION@: the string @stderr@ or @stdout@ (case sensitive), or
 --   @\@{path}@ to log to the file at @path@. Unrecognized values will produce
@@ -46,7 +46,7 @@ parse = Env.parse id parser
 
 parser :: Parser Error LogSettings
 parser = ($ defaultLogSettings) . appEndo . mconcat <$> sequenceA
-  [ var (endo readLogLevel setLogSettingsLevel) "LOG_LEVEL" (def mempty)
+  [ var (endo readLogLevels setLogSettingsLevels) "LOG_LEVEL" (def mempty)
   , var (endo readLogDestination setLogSettingsDestination) "LOG_DESTINATION" (def mempty)
   , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
   , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)

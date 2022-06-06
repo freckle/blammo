@@ -5,7 +5,7 @@ module Logging
   , LogFormat(..)
   , LogColor(..)
   , defaultLogSettings
-  , setLogSettingsLevel
+  , setLogSettingsLevels
   , setLogSettingsDestination
   , setLogSettingsFormat
   , setLogSettingsColor
@@ -39,8 +39,8 @@ import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.ByteString (ByteString)
-import Logging.Logger
 import Logging.LogSettings
+import Logging.Logger
 import System.Log.FastLogger (LoggerSet, flushLogStr, pushLogStrLn)
 
 runLoggerLoggingT :: (MonadIO m, HasLogger env) => env -> LoggingT m a -> m a
