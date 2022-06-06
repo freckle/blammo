@@ -1,3 +1,40 @@
+module Network.Wai.Middleware.Logging
+  ( addThreadContext
+  , requestLogger
+  ) where
+
+import Prelude
+
+import Control.Arrow ((***))
+import Control.Monad.IO.Unlift (withRunInIO)
+import Data.Aeson
+import qualified Data.Aeson.Compat as Key
+import qualified Data.Aeson.Compat as KeyMap
+import qualified Data.CaseInsensitive as CI
+import Data.Text (pack)
+import Data.Text.Encoding (decodeUtf8)
+import Logging
+import Network.HTTP.Types.Header (Header, HeaderName)
+import Network.HTTP.Types.Status (Status(..))
+import Network.Wai
+  ( Middleware
+  , Request
+  , Response
+  , rawPathInfo
+  , rawQueryString
+  , requestHeaders
+  , requestMethod
+  , responseHeaders
+  , responseStatus
+  )
+import qualified System.Clock as Clock
+
+-- | Add context to any logging done from the request-handling thread
+addThreadContext :: [Pair] -> Middleware
+addThreadContext context app request respond = do
+  withThreadContext context $ do
+    app request respond
+
 -- | Log requests (more accurately, responses) as they happen
 --
 -- In JSON format, logged messages look like:
@@ -30,36 +67,6 @@
 -- }
 -- @
 --
-module Network.Wai.Middleware.Logging
-  ( requestLogger
-  ) where
-
-import Prelude
-
-import Control.Arrow ((***))
-import Control.Monad.IO.Unlift (withRunInIO)
-import Data.Aeson
-import qualified Data.Aeson.Compat as Key
-import qualified Data.Aeson.Compat as KeyMap
-import qualified Data.CaseInsensitive as CI
-import Data.Text (pack)
-import Data.Text.Encoding (decodeUtf8)
-import Logging
-import Network.HTTP.Types.Header (Header, HeaderName)
-import Network.HTTP.Types.Status (Status(..))
-import Network.Wai
-  ( Middleware
-  , Request
-  , Response
-  , rawPathInfo
-  , rawQueryString
-  , requestHeaders
-  , requestMethod
-  , responseHeaders
-  , responseStatus
-  )
-import qualified System.Clock as Clock
-
 requestLogger :: HasLogger env => env -> Middleware
 requestLogger env app req respond =
   runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
