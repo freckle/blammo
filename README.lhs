@@ -1,7 +1,19 @@
-# Logging
+# Blammo
 
-A batteries-included Structured Logging toolkit for writing to a single logging
-abstraction in CLI apps and production services in Haskell.
+![](files/blammo.png)
+
+Blammo is a Structured Logging library that's
+
+- Easy to use: one import and go!
+- Easy to configure: environment variable parsing out of the box!
+- Easy to integrate: see below for Amazonka, Yesod, and more!
+- Produces beautiful, colorful output in development
+- Produces fast-fast JSON in production
+
+All built on the well-known `MonadLogger` interface and using an efficient
+`fast-logger` implementation.
+
+> It's better than bad, it's good!
 
 ## Simple Usage
 
@@ -23,7 +35,7 @@ import Text.Markdown.Unlit ()
 -->
 
 ```haskell
-import Logging.Simple
+import Blammo.Logging.Simple
 ```
 
 Throughout your application, you should write against the ubiquitous
@@ -35,7 +47,8 @@ action1 = do
   logInfo "This is a message sans details"
 ```
 
-Make use of [`monad-logger-aeson`][monad-logger-aeson] for structured details:
+And make use of [`monad-logger-aeson`][monad-logger-aeson] for structured
+details:
 
 [monad-logger-aeson]: https://jship.github.io/posts/2022-05-17-announcing-monad-logger-aeson/
 
@@ -170,7 +183,7 @@ warpSettings app = setOnException onEx $ defaultSettings
 ## Integration with Yesod
 
 ```hs
-import Logging.Logger (getLoggerLoggerSet)
+import Blammo.Logging.Logger (getLoggerLoggerSet)
 
 instance HasLogger App where
   -- ...

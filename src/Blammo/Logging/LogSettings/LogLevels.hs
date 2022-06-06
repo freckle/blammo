@@ -47,7 +47,7 @@
 -- source. If you go on to add any @<source:level>@ pairs, that will change the
 -- minimum level for messages from that source.
 --
-module Logging.LogSettings.LogLevels
+module Blammo.Logging.LogSettings.LogLevels
   ( LogLevels
   , LogLevel(..)
   , newLogLevels

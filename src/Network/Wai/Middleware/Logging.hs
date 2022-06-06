@@ -5,6 +5,7 @@ module Network.Wai.Middleware.Logging
 
 import Prelude
 
+import Blammo.Logging
 import Control.Arrow ((***))
 import Control.Monad.IO.Unlift (withRunInIO)
 import Data.Aeson
@@ -13,7 +14,6 @@ import qualified Data.Aeson.Compat as KeyMap
 import qualified Data.CaseInsensitive as CI
 import Data.Text (pack)
 import Data.Text.Encoding (decodeUtf8)
-import Logging
 import Network.HTTP.Types.Header (Header, HeaderName)
 import Network.HTTP.Types.Status (Status(..))
 import Network.Wai

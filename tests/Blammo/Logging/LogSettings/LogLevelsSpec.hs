@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
 
-module Logging.LogSettings.LogLevelsSpec
+module Blammo.Logging.LogSettings.LogLevelsSpec
   ( spec
   ) where
 
 import Prelude
 
+import Blammo.Logging.LogSettings.LogLevels
 import Data.Either (isLeft, isRight)
-import Logging.LogSettings.LogLevels
 import Test.Hspec
 
 spec :: Spec

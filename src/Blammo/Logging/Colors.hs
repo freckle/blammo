@@ -1,4 +1,4 @@
-module Logging.Colors
+module Blammo.Logging.Colors
   ( Colors(..)
   , getColors
   ) where

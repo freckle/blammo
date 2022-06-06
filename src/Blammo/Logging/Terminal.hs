@@ -14,12 +14,13 @@
 -- [structlog](https://www.structlog.org/en/stable/) package in its default
 -- configuration.
 --
-module Logging.Terminal
+module Blammo.Logging.Terminal
   ( reformatTerminal
   ) where
 
 import Prelude
 
+import Blammo.Logging.Colors
 import Control.Monad.Logger.Aeson
 import Data.Aeson
 import Data.Aeson.Compat (KeyMap)
@@ -33,7 +34,6 @@ import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
 import Data.Time (defaultTimeLocale, formatTime)
 import qualified Data.Vector as V
-import Logging.Colors
 
 reformatTerminal :: Bool -> LogLevel -> ByteString -> ByteString
 reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do

@@ -1,4 +1,4 @@
-name: logging
+name: Blammo
 version: 0.0.0.0
 
 dependencies:
@@ -61,14 +61,14 @@ tests:
     main: Spec.hs
     source-dirs: tests
     dependencies:
+      - Blammo
       - hspec
-      - logging
 
   readme:
     main: README.lhs
     ghc-options: -pgmL markdown-unlit
     dependencies:
+      - Blammo
       - aeson
-      - logging
       - markdown-unlit
       - text
