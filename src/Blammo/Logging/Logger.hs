@@ -1,4 +1,4 @@
-module Logging.Logger
+module Blammo.Logging.Logger
   ( Logger
   , HasLogger(..)
   , newLogger
@@ -9,12 +9,12 @@ module Logging.Logger
 
 import Prelude
 
+import Blammo.Logging.LogSettings
+import Blammo.Logging.Terminal
 import Control.Lens (Lens')
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
 import Data.ByteString (ByteString)
-import Logging.LogSettings
-import Logging.Terminal
 import System.IO (stderr, stdout)
 import System.Log.FastLogger
   ( LoggerSet

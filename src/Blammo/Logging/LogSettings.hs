@@ -1,4 +1,4 @@
-module Logging.LogSettings
+module Blammo.Logging.LogSettings
   ( LogSettings
   , LogLevels
   , LogDestination(..)
@@ -34,10 +34,10 @@ module Logging.LogSettings
 
 import Prelude
 
+import Blammo.Logging.LogSettings.LogLevels (LogLevels)
+import qualified Blammo.Logging.LogSettings.LogLevels as LogLevels
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
-import Logging.LogSettings.LogLevels (LogLevels)
-import qualified Logging.LogSettings.LogLevels as LogLevels
 import System.IO (Handle, hIsTerminalDevice)
 
 data LogSettings = LogSettings

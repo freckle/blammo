@@ -17,7 +17,7 @@
 -- This module is meant to be imported @qualified@.
 --
 -- @
--- import Logging
+-- import Blammo.Logging
 -- import qualified Logging.LogSettings.Env as Env
 --
 -- main :: IO ()
@@ -26,18 +26,18 @@
 --   'runLoggerLoggingT' logger $ -- ...
 -- @
 --
-module Logging.LogSettings.Env
+module Blammo.Logging.LogSettings.Env
   ( parse
   , parser
   ) where
 
 import Prelude
 
+import Blammo.Logging.LogSettings
 import Data.Bifunctor (first)
 import Data.Semigroup (Endo(..))
 import Env hiding (parse)
 import qualified Env
-import Logging.LogSettings
 
 parse :: IO LogSettings
 parse = Env.parse id parser

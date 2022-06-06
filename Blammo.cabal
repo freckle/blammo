@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           logging
+name:           Blammo
 version:        0.0.0.0
 license:        MIT
 license-file:   LICENSE
@@ -12,18 +12,18 @@ build-type:     Simple
 
 library
   exposed-modules:
+      Blammo.Logging
+      Blammo.Logging.Colors
+      Blammo.Logging.Logger
+      Blammo.Logging.LogSettings
+      Blammo.Logging.LogSettings.Env
+      Blammo.Logging.LogSettings.LogLevels
+      Blammo.Logging.Simple
+      Blammo.Logging.Terminal
       Data.Aeson.Compat
-      Logging
-      Logging.Colors
-      Logging.Logger
-      Logging.LogSettings
-      Logging.LogSettings.Env
-      Logging.LogSettings.LogLevels
-      Logging.Simple
-      Logging.Terminal
       Network.Wai.Middleware.Logging
   other-modules:
-      Paths_logging
+      Paths_Blammo
   hs-source-dirs:
       src
   default-extensions:
@@ -63,7 +63,7 @@ test-suite readme
   type: exitcode-stdio-1.0
   main-is: README.lhs
   other-modules:
-      Paths_logging
+      Paths_Blammo
   default-extensions:
       DerivingStrategies
       LambdaCase
@@ -73,9 +73,9 @@ test-suite readme
       TypeApplications
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe -pgmL markdown-unlit
   build-depends:
-      aeson
+      Blammo
+    , aeson
     , base >4 && <5
-    , logging
     , markdown-unlit
     , text
   if impl(ghc >= 9.2)
@@ -88,8 +88,8 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Logging.LogSettings.LogLevelsSpec
-      Paths_logging
+      Blammo.Logging.LogSettings.LogLevelsSpec
+      Paths_Blammo
   hs-source-dirs:
       tests
   default-extensions:
@@ -101,9 +101,9 @@ test-suite spec
       TypeApplications
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
-      base >4 && <5
+      Blammo
+    , base >4 && <5
     , hspec
-    , logging
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
   if impl(ghc >= 8.10)

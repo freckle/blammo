@@ -1,4 +1,4 @@
-module Logging
+module Blammo.Logging
   ( LogSettings
   , LogLevel(..)
   , LogDestination(..)
@@ -51,6 +51,8 @@ module Logging
 
 import Prelude
 
+import Blammo.Logging.LogSettings
+import Blammo.Logging.Logger
 import Control.Lens ((^.))
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Class (MonadIO(..))
@@ -58,8 +60,6 @@ import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
 import Data.ByteString (ByteString)
-import Logging.LogSettings
-import Logging.Logger
 import System.Log.FastLogger (LoggerSet, flushLogStr, pushLogStrLn)
 
 runLoggerLoggingT :: (MonadIO m, HasLogger env) => env -> LoggingT m a -> m a

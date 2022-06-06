@@ -1,15 +1,15 @@
 -- | Simplified out-of-the-box logging
-module Logging.Simple
+module Blammo.Logging.Simple
   ( newLoggerEnv
   , runSimpleLoggingT
-  , module Logging
+  , module Blammo.Logging
   ) where
 
 import Prelude
 
+import Blammo.Logging
+import qualified Blammo.Logging.LogSettings.Env as Env
 import Control.Monad.IO.Class (MonadIO(..))
-import Logging
-import qualified Logging.LogSettings.Env as Env
 
 -- | Construct a 'Logger' configured via environment variables
 newLoggerEnv :: MonadIO m => m Logger
