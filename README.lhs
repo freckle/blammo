@@ -129,7 +129,7 @@ awsDiscover = do
           AWS.Info -> LevelInfo
           AWS.Error -> LevelError
           AWS.Debug -> LevelDebug
-          AWS.Trace -> LevelDebug
+          AWS.Trace -> LevelOther "trace"
         )
         (toLogStr msg)
     }
@@ -144,7 +144,10 @@ instance HasLogger App where
   -- ...
 
 waiMiddleware :: App -> Middleware
-waiMiddleware app = requestLogger app . defaultMiddlewaresNoLogging
+waiMiddleware app =
+  addThreadContext ["app" .= ("my-app" :: Text)]
+    $ requestLogger app
+    $ defaultMiddlewaresNoLogging
 ```
 
 ## Integration with Warp
