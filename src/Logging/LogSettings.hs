@@ -1,12 +1,12 @@
 module Logging.LogSettings
   ( LogSettings
-  , LogLevel(..)
+  , LogLevels
   , LogDestination(..)
   , LogFormat(..)
   , LogColor(..)
 
   -- * Reading settings, e.g. from @ENV@
-  , readLogLevel
+  , readLogLevels
   , readLogDestination
   , readLogFormat
   , readLogColor
@@ -15,13 +15,13 @@ module Logging.LogSettings
   , defaultLogSettings
 
   -- * Modify
-  , setLogSettingsLevel
+  , setLogSettingsLevels
   , setLogSettingsDestination
   , setLogSettingsFormat
   , setLogSettingsColor
 
   -- * Access
-  , getLogSettingsLevel
+  , getLogSettingsLevels
   , getLogSettingsDestination
   , getLogSettingsFormat
   , getLogSettingsColor
@@ -36,24 +36,19 @@ import Prelude
 
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Logger.Aeson
-import Data.Char (toLower)
-import Data.Text (pack)
+import Logging.LogSettings.LogLevels (LogLevels)
+import qualified Logging.LogSettings.LogLevels as LogLevels
 import System.IO (Handle, hIsTerminalDevice)
 
 data LogSettings = LogSettings
-  { lsLevel :: LogLevel
+  { lsLevels :: LogLevels
   , lsDestination :: LogDestination
   , lsFormat :: LogFormat
   , lsColor :: LogColor
   }
 
-readLogLevel :: String -> Either String LogLevel
-readLogLevel x = case map toLower x of
-  "debug" -> Right LevelDebug
-  "info" -> Right LevelInfo
-  "warn" -> Right LevelWarn
-  "error" -> Right LevelError
-  _ -> Right $ LevelOther $ pack x
+readLogLevels :: String -> Either String LogLevels
+readLogLevels = LogLevels.readLogLevels
 
 data LogDestination
     = LogDestinationStdout
@@ -108,14 +103,14 @@ readLogColor x
 
 defaultLogSettings :: LogSettings
 defaultLogSettings = LogSettings
-  { lsLevel = LevelInfo
+  { lsLevels = LogLevels.defaultLogLevels
   , lsDestination = LogDestinationStdout
   , lsFormat = LogFormatTerminal
   , lsColor = LogColorAuto
   }
 
-setLogSettingsLevel :: LogLevel -> LogSettings -> LogSettings
-setLogSettingsLevel x ls = ls { lsLevel = x }
+setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
+setLogSettingsLevels x ls = ls { lsLevels = x }
 
 setLogSettingsDestination :: LogDestination -> LogSettings -> LogSettings
 setLogSettingsDestination x ls = ls { lsDestination = x }
@@ -126,8 +121,8 @@ setLogSettingsFormat x ls = ls { lsFormat = x }
 setLogSettingsColor :: LogColor -> LogSettings -> LogSettings
 setLogSettingsColor x ls = ls { lsColor = x }
 
-getLogSettingsLevel :: LogSettings -> LogLevel
-getLogSettingsLevel = lsLevel
+getLogSettingsLevels :: LogSettings -> LogLevels
+getLogSettingsLevels = lsLevels
 
 getLogSettingsDestination :: LogSettings -> LogDestination
 getLogSettingsDestination = lsDestination
@@ -139,7 +134,7 @@ getLogSettingsColor :: LogSettings -> LogColor
 getLogSettingsColor = lsColor
 
 shouldLogLevel :: LogSettings -> LogSource -> LogLevel -> Bool
-shouldLogLevel LogSettings {..} = const (>= lsLevel)
+shouldLogLevel = LogLevels.shouldLogLevel . getLogSettingsLevels
 
 shouldColorAuto :: Applicative m => LogSettings -> m Bool -> m Bool
 shouldColorAuto LogSettings {..} f = case lsColor of
