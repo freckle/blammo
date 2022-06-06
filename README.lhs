@@ -159,7 +159,38 @@ runAppT app f = runLoggerLoggingT app $ runReaderT f app
 
 ## Integration with RIO
 
-TODO
+```hs
+data App = App
+  { appLogFunc :: LogFunc
+  , -- ...
+  }
+
+instance HasLogFuncApp where
+  logFuncL = lens appLogFunc $ \x y -> x { logFunc = y }
+
+runApp :: MonadIO m => RIO App a -> m a
+runApp f = runSimpleLoggingT $ do
+  loggerIO <- askLoggerIO
+
+  let
+    logFunc = mkLogFunc $ \cs source level msg -> loggerIO
+      (callStackLoc cs)
+      source
+      (fromRIOLevel level)
+      (getUtf8Builder msg)
+
+  app <- App logFunc
+    <$> -- ...
+    <*> -- ...
+
+  runRIO app $ f
+
+callStackLoc :: CallStack -> Loc
+callStackLoc = undefined
+
+fromRIOLevel :: RIO.LogLevel -> LogLevel
+fromRIOLevel = undefined
+```
 
 ## Integration with Amazonka
 
