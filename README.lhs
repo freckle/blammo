@@ -104,9 +104,58 @@ some aggregator like Datadog or Mezmo (formerly LogDNA):
 
 ![](files/readme-json.png)
 
+## Configuration
+
+| Setting     | Setter                      | Environment variable and format          |
+| ---         | ---                         | ---                                      |
+| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]` |
+| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout|stderr|@<path>`  |
+| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty|json`                    |
+
 ## Advanced Usage
 
-TODO
+Add our environment variable parser to your own,
+
+```hs
+data AppSettings = AppSettings
+  { appDryRun :: Bool
+  , appLogSettings :: LogSettings
+  , -- ...
+  }
+
+loadAppSettings :: IO AppSettings
+loadAppSettings = Env.parse id $ AppSettings
+  <$> var switch "DRY_RUN" mempty
+  <*> LogSettingsEnv.parser
+  <*> -- ...
+```
+
+Load a `Logger` into your `App` type and define `HasLogger`,
+
+```hs
+data App = App
+  { appSettings :: AppSettings
+  , appLogger :: Logger
+  , -- ...
+  }
+
+instance HasLogger App where
+  loggerL = lens appLogger $ \x y -> x { appLogger = y }
+
+loadApp :: IO App
+loadApp = do
+  appSettings <- loadAppSettings
+  appLogger <- newLogger $ appLogSettings appSettings
+  -- ...
+  pure App {..}
+```
+
+Use `runLoggerLoggingT`,
+
+```hs
+runAppT :: App -> ReaderT App (LoggingT IO) a -> IO a
+runAppT app f = runLoggerLoggingT app $ runReaderT f app
+```
 
 ## Integration with RIO
 
