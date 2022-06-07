@@ -109,8 +109,8 @@ some aggregator like Datadog or Mezmo (formerly LogDNA):
 | Setting     | Setter                      | Environment variable and format          |
 | ---         | ---                         | ---                                      |
 | Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]` |
-| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout|stderr|@<path>`  |
-| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty|json`                    |
+| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>`  |
+| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty\|json`                    |
 
 ## Advanced Usage
 
