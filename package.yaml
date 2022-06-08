@@ -1,8 +1,14 @@
 name: Blammo
 version: 1.0.0.0
+maintainer: Freckle Education
+category: Utils
+github: freckle/blammo
+synopsis: Batteries-included Structured Logging library
+description: Please see README.md
 
-dependencies:
-  - base > 4 && < 5
+extra-doc-files:
+  - README.md
+  - CHANGELOG.md
 
 ghc-options:
   - -Weverything
@@ -22,6 +28,9 @@ when:
     ghc-options:
       - -Wno-missing-safe-haskell-mode
       - -Wno-prepositive-qualified-module
+
+dependencies:
+  - base < 5
 
 default-extensions:
   - DerivingStrategies
