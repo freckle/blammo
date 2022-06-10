@@ -5,12 +5,12 @@
 
 packages:
 - completed:
-    hackage: monad-logger-aeson-0.2.0.0@sha256:c855d721e74608b94b68b5d94ce30bbb49f535d92ae534c8b4c8cb9bb56524f5,5158
+    hackage: monad-logger-aeson-0.2.0.1@sha256:3ce33913e0f0f73cd272ce734abaae460bdbc48ad9c4d7192a912849060114b0,5156
     pantry-tree:
       size: 5103
-      sha256: 3ebd7fed0fd9da25f070ef84bd14d9eaf12a2f4fc4fe736802454e3e8e679520
+      sha256: f221efc9a29a358c63b571cc3fb8e86cdcab3ee6aa29c8d4395ca85adb8fe2af
   original:
-    hackage: monad-logger-aeson-0.2.0.0
+    hackage: monad-logger-aeson-0.2.0.1
 - completed:
     hackage: context-0.2.0.0@sha256:6b643adb4a64fe521873d08df0497f71f88e18b9ecff4b68b4eef938e446cfc9,1886
     pantry-tree:
