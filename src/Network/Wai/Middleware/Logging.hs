@@ -1,5 +1,6 @@
 module Network.Wai.Middleware.Logging
   ( addThreadContext
+  , addThreadContextFromRequest
   , requestLogger
   ) where
 
@@ -31,8 +32,12 @@ import qualified System.Clock as Clock
 
 -- | Add context to any logging done from the request-handling thread
 addThreadContext :: [Pair] -> Middleware
-addThreadContext context app request respond = do
-  withThreadContext context $ do
+addThreadContext = addThreadContextFromRequest . const
+
+-- | 'addThreadContext', but have the 'Request' available
+addThreadContextFromRequest :: (Request -> [Pair]) -> Middleware
+addThreadContextFromRequest toContext app request respond = do
+  withThreadContext (toContext request) $ do
     app request respond
 
 -- | Log requests (more accurately, responses) as they happen
