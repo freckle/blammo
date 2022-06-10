@@ -5,6 +5,20 @@
 
 packages:
 - completed:
+    hackage: aeson-1.5.2.0@sha256:d00c7aa51969b2849550e4dee14c9ce188504d55ed8d7f734ce9f6976db452f6,6786
+    pantry-tree:
+      size: 39758
+      sha256: 992b01282d72e4db664289db69a846a4ec675379ca96824ba902a7541104d409
+  original:
+    hackage: aeson-1.5.2.0
+- completed:
+    hackage: envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
+    pantry-tree:
+      size: 1180
+      sha256: 35044d67979fe2a5cff05cf8736a06a265592433cdd03e13a72908ceed892612
+  original:
+    hackage: envparse-0.4.1
+- completed:
     hackage: monad-logger-aeson-0.2.0.1@sha256:3ce33913e0f0f73cd272ce734abaae460bdbc48ad9c4d7192a912849060114b0,5156
     pantry-tree:
       size: 5103
@@ -20,7 +34,7 @@ packages:
     hackage: context-0.2.0.0
 snapshots:
 - completed:
-    size: 591254
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/6/3.yaml
-    sha256: 9384985e933206c1e079f43c63dd2d6137e7f86715091de76cc95e1c802bba01
-  original: nightly-2022-06-03
+    size: 534126
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/31.yaml
+    sha256: 637fb77049b25560622a224845b7acfe81a09fdb6a96a3c75997a10b651667f6
+  original: lts-16.31
