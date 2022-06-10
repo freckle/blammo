@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 1.18
 
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
@@ -6,9 +6,22 @@ cabal-version: 1.12
 
 name:           Blammo
 version:        1.0.0.0
+synopsis:       Batteries-included Structured Logging library
+description:    Please see README.md
+category:       Utils
+homepage:       https://github.com/freckle/blammo#readme
+bug-reports:    https://github.com/freckle/blammo/issues
+maintainer:     Freckle Education
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-doc-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/freckle/blammo
 
 library
   exposed-modules:
@@ -36,7 +49,7 @@ library
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
       aeson
-    , base >4 && <5
+    , base <5
     , bytestring
     , case-insensitive
     , clock
@@ -75,7 +88,7 @@ test-suite readme
   build-depends:
       Blammo
     , aeson
-    , base >4 && <5
+    , base <5
     , markdown-unlit
     , text
   if impl(ghc >= 9.2)
@@ -102,7 +115,7 @@ test-suite spec
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
       Blammo
-    , base >4 && <5
+    , base <5
     , hspec
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
