@@ -88,7 +88,7 @@ newtype Config = Config
 defaultConfig :: Config
 defaultConfig = Config { cLogSource = "requestLogger" }
 
--- | Change the source use for log messages
+-- | Change the source used for log messages
 --
 -- Default is @requestLogger@.
 --
