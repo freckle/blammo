@@ -2,6 +2,12 @@ module Network.Wai.Middleware.Logging
   ( addThreadContext
   , addThreadContextFromRequest
   , requestLogger
+  , requestLoggerWith
+
+  -- * Configuration
+  , Config
+  , defaultConfig
+  , setConfigLogSource
   ) where
 
 import Prelude
@@ -73,24 +79,42 @@ addThreadContextFromRequest toContext app request respond = do
 -- @
 --
 requestLogger :: HasLogger env => env -> Middleware
-requestLogger env app req respond =
+requestLogger = requestLoggerWith defaultConfig
+
+newtype Config = Config
+  { cLogSource :: LogSource
+  }
+
+defaultConfig :: Config
+defaultConfig = Config { cLogSource = "requestLogger" }
+
+-- | Change the source use for log messages
+--
+-- Default is @requestLogger@.
+--
+setConfigLogSource :: LogSource -> Config -> Config
+setConfigLogSource x c = c { cLogSource = x }
+
+requestLoggerWith :: HasLogger env => Config -> env -> Middleware
+requestLoggerWith Config {..} env app req respond =
   runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
     begin <- getTime
     app req $ \resp -> do
       recvd <- respond resp
       duration <- toMillis . subtract begin <$> getTime
-      recvd <$ runInIO (logResponse duration req resp)
+      recvd <$ runInIO (logResponse cLogSource duration req resp)
  where
   getTime = Clock.getTime Clock.Monotonic
 
   toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
 
-logResponse :: MonadLogger m => Double -> Request -> Response -> m ()
-logResponse duration req resp
-  | statusCode status >= 500 = logError $ message :# details
-  | statusCode status == 404 = logDebug $ message :# details
-  | statusCode status >= 400 = logWarn $ message :# details
-  | otherwise = logDebug $ message :# details
+logResponse
+  :: MonadLogger m => LogSource -> Double -> Request -> Response -> m ()
+logResponse logSource duration req resp
+  | statusCode status >= 500 = logErrorNS logSource $ message :# details
+  | statusCode status == 404 = logDebugNS logSource $ message :# details
+  | statusCode status >= 400 = logWarnNS logSource $ message :# details
+  | otherwise = logDebugNS logSource $ message :# details
  where
   message =
     decodeUtf8 (requestMethod req)
