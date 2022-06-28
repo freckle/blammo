@@ -218,7 +218,7 @@ awsDiscover = do
       loggerIO
         defaultLoc -- TODO: there may be a way to get a CallStack/Loc
         "Amazonka"
-        (\case
+        (case level of
           AWS.Info -> LevelInfo
           AWS.Error -> LevelError
           AWS.Debug -> LevelDebug
