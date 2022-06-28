@@ -8,6 +8,7 @@ module Network.Wai.Middleware.Logging
   , Config
   , defaultConfig
   , setConfigLogSource
+  , setConfigGetDestinationIp
   ) where
 
 import Prelude
@@ -18,9 +19,11 @@ import Control.Monad.IO.Unlift (withRunInIO)
 import Data.Aeson
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
+import Data.ByteString (ByteString)
 import qualified Data.CaseInsensitive as CI
-import Data.Text (pack)
-import Data.Text.Encoding (decodeUtf8)
+import Data.Text (Text, pack)
+import Data.Text.Encoding (decodeUtf8With)
+import Data.Text.Encoding.Error (lenientDecode)
 import Network.HTTP.Types.Header (Header, HeaderName)
 import Network.HTTP.Types.Status (Status(..))
 import Network.Wai
@@ -29,6 +32,7 @@ import Network.Wai
   , Response
   , rawPathInfo
   , rawQueryString
+  , remoteHost
   , requestHeaders
   , requestMethod
   , responseHeaders
@@ -81,12 +85,19 @@ addThreadContextFromRequest toContext app request respond = do
 requestLogger :: HasLogger env => env -> Middleware
 requestLogger = requestLoggerWith defaultConfig
 
-newtype Config = Config
+data Config = Config
   { cLogSource :: LogSource
+  , cGetDestinationIp :: Request -> Maybe Text
   }
 
 defaultConfig :: Config
-defaultConfig = Config { cLogSource = "requestLogger" }
+defaultConfig = Config
+  { cLogSource = "requestLogger"
+  , cGetDestinationIp = fmap decodeUtf8 . lookupRequestHeader "x-real-ip"
+  }
+
+lookupRequestHeader :: HeaderName -> Request -> Maybe ByteString
+lookupRequestHeader h = lookup h . requestHeaders
 
 -- | Change the source used for log messages
 --
@@ -95,26 +106,32 @@ defaultConfig = Config { cLogSource = "requestLogger" }
 setConfigLogSource :: LogSource -> Config -> Config
 setConfigLogSource x c = c { cLogSource = x }
 
+-- | Change how the @destinationIp@ field is determined
+--
+-- Default is looking up the @x-real-ip@ header.
+--
+setConfigGetDestinationIp :: (Request -> Maybe Text) -> Config -> Config
+setConfigGetDestinationIp x c = c { cGetDestinationIp = x }
+
 requestLoggerWith :: HasLogger env => Config -> env -> Middleware
-requestLoggerWith Config {..} env app req respond =
+requestLoggerWith config env app req respond =
   runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
     begin <- getTime
     app req $ \resp -> do
       recvd <- respond resp
       duration <- toMillis . subtract begin <$> getTime
-      recvd <$ runInIO (logResponse cLogSource duration req resp)
+      recvd <$ runInIO (logResponse config duration req resp)
  where
   getTime = Clock.getTime Clock.Monotonic
 
   toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
 
-logResponse
-  :: MonadLogger m => LogSource -> Double -> Request -> Response -> m ()
-logResponse logSource duration req resp
-  | statusCode status >= 500 = logErrorNS logSource $ message :# details
-  | statusCode status == 404 = logDebugNS logSource $ message :# details
-  | statusCode status >= 400 = logWarnNS logSource $ message :# details
-  | otherwise = logDebugNS logSource $ message :# details
+logResponse :: MonadLogger m => Config -> Double -> Request -> Response -> m ()
+logResponse Config {..} duration req resp
+  | statusCode status >= 500 = logErrorNS cLogSource $ message :# details
+  | statusCode status == 404 = logDebugNS cLogSource $ message :# details
+  | statusCode status >= 400 = logWarnNS cLogSource $ message :# details
+  | otherwise = logDebugNS cLogSource $ message :# details
  where
   message =
     decodeUtf8 (requestMethod req)
@@ -133,6 +150,8 @@ logResponse logSource duration req resp
       [ "code" .= statusCode status
       , "message" .= decodeUtf8 (statusMessage status)
       ]
+    , "clientIp" .= show (remoteHost req)
+    , "destinationIp" .= cGetDestinationIp req
     , "durationMs" .= duration
     , "requestHeaders"
       .= headerObject ["authorization", "cookie"] (requestHeaders req)
@@ -151,3 +170,6 @@ headerObject redact = Object . KeyMap.fromList . map (mung . hide)
 
 nsPerMs :: Double
 nsPerMs = 1000000
+
+decodeUtf8 :: ByteString -> Text
+decodeUtf8 = decodeUtf8With lenientDecode
