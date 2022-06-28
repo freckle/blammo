@@ -42,6 +42,7 @@ module Blammo.Logging
   , logOther
 
   -- *** Implicit call stack, with 'LogSource'
+  , LogSource
   , logDebugNS
   , logInfoNS
   , logWarnNS
