@@ -263,8 +263,6 @@ warpSettings app = setOnException onEx $ defaultSettings
 ## Integration with Yesod
 
 ```hs
-import Blammo.Logging.Logger (getLoggerLoggerSet)
-
 instance HasLogger App where
   -- ...
 
