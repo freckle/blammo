@@ -10,7 +10,7 @@ import Blammo.Logging
 import Blammo.Logging.Logger
 import Control.Monad.Reader (runReaderT)
 import Data.Aeson (Value(..))
-import qualified Data.Aeson.KeyMap as KeyMap
+import qualified Data.Aeson.Compat as KeyMap
 import Data.Text (Text)
 import Test.Hspec
 
