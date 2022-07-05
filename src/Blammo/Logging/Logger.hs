@@ -32,6 +32,7 @@ import Control.Monad.Reader (MonadReader)
 import Data.ByteString (ByteString)
 import Data.Either (partitionEithers, rights)
 import Data.List (intercalate)
+import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
 import System.Log.FastLogger
   ( LoggerSet
@@ -132,7 +133,8 @@ getLoggedMessagesLenient = rights <$> getLoggedMessages
 
 -- | 'getLoggedMessages' but 'throwString' if any messages failed to parse
 getLoggedMessagesUnsafe
-  :: (MonadIO m, MonadReader env m, HasLogger env) => m [LoggedMessage]
+  :: (HasCallStack, MonadIO m, MonadReader env m, HasLogger env)
+  => m [LoggedMessage]
 getLoggedMessagesUnsafe = do
   (failed, succeeded) <- partitionEithers <$> getLoggedMessages
 
