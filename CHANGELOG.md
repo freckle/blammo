@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.0.1...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.0...main)
+
+## [v1.0.2.0](https://github.com/freckle/blammo/compare/v1.0.1.0...v1.0.2.0)
+
+- Add ability to capture and retrieve logged messages, for testing
 
 ## [v1.0.1.0](https://github.com/freckle/blammo/compare/v1.0.0.0...v1.0.1.0)
 
