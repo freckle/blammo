@@ -46,14 +46,17 @@ library:
     - aeson
     - bytestring
     - containers
+    - dlist
     - envparse
     - exceptions
     - fast-logger
     - lens
     - monad-logger-aeson
+    - mtl
     - text
     - time
     - vector
+    - unliftio
 
     # For the wai Middleware
     - case-insensitive
@@ -71,7 +74,10 @@ tests:
     source-dirs: tests
     dependencies:
       - Blammo
+      - aeson
       - hspec
+      - mtl
+      - text
 
   readme:
     main: README.lhs

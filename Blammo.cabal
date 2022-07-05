@@ -33,6 +33,7 @@ library
       Blammo.Logging.LogSettings.LogLevels
       Blammo.Logging.Simple
       Blammo.Logging.Terminal
+      Blammo.Logging.Test
       Data.Aeson.Compat
       Network.Wai.Middleware.Logging
   other-modules:
@@ -54,14 +55,17 @@ library
     , case-insensitive
     , clock
     , containers
+    , dlist
     , envparse
     , exceptions
     , fast-logger
     , http-types
     , lens
     , monad-logger-aeson
+    , mtl
     , text
     , time
+    , unliftio
     , unliftio-core
     , unordered-containers
     , vector
@@ -101,6 +105,7 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Blammo.Logging.LoggerSpec
       Blammo.Logging.LogSettings.LogLevelsSpec
       Paths_Blammo
   hs-source-dirs:
@@ -115,8 +120,11 @@ test-suite spec
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
       Blammo
+    , aeson
     , base <5
     , hspec
+    , mtl
+    , text
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
   if impl(ghc >= 8.10)

@@ -61,26 +61,23 @@ import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
 import Data.ByteString (ByteString)
-import System.Log.FastLogger (LoggerSet, flushLogStr, pushLogStrLn)
 
 runLoggerLoggingT :: (MonadIO m, HasLogger env) => env -> LoggingT m a -> m a
 runLoggerLoggingT env f = do
   a <- runLoggingT
     (filterLogger (getLoggerShouldLog logger) f)
-    (loggerOutput loggerSet $ getLoggerReformat logger)
-  a <$ liftIO (flushLogStr loggerSet)
- where
-  logger = env ^. loggerL
-  loggerSet = getLoggerLoggerSet logger
+    (loggerOutput logger $ getLoggerReformat logger)
+  a <$ flushLogStr logger
+  where logger = env ^. loggerL
 
 loggerOutput
-  :: LoggerSet
+  :: Logger
   -> (LogLevel -> ByteString -> ByteString)
   -> Loc
   -> LogSource
   -> LogLevel
   -> LogStr
   -> IO ()
-loggerOutput loggerSet reformat =
+loggerOutput logger reformat =
   defaultOutputWith $ defaultOutputOptions $ \logLevel bytes -> do
-    pushLogStrLn loggerSet $ toLogStr $ reformat logLevel bytes
+    pushLogStrLn logger $ toLogStr $ reformat logLevel bytes
