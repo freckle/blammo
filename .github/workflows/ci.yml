@@ -16,6 +16,8 @@ jobs:
           - stack.yaml           # ghc-9.0
           - stack-lts-18.28.yaml # ghc-8.10
           - stack-lts-16.31.yaml # ghc-8.8
+          - stack-lts-14.27.yaml # ghc-8.6
+          - stack-lts-12.26.yaml # ghc-8.4
       fail-fast: false
 
     steps:
