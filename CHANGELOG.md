@@ -1,10 +1,11 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.1...main)
 
-## [v1.0.2.0](https://github.com/freckle/blammo/compare/v1.0.1.0...v1.0.2.0)
+## [v1.0.2.1](https://github.com/freckle/blammo/compare/v1.0.1.1...v1.0.2.1)
 
+- Add configurability to `requestLogger`, set `LogSource` by default
 - Add ability to capture and retrieve logged messages, for testing
 
-## [v1.0.1.0](https://github.com/freckle/blammo/compare/v1.0.0.0...v1.0.1.0)
+## [v1.0.1.1](https://github.com/freckle/blammo/compare/v1.0.0.1...v1.0.1.1)
 
 - Add `addThreadContextFromRequest`, a wai `Middleware` for adding context using
   information from the `Request`.
