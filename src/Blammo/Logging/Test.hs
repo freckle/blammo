@@ -11,10 +11,11 @@ module Blammo.Logging.Test
 import Prelude
 
 import Control.Monad.IO.Class (MonadIO(..))
-import Control.Monad.Logger.Aeson (LogStr, LoggedMessage(..), fromLogStr)
+import Control.Monad.Logger.Aeson (LoggedMessage(..))
 import Data.Aeson (eitherDecodeStrict)
 import Data.DList (DList)
 import qualified Data.DList as DList
+import System.Log.FastLogger (LogStr, fromLogStr)
 import UnliftIO.IORef
 
 newtype LoggedMessages = LoggedMessages
