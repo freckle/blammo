@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.1...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.2...main)
+
+## [v1.0.2.2](https://github.com/freckle/blammo/compare/v1.0.2.1...v1.0.2.2)
+
+- Support down to LTS 12.26 / GHC 8.4
 
 ## [v1.0.2.1](https://github.com/freckle/blammo/compare/v1.0.1.1...v1.0.2.1)
 
