@@ -1,4 +1,4 @@
-resolver: lts-19.9
+resolver: lts-19.14
 extra-deps:
   - monad-logger-aeson-0.2.0.1
   - context-0.2.0.0
