@@ -129,6 +129,13 @@ setConfigGetClientIp x c = c { cGetClientIp = x }
 --
 -- Default is looking up the @x-real-ip@ header.
 --
+-- __NOTE__: Our default uses a somewhat loose definition of /destination/. It
+-- would be more accurate to report the resolved IP address of the @Host@
+-- header, but we don't have that available. Our default of @x-real-ip@ favors
+-- containerized Warp on AWS/ECS, where this value holds the ECS target
+-- container's IP address. This is valuable debugging information and could, if
+-- you squint, be considered a /destination/.
+--
 setConfigGetDestinationIp :: (Request -> Maybe Text) -> Config -> Config
 setConfigGetDestinationIp x c = c { cGetDestinationIp = x }
 
