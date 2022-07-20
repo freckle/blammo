@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.2...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.3...main)
+
+## [v1.0.2.3](https://github.com/freckle/blammo/compare/v1.0.2.2...v1.0.2.3)
+
+- Fix for localhost `clientIp` value in `requestLogger` ([#18](https://github.com/freckle/blammo/issues/18))
 
 ## [v1.0.2.2](https://github.com/freckle/blammo/compare/v1.0.2.1...v1.0.2.2)
 
