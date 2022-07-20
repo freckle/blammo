@@ -8,12 +8,14 @@ module Network.Wai.Middleware.Logging
   , Config
   , defaultConfig
   , setConfigLogSource
+  , setConfigGetClientIp
   , setConfigGetDestinationIp
   ) where
 
 import Prelude
 
 import Blammo.Logging
+import Control.Applicative ((<|>))
 import Control.Arrow ((***))
 import Control.Monad.IO.Unlift (withRunInIO)
 import Data.Aeson
@@ -21,7 +23,10 @@ import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
 import Data.ByteString (ByteString)
 import qualified Data.CaseInsensitive as CI
+import Data.List (find)
+import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
+import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8With)
 import Data.Text.Encoding.Error (lenientDecode)
 import Network.HTTP.Types.Header (Header, HeaderName)
@@ -87,17 +92,23 @@ requestLogger = requestLoggerWith defaultConfig
 
 data Config = Config
   { cLogSource :: LogSource
+  , cGetClientIp :: Request -> Text
   , cGetDestinationIp :: Request -> Maybe Text
   }
 
 defaultConfig :: Config
 defaultConfig = Config
   { cLogSource = "requestLogger"
-  , cGetDestinationIp = fmap decodeUtf8 . lookupRequestHeader "x-real-ip"
+  , cGetClientIp = \req ->
+    fromMaybe (pack $ show $ remoteHost req)
+      $ (firstValue =<< lookupRequestHeader "x-forwarded-for" req)
+      <|> lookupRequestHeader "x-real-ip" req
+  , cGetDestinationIp = lookupRequestHeader "x-real-ip"
   }
+  where firstValue = find (not . T.null) . map T.strip . T.splitOn ","
 
-lookupRequestHeader :: HeaderName -> Request -> Maybe ByteString
-lookupRequestHeader h = lookup h . requestHeaders
+lookupRequestHeader :: HeaderName -> Request -> Maybe Text
+lookupRequestHeader h = fmap decodeUtf8 . lookup h . requestHeaders
 
 -- | Change the source used for log messages
 --
@@ -105,6 +116,14 @@ lookupRequestHeader h = lookup h . requestHeaders
 --
 setConfigLogSource :: LogSource -> Config -> Config
 setConfigLogSource x c = c { cLogSource = x }
+
+-- | Change how the @clientIp@ field is determined
+--
+-- Default is looking up the first value in @x-forwarded-for@, then the
+-- @x-real-ip@ header, then finally falling back to 'Network.Wai.remoteHost'.
+--
+setConfigGetClientIp :: (Request -> Text) -> Config -> Config
+setConfigGetClientIp x c = c { cGetClientIp = x }
 
 -- | Change how the @destinationIp@ field is determined
 --
@@ -150,7 +169,7 @@ logResponse Config {..} duration req resp
       [ "code" .= statusCode status
       , "message" .= decodeUtf8 (statusMessage status)
       ]
-    , "clientIp" .= show (remoteHost req)
+    , "clientIp" .= cGetClientIp req
     , "destinationIp" .= cGetDestinationIp req
     , "durationMs" .= duration
     , "requestHeaders"
