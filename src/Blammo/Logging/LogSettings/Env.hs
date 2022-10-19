@@ -29,6 +29,19 @@
 module Blammo.Logging.LogSettings.Env
   ( parse
   , parser
+
+  -- | Specifying defaults other than 'defaultLogSettings'
+  --
+  -- For example, if you want logging to go to @stderr@ by default, but still
+  -- support @LOG_DESTINATION@,
+  --
+  -- @
+  -- settings <- Env.'parseWith'
+  --   $ 'setLogSettingsDestination' 'LogDestinationStderr' 'defaultLogSettings'
+  -- @
+  --
+  , parseWith
+  , parserWith
   ) where
 
 import Prelude
@@ -40,12 +53,18 @@ import Env hiding (parse)
 import qualified Env
 
 parse :: IO LogSettings
-parse = Env.parse id parser
+parse = parseWith defaultLogSettings
+
+parser :: Parser Error LogSettings
+parser = parserWith defaultLogSettings
+
+parseWith :: LogSettings -> IO LogSettings
+parseWith = Env.parse id . parserWith
 
 -- brittany-next-binding --columns 100
 
-parser :: Parser Error LogSettings
-parser = ($ defaultLogSettings) . appEndo . mconcat <$> sequenceA
+parserWith :: LogSettings -> Parser Error LogSettings
+parserWith defaults = ($ defaults) . appEndo . mconcat <$> sequenceA
   [ var (endo readLogLevels setLogSettingsLevels) "LOG_LEVEL" (def mempty)
   , var (endo readLogDestination setLogSettingsDestination) "LOG_DESTINATION" (def mempty)
   , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
