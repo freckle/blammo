@@ -1,4 +1,9 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.2.3...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.3.0...main)
+
+## [v1.0.3.0](https://github.com/freckle/blammo/compare/v1.0.2.3...v1.0.3.0)
+
+- Add `Env.{parse,parser}With` functions for parsing 'LogSettings' from
+  environment variables with custom defaults.
 
 ## [v1.0.2.3](https://github.com/freckle/blammo/compare/v1.0.2.2...v1.0.2.3)
 
