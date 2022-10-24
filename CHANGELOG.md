@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.0.3.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.0.0...main)
+
+## [v1.1.0.0](https://github.com/freckle/blammo/compare/v1.0.3.0...v1.1.0.0)
+
+- Ensure log is flushed even on exceptions.
 
 ## [v1.0.3.0](https://github.com/freckle/blammo/compare/v1.0.2.3...v1.0.3.0)
 
