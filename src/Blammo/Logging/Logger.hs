@@ -2,6 +2,7 @@ module Blammo.Logging.Logger
   ( Logger
   , HasLogger(..)
   , newLogger
+  , flushLogger
   , getLoggerReformat
   , getLoggerShouldLog
   , pushLogStrLn
@@ -104,6 +105,11 @@ newLogger settings = do
     lLoggedMessages = Nothing
 
   pure $ Logger { .. }
+
+flushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => m ()
+flushLogger = do
+  logger <- view loggerL
+  flushLogStr logger
 
 -- | Create a 'Logger' that will capture log messages instead of logging them
 --
