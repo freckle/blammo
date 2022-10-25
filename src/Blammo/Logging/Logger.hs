@@ -14,9 +14,6 @@ module Blammo.Logging.Logger
   , getLoggedMessages
   , getLoggedMessagesLenient
   , getLoggedMessagesUnsafe
-
-  -- * Deprecated
-  , getLoggerLoggerSet
   ) where
 
 import Prelude
@@ -54,7 +51,6 @@ data Logger = Logger
 
 getLoggerLoggerSet :: Logger -> LoggerSet
 getLoggerLoggerSet = lLoggerSet
-{-# DEPRECATED getLoggerLoggerSet "Internal function, will be removed in a future version" #-}
 
 getLoggerReformat :: Logger -> LogLevel -> ByteString -> ByteString
 getLoggerReformat = lReformat
