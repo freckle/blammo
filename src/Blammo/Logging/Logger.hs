@@ -2,6 +2,7 @@ module Blammo.Logging.Logger
   ( Logger
   , HasLogger(..)
   , newLogger
+  , flushLogger
   , getLoggerReformat
   , getLoggerShouldLog
   , pushLogStrLn
@@ -13,9 +14,6 @@ module Blammo.Logging.Logger
   , getLoggedMessages
   , getLoggedMessagesLenient
   , getLoggedMessagesUnsafe
-
-  -- * Deprecated
-  , getLoggerLoggerSet
   ) where
 
 import Prelude
@@ -53,7 +51,6 @@ data Logger = Logger
 
 getLoggerLoggerSet :: Logger -> LoggerSet
 getLoggerLoggerSet = lLoggerSet
-{-# DEPRECATED getLoggerLoggerSet "Internal function, will be removed in a future version" #-}
 
 getLoggerReformat :: Logger -> LogLevel -> ByteString -> ByteString
 getLoggerReformat = lReformat
@@ -104,6 +101,11 @@ newLogger settings = do
     lLoggedMessages = Nothing
 
   pure $ Logger { .. }
+
+flushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => m ()
+flushLogger = do
+  logger <- view loggerL
+  flushLogStr logger
 
 -- | Create a 'Logger' that will capture log messages instead of logging them
 --
