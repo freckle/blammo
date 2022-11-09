@@ -51,6 +51,7 @@ import Data.Bifunctor (first)
 import Data.Semigroup (Endo(..))
 import Env hiding (parse)
 import qualified Env
+import Text.Read (readEither)
 
 parse :: IO LogSettings
 parse = parseWith defaultLogSettings
@@ -69,6 +70,7 @@ parserWith defaults = ($ defaults) . appEndo . mconcat <$> sequenceA
   , var (endo readLogDestination setLogSettingsDestination) "LOG_DESTINATION" (def mempty)
   , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
   , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)
+  , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
   ]
 
 endo

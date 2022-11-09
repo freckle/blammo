@@ -93,9 +93,11 @@ newLogger settings = do
         (pure False)
 
   let
+    breakpoint = getLogSettingsBreakpoint settings
+
     lReformat = case getLogSettingsFormat settings of
-      LogFormatJSON -> const id -- Color is ignored
-      LogFormatTerminal -> reformatTerminal useColor
+      LogFormatJSON -> const id -- breakpoint and color ignored
+      LogFormatTerminal -> reformatTerminal breakpoint useColor
 
     lShouldLog = shouldLogLevel settings
     lLoggedMessages = Nothing
