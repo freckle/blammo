@@ -19,12 +19,14 @@ module Blammo.Logging.LogSettings
   , setLogSettingsDestination
   , setLogSettingsFormat
   , setLogSettingsColor
+  , setLogSettingsBreakpoint
 
   -- * Access
   , getLogSettingsLevels
   , getLogSettingsDestination
   , getLogSettingsFormat
   , getLogSettingsColor
+  , getLogSettingsBreakpoint
 
   -- * Logic
   , shouldLogLevel
@@ -45,6 +47,7 @@ data LogSettings = LogSettings
   , lsDestination :: LogDestination
   , lsFormat :: LogFormat
   , lsColor :: LogColor
+  , lsBreakpoint :: Int
   }
 
 readLogLevels :: String -> Either String LogLevels
@@ -107,6 +110,7 @@ defaultLogSettings = LogSettings
   , lsDestination = LogDestinationStdout
   , lsFormat = LogFormatTerminal
   , lsColor = LogColorAuto
+  , lsBreakpoint = 120
   }
 
 setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
@@ -121,6 +125,9 @@ setLogSettingsFormat x ls = ls { lsFormat = x }
 setLogSettingsColor :: LogColor -> LogSettings -> LogSettings
 setLogSettingsColor x ls = ls { lsColor = x }
 
+setLogSettingsBreakpoint :: Int -> LogSettings -> LogSettings
+setLogSettingsBreakpoint x ls = ls { lsBreakpoint = x }
+
 getLogSettingsLevels :: LogSettings -> LogLevels
 getLogSettingsLevels = lsLevels
 
@@ -132,6 +139,9 @@ getLogSettingsFormat = lsFormat
 
 getLogSettingsColor :: LogSettings -> LogColor
 getLogSettingsColor = lsColor
+
+getLogSettingsBreakpoint :: LogSettings -> Int
+getLogSettingsBreakpoint = lsBreakpoint
 
 shouldLogLevel :: LogSettings -> LogSource -> LogLevel -> Bool
 shouldLogLevel = LogLevels.shouldLogLevel . getLogSettingsLevels

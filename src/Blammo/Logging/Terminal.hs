@@ -21,6 +21,8 @@ module Blammo.Logging.Terminal
 import Prelude
 
 import Blammo.Logging.Colors
+import Blammo.Logging.Terminal.LogPiece (LogPiece, logPiece)
+import qualified Blammo.Logging.Terminal.LogPiece as LogPiece
 import Control.Monad.Logger.Aeson
 import Data.Aeson
 import Data.Aeson.Compat (KeyMap)
@@ -31,47 +33,69 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
 import qualified Data.Text as T
-import Data.Text.Encoding (encodeUtf8)
 import Data.Time (defaultTimeLocale, formatTime)
 import qualified Data.Vector as V
 
-reformatTerminal :: Bool -> LogLevel -> ByteString -> ByteString
-reformatTerminal useColor logLevel bytes = fromMaybe bytes $ do
+reformatTerminal :: Int -> Bool -> LogLevel -> ByteString -> ByteString
+reformatTerminal breakpoint useColor logLevel bytes = fromMaybe bytes $ do
   LoggedMessage {..} <- decode $ BSL.fromStrict bytes
 
   let
     colors@Colors {..} = getColors useColor
 
-    logTimestampText =
-      dim $ pack $ formatTime defaultTimeLocale "%F %X" loggedMessageTimestamp
+    logTimestampPiece = logPiece dim $ pack $ formatTime
+      defaultTimeLocale
+      "%F %X"
+      loggedMessageTimestamp
 
-    logLevelText = case logLevel of
-      LevelDebug -> gray $ padTo 9 "debug"
-      LevelInfo -> green $ padTo 9 "info"
-      LevelWarn -> yellow $ padTo 9 "warn"
-      LevelError -> red $ padTo 9 "error"
-      LevelOther x -> blue $ padTo 9 x
+    logLevelPiece = case logLevel of
+      LevelDebug -> logPiece gray $ padTo 9 "debug"
+      LevelInfo -> logPiece green $ padTo 9 "info"
+      LevelWarn -> logPiece yellow $ padTo 9 "warn"
+      LevelError -> logPiece red $ padTo 9 "error"
+      LevelOther x -> logPiece blue $ padTo 9 x
 
     loggedSourceAsMap =
       foldMap (KeyMap.singleton "source" . String) loggedMessageLogSource
 
-  pure $ encodeUtf8 $ mconcat
-    [ logTimestampText <> " "
-    , "[" <> logLevelText <> "] "
-    , bold $ padTo 31 loggedMessageText
-    , colorizeKeyMap colors loggedSourceAsMap
-    , colorizeKeyMap colors loggedMessageThreadContext
-    , colorizeKeyMap colors loggedMessageMeta
-    ]
+    logPrefixPiece =
+      logTimestampPiece <> " [" <> logLevelPiece <> "] "
 
-colorizeKeyMap :: Colors -> KeyMap Value -> Text
-colorizeKeyMap Colors {..} km
-  | KeyMap.null km = ""
-  | otherwise = " " <> T.intercalate " " keyValues
+    logMessagePiece = logPiece bold $ padTo 31 loggedMessageText
+
+    logAttrsPiece = mconcat
+      [ colorizeKeyMap " " colors loggedSourceAsMap
+      , colorizeKeyMap " " colors loggedMessageThreadContext
+      , colorizeKeyMap " " colors loggedMessageMeta
+      ]
+
+    oneLineLogPiece = mconcat [logPrefixPiece, logMessagePiece, logAttrsPiece]
+
+    multiLineLogPiece =
+      let
+        shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
+      in
+        mconcat
+          [ logPrefixPiece
+          , logMessagePiece
+          , colorizeKeyMap shift colors loggedSourceAsMap
+          , colorizeKeyMap shift colors loggedMessageThreadContext
+          , colorizeKeyMap shift colors loggedMessageMeta
+          ]
+
+  pure
+    $ LogPiece.bytestring
+    $ if LogPiece.visibleLength oneLineLogPiece <= breakpoint
+        then oneLineLogPiece
+        else multiLineLogPiece
+
+colorizeKeyMap :: LogPiece -> Colors -> KeyMap Value -> LogPiece
+colorizeKeyMap sep Colors {..} km
+  | KeyMap.null km = mempty
+  | otherwise = foldMap (uncurry fromPair) $ KeyMap.toList km
  where
-  keyValues = map (uncurry renderPair) $ KeyMap.toList km
-
-  renderPair k v = cyan (Key.toText k) <> "=" <> magenta (fromValue v)
+  fromPair k v =
+    sep <> logPiece cyan (Key.toText k) <> "=" <> logPiece magenta (fromValue v)
 
   fromValue = \case
     Object m -> obj $ map (uncurry renderPairNested) $ KeyMap.toList m
