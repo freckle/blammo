@@ -104,13 +104,24 @@ some aggregator like Datadog or Mezmo (formerly LogDNA):
 
 ![](files/readme-json.png)
 
+## Multiline Format
+
+With the terminal formatter, a log message that is more than 120 visible
+characters will break into multi-line format:
+
+![](files/multiline.png)
+
+This breakpoint can be controlled with `LOG_BREAKPOINT`. Set an unreasonably
+large number to disable this feature.
+
 ## Configuration
 
-| Setting     | Setter                      | Environment variable and format          |
-| ---         | ---                         | ---                                      |
-| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]` |
-| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>`  |
-| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty\|json`                    |
+| Setting     | Setter                      | Environment variable and format           |
+| ---         | ---                         | ---                                       |
+| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`  |
+| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>` |
+| Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`           |
+| Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                 |
 
 ## Advanced Usage
 
