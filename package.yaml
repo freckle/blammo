@@ -75,9 +75,11 @@ tests:
     dependencies:
       - Blammo
       - aeson
+      - bytestring
       - hspec
       - mtl
       - text
+      - time
 
   readme:
     main: README.lhs
