@@ -30,6 +30,7 @@ import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BSL
+import Data.List (sortOn)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
 import qualified Data.Text as T
@@ -92,7 +93,7 @@ reformatTerminal breakpoint useColor logLevel bytes = fromMaybe bytes $ do
 colorizeKeyMap :: LogPiece -> Colors -> KeyMap Value -> LogPiece
 colorizeKeyMap sep Colors {..} km
   | KeyMap.null km = mempty
-  | otherwise = foldMap (uncurry fromPair) $ KeyMap.toList km
+  | otherwise = foldMap (uncurry fromPair) $ sortOn fst $ KeyMap.toList km
  where
   fromPair k v =
     sep <> logPiece cyan (Key.toText k) <> "=" <> logPiece magenta (fromValue v)
