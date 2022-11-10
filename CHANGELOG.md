@@ -1,4 +1,10 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.0.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.0...main)
+
+## [v1.1.1.0](https://github.com/freckle/blammo/compare/v1.1.0.0...v1.1.1.0)
+
+- Terminal formatter: align attributes vertically if the message goes over a
+  certain number of characters (default 120).
+- Adds `{get,set}LogSettingsBreakpoint` and `LOG_BREAKPOINT` parsing
 
 ## [v1.1.0.0](https://github.com/freckle/blammo/compare/v1.0.3.0...v1.1.0.0)
 
