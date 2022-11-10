@@ -108,6 +108,7 @@ test-suite spec
   other-modules:
       Blammo.Logging.LoggerSpec
       Blammo.Logging.LogSettings.LogLevelsSpec
+      Blammo.Logging.TerminalSpec
       Paths_Blammo
   hs-source-dirs:
       tests
@@ -123,9 +124,11 @@ test-suite spec
       Blammo
     , aeson
     , base <5
+    , bytestring
     , hspec
     , mtl
     , text
+    , time
   default-language: Haskell2010
   if impl(ghc >= 9.2)
     ghc-options: -Wno-missing-kind-signatures
