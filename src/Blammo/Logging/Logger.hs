@@ -3,6 +3,7 @@ module Blammo.Logging.Logger
   , HasLogger(..)
   , newLogger
   , flushLogger
+  , getLoggerLogSettings
   , getLoggerReformat
   , getLoggerShouldLog
   , pushLogStrLn
@@ -43,11 +44,15 @@ import qualified System.Log.FastLogger as FastLogger (flushLogStr, pushLogStrLn)
 import UnliftIO.Exception (throwString)
 
 data Logger = Logger
-  { lLoggerSet :: LoggerSet
+  { lLogSettings :: LogSettings
+  , lLoggerSet :: LoggerSet
   , lReformat :: LogLevel -> ByteString -> ByteString
   , lShouldLog :: LogSource -> LogLevel -> Bool
   , lLoggedMessages :: Maybe LoggedMessages
   }
+
+getLoggerLogSettings :: Logger -> LogSettings
+getLoggerLogSettings = lLogSettings
 
 getLoggerLoggerSet :: Logger -> LoggerSet
 getLoggerLoggerSet = lLoggerSet
@@ -101,6 +106,7 @@ newLogger settings = do
 
     lShouldLog = shouldLogLevel settings
     lLoggedMessages = Nothing
+    lLogSettings = settings
 
   pure $ Logger { .. }
 
