@@ -3,6 +3,8 @@ module Blammo.Logging.Logger
   , HasLogger(..)
   , newLogger
   , flushLogger
+  , pushLogger
+  , pushLoggerLn
   , getLoggerLogSettings
   , getLoggerReformat
   , getLoggerShouldLog
@@ -31,6 +33,7 @@ import Control.Monad.Reader (MonadReader)
 import Data.ByteString (ByteString)
 import Data.Either (partitionEithers, rights)
 import Data.List (intercalate)
+import Data.Text (Text)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
 import System.Log.FastLogger
@@ -40,7 +43,8 @@ import System.Log.FastLogger
   , newStderrLoggerSet
   , newStdoutLoggerSet
   )
-import qualified System.Log.FastLogger as FastLogger (flushLogStr, pushLogStrLn)
+import qualified System.Log.FastLogger as FastLogger
+  (flushLogStr, pushLogStr, pushLogStrLn)
 import UnliftIO.Exception (throwString)
 
 data Logger = Logger
@@ -62,6 +66,12 @@ getLoggerReformat = lReformat
 
 getLoggerShouldLog :: Logger -> LogSource -> LogLevel -> Bool
 getLoggerShouldLog = lShouldLog
+
+pushLogStr :: MonadIO m => Logger -> LogStr -> m ()
+pushLogStr logger str = case lLoggedMessages logger of
+  Nothing -> liftIO $ FastLogger.pushLogStr loggerSet str
+  Just lm -> appendLogStr lm str
+  where loggerSet = getLoggerLoggerSet logger
 
 pushLogStrLn :: MonadIO m => Logger -> LogStr -> m ()
 pushLogStrLn logger str = case lLoggedMessages logger of
@@ -114,6 +124,16 @@ flushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => m ()
 flushLogger = do
   logger <- view loggerL
   flushLogStr logger
+
+pushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => Text -> m ()
+pushLogger msg = do
+  logger <- view loggerL
+  pushLogStr logger $ toLogStr msg
+
+pushLoggerLn :: (MonadIO m, MonadReader env m, HasLogger env) => Text -> m ()
+pushLoggerLn msg = do
+  logger <- view loggerL
+  pushLogStrLn logger $ toLogStr msg
 
 -- | Create a 'Logger' that will capture log messages instead of logging them
 --
