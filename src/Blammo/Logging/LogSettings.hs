@@ -20,6 +20,7 @@ module Blammo.Logging.LogSettings
   , setLogSettingsFormat
   , setLogSettingsColor
   , setLogSettingsBreakpoint
+  , setLogSettingsConcurrency
 
   -- * Access
   , getLogSettingsLevels
@@ -27,6 +28,7 @@ module Blammo.Logging.LogSettings
   , getLogSettingsFormat
   , getLogSettingsColor
   , getLogSettingsBreakpoint
+  , getLogSettingsConcurrency
 
   -- * Logic
   , shouldLogLevel
@@ -48,6 +50,7 @@ data LogSettings = LogSettings
   , lsFormat :: LogFormat
   , lsColor :: LogColor
   , lsBreakpoint :: Int
+  , lsConcurrency :: Maybe Int
   }
 
 readLogLevels :: String -> Either String LogLevels
@@ -111,6 +114,7 @@ defaultLogSettings = LogSettings
   , lsFormat = LogFormatTerminal
   , lsColor = LogColorAuto
   , lsBreakpoint = 120
+  , lsConcurrency = Nothing
   }
 
 setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
@@ -128,6 +132,9 @@ setLogSettingsColor x ls = ls { lsColor = x }
 setLogSettingsBreakpoint :: Int -> LogSettings -> LogSettings
 setLogSettingsBreakpoint x ls = ls { lsBreakpoint = x }
 
+setLogSettingsConcurrency :: Maybe Int -> LogSettings -> LogSettings
+setLogSettingsConcurrency x ls = ls { lsConcurrency = x }
+
 getLogSettingsLevels :: LogSettings -> LogLevels
 getLogSettingsLevels = lsLevels
 
@@ -142,6 +149,9 @@ getLogSettingsColor = lsColor
 
 getLogSettingsBreakpoint :: LogSettings -> Int
 getLogSettingsBreakpoint = lsBreakpoint
+
+getLogSettingsConcurrency :: LogSettings -> Maybe Int
+getLogSettingsConcurrency = lsConcurrency
 
 shouldLogLevel :: LogSettings -> LogSource -> LogLevel -> Bool
 shouldLogLevel = LogLevels.shouldLogLevel . getLogSettingsLevels

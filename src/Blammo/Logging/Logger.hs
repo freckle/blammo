@@ -37,15 +37,15 @@ import Data.List (intercalate)
 import Data.Text (Text)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
+import qualified System.Log.FastLogger as FastLogger
+  (flushLogStr, pushLogStr, pushLogStrLn)
 import System.Log.FastLogger
   ( LoggerSet
   , defaultBufSize
-  , newFileLoggerSet
-  , newStderrLoggerSet
-  , newStdoutLoggerSet
+  , newFileLoggerSetN
+  , newStderrLoggerSetN
+  , newStdoutLoggerSetN
   )
-import qualified System.Log.FastLogger as FastLogger
-  (flushLogStr, pushLogStr, pushLogStrLn)
 import UnliftIO.Exception (throwString)
 
 data Logger = Logger
@@ -102,20 +102,18 @@ newLogger settings = do
     liftIO $ case getLogSettingsDestination settings of
       LogDestinationStdout ->
         (,)
-          <$> newStdoutLoggerSet defaultBufSize
+          <$> newStdoutLoggerSetN defaultBufSize concurrency
           <*> shouldColorHandle settings stdout
       LogDestinationStderr ->
         (,)
-          <$> newStderrLoggerSet defaultBufSize
+          <$> newStderrLoggerSetN defaultBufSize concurrency
           <*> shouldColorHandle settings stderr
       LogDestinationFile path ->
-        (,) <$> newFileLoggerSet defaultBufSize path <*> shouldColorAuto
-          settings
-          (pure False)
+        (,)
+          <$> newFileLoggerSetN defaultBufSize concurrency path
+          <*> shouldColorAuto settings (pure False)
 
   let
-    breakpoint = getLogSettingsBreakpoint settings
-
     lReformat = case getLogSettingsFormat settings of
       LogFormatJSON -> const id -- breakpoint and color ignored
       LogFormatTerminal -> reformatTerminal breakpoint lShouldColor
@@ -125,6 +123,9 @@ newLogger settings = do
     lLogSettings = settings
 
   pure $ Logger { .. }
+ where
+  breakpoint = getLogSettingsBreakpoint settings
+  concurrency = getLogSettingsConcurrency settings
 
 flushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => m ()
 flushLogger = do

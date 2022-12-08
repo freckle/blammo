@@ -48,6 +48,7 @@ import Prelude
 
 import Blammo.Logging.LogSettings
 import Data.Bifunctor (first)
+import Data.Maybe (fromMaybe)
 import Data.Semigroup (Endo(..))
 import Env hiding (parse)
 import qualified Env
@@ -71,7 +72,11 @@ parserWith defaults = ($ defaults) . appEndo . mconcat <$> sequenceA
   , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
   , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)
   , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
+  , orMempty (var (endo readEither setLogSettingsConcurrency) "LOG_CONCURRENCY" (def mempty))
   ]
+
+orMempty :: Monoid m => Parser e m -> Parser e m
+orMempty p = fromMaybe mempty <$> optional p
 
 endo
   :: AsUnread e
