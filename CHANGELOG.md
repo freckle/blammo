@@ -1,4 +1,11 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.1...main)
+
+## [v1.1.1.1](https://github.com/freckle/blammo/compare/v1.1.1.0...v1.1.1.1)
+
+- Add `getLogSettingsConcurrency`
+- Add `getLoggerShouldColor`
+- Add `pushLoggerStr` & `pushLoggerStrLn`
+- Add `getLoggerLogSettings`
 
 ## [v1.1.1.0](https://github.com/freckle/blammo/compare/v1.1.0.0...v1.1.1.0)
 
