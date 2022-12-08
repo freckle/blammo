@@ -5,6 +5,7 @@ module Blammo.Logging.Test
   , LoggedMessage(..)
   , newLoggedMessages
   , appendLogStr
+  , appendLogStrLn
   , getLoggedMessages
   ) where
 
@@ -28,6 +29,9 @@ newLoggedMessages = LoggedMessages <$> newIORef DList.empty
 appendLogStr :: MonadIO m => LoggedMessages -> LogStr -> m ()
 appendLogStr (LoggedMessages ref) str =
   atomicModifyIORef' ref $ \x -> (DList.snoc x str, ())
+
+appendLogStrLn :: MonadIO m => LoggedMessages -> LogStr -> m ()
+appendLogStrLn lm = appendLogStr lm . (<> "\n")
 
 getLoggedMessages :: MonadIO m => LoggedMessages -> m [Either String LoggedMessage]
 getLoggedMessages (LoggedMessages ref) =
