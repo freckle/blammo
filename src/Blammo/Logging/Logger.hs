@@ -66,7 +66,7 @@ getLoggerShouldLog = lShouldLog
 pushLogStrLn :: MonadIO m => Logger -> LogStr -> m ()
 pushLogStrLn logger str = case lLoggedMessages logger of
   Nothing -> liftIO $ FastLogger.pushLogStrLn loggerSet str
-  Just lm -> appendLogStr lm str
+  Just lm -> appendLogStrLn lm str
   where loggerSet = getLoggerLoggerSet logger
 
 flushLogStr :: MonadIO m => Logger -> m ()
