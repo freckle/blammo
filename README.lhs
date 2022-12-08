@@ -114,6 +114,20 @@ characters will break into multi-line format:
 This breakpoint can be controlled with `LOG_BREAKPOINT`. Set an unreasonably
 large number to disable this feature.
 
+## Out of Order Messages
+
+Blammo is built on [fast-logger], which offers concurrent logging through
+multiple buffers. By default, it uses {number-of-processors} buffers. This
+concurrent logging is fast, but may deliver messages out of order. You want this
+on production: your aggregator should be inspecting the message's time-stamp to
+re-order as necessary on the other side. However, this can be problematic in a
+CLI, where there is both little need for such high performance and a lower
+tolerance for the confusion of out of order messages.
+
+For such cases, you can set `LOG_CONCURRENCY=1` to use a single buffer.
+
+[fast-logger]: https://hackage.haskell.org/package/fast-logger
+
 ## Configuration
 
 | Setting     | Setter                      | Environment variable and format           |
@@ -122,6 +136,7 @@ large number to disable this feature.
 | Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>` |
 | Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`           |
 | Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                 |
+| Concurrency | `setLogSettingsConcurrency` | `LOG_CONCURRENCY=<number>`                |
 
 ## Advanced Usage
 

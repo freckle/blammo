@@ -71,6 +71,7 @@ parserWith defaults = ($ defaults) . appEndo . mconcat <$> sequenceA
   , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
   , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)
   , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
+  , var (endo readEither setLogSettingsConcurrency) "LOG_CONCURRENCY" (def mempty)
   ]
 
 endo

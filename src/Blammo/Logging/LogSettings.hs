@@ -20,6 +20,7 @@ module Blammo.Logging.LogSettings
   , setLogSettingsFormat
   , setLogSettingsColor
   , setLogSettingsBreakpoint
+  , setLogSettingsConcurrency
 
   -- * Access
   , getLogSettingsLevels
@@ -27,6 +28,7 @@ module Blammo.Logging.LogSettings
   , getLogSettingsFormat
   , getLogSettingsColor
   , getLogSettingsBreakpoint
+  , getLogSettingsConcurrency
 
   -- * Logic
   , shouldLogLevel
@@ -48,6 +50,7 @@ data LogSettings = LogSettings
   , lsFormat :: LogFormat
   , lsColor :: LogColor
   , lsBreakpoint :: Int
+  , lsConcurrency :: Maybe Int
   }
 
 readLogLevels :: String -> Either String LogLevels
@@ -111,6 +114,7 @@ defaultLogSettings = LogSettings
   , lsFormat = LogFormatTerminal
   , lsColor = LogColorAuto
   , lsBreakpoint = 120
+  , lsConcurrency = Nothing
   }
 
 setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
@@ -128,6 +132,29 @@ setLogSettingsColor x ls = ls { lsColor = x }
 setLogSettingsBreakpoint :: Int -> LogSettings -> LogSettings
 setLogSettingsBreakpoint x ls = ls { lsBreakpoint = x }
 
+-- | Set the number of 'LoggerSet' Buffers used by @fast-logger@
+--
+-- By default this matches 'getNumCapabilities', which is more performant but
+-- does not guarantee message order. If this matters, such as in a CLI, set this
+-- value to @1@.
+--
+-- Support for this option depends on your version of @fast-logger@:
+--
+-- +-----------------------------+------------+
+-- | fast-logger | Destination   | Supported? |
+-- +=============+===============+============+
+-- | >=3.1.1     | anywhere      | yes        |
+-- +-----------------------------+------------+
+-- | >=3.0.5     | file          | yes        |
+-- +-----------------------------+------------+
+-- | >=3.0.5     | stdout/stderr | no         |
+-- +-----------------------------+------------+
+-- |  <3.0.5     | anywhere      | no         |
+-- +-----------------------------+------------+
+--
+setLogSettingsConcurrency :: Maybe Int -> LogSettings -> LogSettings
+setLogSettingsConcurrency x ls = ls { lsConcurrency = x }
+
 getLogSettingsLevels :: LogSettings -> LogLevels
 getLogSettingsLevels = lsLevels
 
@@ -142,6 +169,9 @@ getLogSettingsColor = lsColor
 
 getLogSettingsBreakpoint :: LogSettings -> Int
 getLogSettingsBreakpoint = lsBreakpoint
+
+getLogSettingsConcurrency :: LogSettings -> Maybe Int
+getLogSettingsConcurrency = lsConcurrency
 
 shouldLogLevel :: LogSettings -> LogSource -> LogLevel -> Bool
 shouldLogLevel = LogLevels.shouldLogLevel . getLogSettingsLevels
