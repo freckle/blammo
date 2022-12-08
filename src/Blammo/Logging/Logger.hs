@@ -8,6 +8,7 @@ module Blammo.Logging.Logger
   , getLoggerLogSettings
   , getLoggerReformat
   , getLoggerShouldLog
+  , getLoggerShouldColor
   , pushLogStrLn
   , flushLogStr
 
@@ -52,6 +53,7 @@ data Logger = Logger
   , lLoggerSet :: LoggerSet
   , lReformat :: LogLevel -> ByteString -> ByteString
   , lShouldLog :: LogSource -> LogLevel -> Bool
+  , lShouldColor :: Bool
   , lLoggedMessages :: Maybe LoggedMessages
   }
 
@@ -66,6 +68,9 @@ getLoggerReformat = lReformat
 
 getLoggerShouldLog :: Logger -> LogSource -> LogLevel -> Bool
 getLoggerShouldLog = lShouldLog
+
+getLoggerShouldColor :: Logger -> Bool
+getLoggerShouldColor = lShouldColor
 
 pushLogStr :: MonadIO m => Logger -> LogStr -> m ()
 pushLogStr logger str = case lLoggedMessages logger of
@@ -93,26 +98,27 @@ instance HasLogger Logger where
 
 newLogger :: MonadIO m => LogSettings -> m Logger
 newLogger settings = do
-  (lLoggerSet, useColor) <- liftIO $ case getLogSettingsDestination settings of
-    LogDestinationStdout ->
-      (,)
-        <$> newStdoutLoggerSet defaultBufSize
-        <*> shouldColorHandle settings stdout
-    LogDestinationStderr ->
-      (,)
-        <$> newStderrLoggerSet defaultBufSize
-        <*> shouldColorHandle settings stderr
-    LogDestinationFile path ->
-      (,) <$> newFileLoggerSet defaultBufSize path <*> shouldColorAuto
-        settings
-        (pure False)
+  (lLoggerSet, lShouldColor) <-
+    liftIO $ case getLogSettingsDestination settings of
+      LogDestinationStdout ->
+        (,)
+          <$> newStdoutLoggerSet defaultBufSize
+          <*> shouldColorHandle settings stdout
+      LogDestinationStderr ->
+        (,)
+          <$> newStderrLoggerSet defaultBufSize
+          <*> shouldColorHandle settings stderr
+      LogDestinationFile path ->
+        (,) <$> newFileLoggerSet defaultBufSize path <*> shouldColorAuto
+          settings
+          (pure False)
 
   let
     breakpoint = getLogSettingsBreakpoint settings
 
     lReformat = case getLogSettingsFormat settings of
       LogFormatJSON -> const id -- breakpoint and color ignored
-      LogFormatTerminal -> reformatTerminal breakpoint useColor
+      LogFormatTerminal -> reformatTerminal breakpoint lShouldColor
 
     lShouldLog = shouldLogLevel settings
     lLoggedMessages = Nothing
