@@ -6,10 +6,11 @@ module System.Log.FastLogger.Compat
   , newStderrLoggerSetN
   ) where
 
-import Prelude
 import System.Log.FastLogger
 
 #if !MIN_VERSION_fast_logger(3, 1, 1)
+import Prelude
+
 newStdoutLoggerSetN :: BufSize -> Maybe Int -> IO LoggerSet
 newStdoutLoggerSetN size _ = newStdoutLoggerSet size
 
