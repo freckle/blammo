@@ -2,7 +2,7 @@ restylers_version: dev
 restylers:
   - brittany:
       include:
-        "**/*.hs"
-        "!src/Data/Aeson/Compat.hs" # CPP
-        "!src/System/Log/FastLogger/Compat.hs" # CPP
+        - "**/*.hs"
+        - "!src/Data/Aeson/Compat.hs" # CPP
+        - "!src/System/Log/FastLogger/Compat.hs" # CPP
   - "*"
