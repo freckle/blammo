@@ -54,8 +54,8 @@ module Blammo.Logging
 
 import Prelude
 
-import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
+import Blammo.Logging.LogSettings
 import Control.Lens ((^.))
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
