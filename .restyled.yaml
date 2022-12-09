@@ -1,0 +1,4 @@
+restylers_version: dev
+restylers:
+  - brittany
+  - "*"
