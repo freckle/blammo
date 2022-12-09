@@ -37,6 +37,7 @@ library
       Blammo.Logging.Test
       Data.Aeson.Compat
       Network.Wai.Middleware.Logging
+      System.Log.FastLogger.Compat
   other-modules:
       Paths_Blammo
   hs-source-dirs:

@@ -37,15 +37,11 @@ import Data.List (intercalate)
 import Data.Text (Text)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
-import System.Log.FastLogger
-  ( LoggerSet
-  , defaultBufSize
-  , newFileLoggerSetN
-  , newStderrLoggerSetN
-  , newStdoutLoggerSetN
-  )
 import qualified System.Log.FastLogger as FastLogger
   (flushLogStr, pushLogStr, pushLogStrLn)
+import System.Log.FastLogger (LoggerSet, defaultBufSize)
+import System.Log.FastLogger.Compat
+  (newFileLoggerSetN, newStderrLoggerSetN, newStdoutLoggerSetN)
 import UnliftIO.Exception (throwString)
 
 data Logger = Logger
