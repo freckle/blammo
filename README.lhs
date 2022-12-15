@@ -1,5 +1,11 @@
 # Blammo
 
+
+[![Hackage](https://img.shields.io/hackage/v/Blammo.svg?style=flat)](https://hackage.haskell.org/package/Blammo)
+[![Stackage Nightly](http://stackage.org/package/Blammo/badge/nightly)](http://stackage.org/nightly/package/Blammo)
+[![Stackage LTS](http://stackage.org/package/Blammo/badge/lts)](http://stackage.org/lts/package/Blammo)
+[![CI](https://github.com/freckle/blammo/actions/workflows/ci.yml/badge.svg)](https://github.com/freckle/blammo/actions/workflows/ci.yml)
+
 ![](files/blammo.png)
 
 Blammo is a Structured Logging library that's
