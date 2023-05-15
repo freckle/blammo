@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.1...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.2...main)
+
+## [v1.1.1.2](https://github.com/freckle/blammo/compare/v1.1.1.1...v1.1.1.2)
+
+- Fix bug in `LOG_CONCURRENCY` parser
 
 ## [v1.1.1.1](https://github.com/freckle/blammo/compare/v1.1.1.0...v1.1.1.1)
 
