@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.1.2...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.2.0...main)
+
+## [v1.1.2.0](https://github.com/freckle/blammo/compare/v1.1.1.2...v1.1.2.0)
+
+- Add `Blammo.Logging.LogSettings.LogLevels`
 
 ## [v1.1.1.2](https://github.com/freckle/blammo/compare/v1.1.1.1...v1.1.1.2)
 
