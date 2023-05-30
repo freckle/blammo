@@ -52,6 +52,7 @@ module Blammo.Logging.LogSettings.LogLevels
   , LogLevel(..)
   , newLogLevels
   , readLogLevels
+  , showLogLevels
   , shouldLogLevel
   , defaultLogLevels
   ) where
@@ -103,6 +104,20 @@ readLogLevel t = case T.toLower t of
   "warn" -> LevelWarn
   "error" -> LevelError
   _ -> LevelOther t
+
+showLogLevels :: LogLevels -> String
+showLogLevels LogLevels {..} =
+  unpack $ T.intercalate "," $ showLogLevel llDefaultLevel : map
+    (\(s, l) -> s <> ":" <> showLogLevel l)
+    (Map.toList llSourceLevels)
+
+showLogLevel :: LogLevel -> Text
+showLogLevel = \case
+  LevelDebug -> "debug"
+  LevelInfo -> "info"
+  LevelWarn -> "warn"
+  LevelError -> "error"
+  LevelOther t -> t
 
 shouldLogLevel :: LogLevels -> LogSource -> LogLevel -> Bool
 shouldLogLevel LogLevels {..} source = (`lgte` minLevel)

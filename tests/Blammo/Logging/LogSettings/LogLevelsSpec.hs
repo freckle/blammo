@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
-
 module Blammo.Logging.LogSettings.LogLevelsSpec
   ( spec
   ) where
@@ -31,11 +29,30 @@ spec = do
       readLogLevels "foo:warn,info" `shouldSatisfy` isRight
       readLogLevels "foo:warn,info,foo:warn" `shouldSatisfy` isRight
 
+  describe "showLogLevels" $ do
+    it "shows a simple log levels" $ do
+      let ll = newLogLevels LevelWarn []
+
+      showLogLevels ll `shouldBe` "warn"
+
+    it "shows complex log levels in normalized order and casing" $ do
+      -- Using readLogLevel here so we can highlight how it gets normalized
+      let ell = readLogLevels "foo:WARN,info,bar:debug"
+
+      fmap showLogLevels ell `shouldBe` Right "info,bar:debug,foo:warn"
+
+    -- This is a compromise vs using a proper property because it was just too
+    -- complex to make Arbitrary LogLevels
+    it "round-trips through readLogLevels" $ do
+      let ll = newLogLevels LevelWarn [("foo", LevelInfo), ("bar", LevelDebug)]
+
+      readLogLevels (showLogLevels ll) `shouldBe` Right ll
+
   describe "shouldLogLevel" $ do
     it "uses the default log level for unknown sources" $ do
       let
-        Right ll1 = readLogLevels "warn"
-        Right ll2 = readLogLevels "warn,foo:debug"
+        ll1 = newLogLevels LevelWarn []
+        ll2 = newLogLevels LevelWarn [("foo", LevelDebug)]
 
       shouldLogLevel ll1 "foo" LevelInfo `shouldBe` False
       shouldLogLevel ll1 "bar" LevelInfo `shouldBe` False
@@ -44,7 +61,9 @@ spec = do
       shouldLogLevel ll2 "bar" LevelInfo `shouldBe` False
 
     it "can override multiple sources" $ do
-      let Right ll = readLogLevels "debug,Amazonka:warn,SQL:info"
+      let
+        ll =
+          newLogLevels LevelDebug [("Amazonka", LevelWarn), ("SQL", LevelInfo)]
 
       shouldLogLevel ll "app" LevelDebug `shouldBe` True
       shouldLogLevel ll "Amazonka" LevelInfo `shouldBe` False
