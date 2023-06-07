@@ -1,6 +1,6 @@
 module Blammo.Logging.Logger
   ( Logger
-  , HasLogger(..)
+  , HasLogger (..)
   , newLogger
   , flushLogger
   , pushLogger
@@ -12,9 +12,9 @@ module Blammo.Logging.Logger
   , pushLogStrLn
   , flushLogStr
 
-  -- * Testing
+    -- * Testing
   , newTestLogger
-  , LoggedMessage(..)
+  , LoggedMessage (..)
   , getLoggedMessages
   , getLoggedMessagesLenient
   , getLoggedMessagesUnsafe
@@ -28,7 +28,7 @@ import Blammo.Logging.Test hiding (getLoggedMessages)
 import qualified Blammo.Logging.Test as LoggedMessages
 import Control.Lens (Lens', view)
 import Control.Monad (unless)
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
 import Control.Monad.Reader (MonadReader)
 import Data.ByteString (ByteString)
@@ -37,11 +37,17 @@ import Data.List (intercalate)
 import Data.Text (Text)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
-import qualified System.Log.FastLogger as FastLogger
-  (flushLogStr, pushLogStr, pushLogStrLn)
 import System.Log.FastLogger (LoggerSet, defaultBufSize)
+import qualified System.Log.FastLogger as FastLogger
+  ( flushLogStr
+  , pushLogStr
+  , pushLogStrLn
+  )
 import System.Log.FastLogger.Compat
-  (newFileLoggerSetN, newStderrLoggerSetN, newStdoutLoggerSetN)
+  ( newFileLoggerSetN
+  , newStderrLoggerSetN
+  , newStdoutLoggerSetN
+  )
 import UnliftIO.Exception (throwString)
 
 data Logger = Logger
@@ -72,22 +78,25 @@ pushLogStr :: MonadIO m => Logger -> LogStr -> m ()
 pushLogStr logger str = case lLoggedMessages logger of
   Nothing -> liftIO $ FastLogger.pushLogStr loggerSet str
   Just lm -> appendLogStr lm str
-  where loggerSet = getLoggerLoggerSet logger
+ where
+  loggerSet = getLoggerLoggerSet logger
 
 pushLogStrLn :: MonadIO m => Logger -> LogStr -> m ()
 pushLogStrLn logger str = case lLoggedMessages logger of
   Nothing -> liftIO $ FastLogger.pushLogStrLn loggerSet str
   Just lm -> appendLogStrLn lm str
-  where loggerSet = getLoggerLoggerSet logger
+ where
+  loggerSet = getLoggerLoggerSet logger
 
 flushLogStr :: MonadIO m => Logger -> m ()
 flushLogStr logger = case lLoggedMessages logger of
   Nothing -> liftIO $ FastLogger.flushLogStr loggerSet
   Just _ -> pure ()
-  where loggerSet = getLoggerLoggerSet logger
+ where
+  loggerSet = getLoggerLoggerSet logger
 
 class HasLogger env where
-    loggerL :: Lens' env Logger
+  loggerL :: Lens' env Logger
 
 instance HasLogger Logger where
   loggerL = id
@@ -118,7 +127,7 @@ newLogger settings = do
     lLoggedMessages = Nothing
     lLogSettings = settings
 
-  pure $ Logger { .. }
+  pure $ Logger {..}
  where
   breakpoint = getLogSettingsBreakpoint settings
   concurrency = getLogSettingsConcurrency settings
@@ -141,17 +150,15 @@ pushLoggerLn msg = do
 -- | Create a 'Logger' that will capture log messages instead of logging them
 --
 -- See "Blammo.Logging.LoggedMessages" for more details.
---
 newTestLogger :: MonadIO m => LogSettings -> m Logger
 newTestLogger settings = go <$> newLogger settings <*> newLoggedMessages
  where
   go logger loggedMessages =
-    logger { lReformat = const id, lLoggedMessages = Just loggedMessages }
+    logger {lReformat = const id, lLoggedMessages = Just loggedMessages}
 
 -- | Return the logged messages if 'newTestLogger' was used
 --
 -- If not, the empty list is returned.
---
 getLoggedMessages
   :: (MonadIO m, MonadReader env m, HasLogger env)
   => m [Either String LoggedMessage]
@@ -171,10 +178,11 @@ getLoggedMessagesUnsafe
 getLoggedMessagesUnsafe = do
   (failed, succeeded) <- partitionEithers <$> getLoggedMessages
 
-  succeeded <$ unless
-    (null failed)
-    (throwString
-    $ intercalate "\n"
-    $ "Messages were logged that didn't parse as LoggedMessage:"
-    : failed
-    )
+  succeeded
+    <$ unless
+      (null failed)
+      ( throwString $
+          intercalate "\n" $
+            "Messages were logged that didn't parse as LoggedMessage:"
+              : failed
+      )

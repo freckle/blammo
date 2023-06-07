@@ -1,20 +1,20 @@
 module Blammo.Logging.LogSettings
   ( LogSettings
   , LogLevels
-  , LogDestination(..)
-  , LogFormat(..)
-  , LogColor(..)
+  , LogDestination (..)
+  , LogFormat (..)
+  , LogColor (..)
 
-  -- * Reading settings, e.g. from @ENV@
+    -- * Reading settings, e.g. from @ENV@
   , readLogLevels
   , readLogDestination
   , readLogFormat
   , readLogColor
 
-  -- * Construction
+    -- * Construction
   , defaultLogSettings
 
-  -- * Modify
+    -- * Modify
   , setLogSettingsLevels
   , setLogSettingsDestination
   , setLogSettingsFormat
@@ -22,7 +22,7 @@ module Blammo.Logging.LogSettings
   , setLogSettingsBreakpoint
   , setLogSettingsConcurrency
 
-  -- * Access
+    -- * Access
   , getLogSettingsLevels
   , getLogSettingsDestination
   , getLogSettingsFormat
@@ -30,7 +30,7 @@ module Blammo.Logging.LogSettings
   , getLogSettingsBreakpoint
   , getLogSettingsConcurrency
 
-  -- * Logic
+    -- * Logic
   , shouldLogLevel
   , shouldColorAuto
   , shouldColorHandle
@@ -40,7 +40,7 @@ import Prelude
 
 import Blammo.Logging.LogSettings.LogLevels (LogLevels)
 import qualified Blammo.Logging.LogSettings.LogLevels as LogLevels
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
 import System.IO (Handle, hIsTerminalDevice)
 
@@ -57,9 +57,9 @@ readLogLevels :: String -> Either String LogLevels
 readLogLevels = LogLevels.readLogLevels
 
 data LogDestination
-    = LogDestinationStdout
-    | LogDestinationStderr
-    | LogDestinationFile FilePath
+  = LogDestinationStdout
+  | LogDestinationStderr
+  | LogDestinationFile FilePath
 
 readLogDestination :: String -> Either String LogDestination
 readLogDestination = \case
@@ -67,14 +67,14 @@ readLogDestination = \case
   "stderr" -> Right LogDestinationStderr
   ('@' : path) -> Right $ LogDestinationFile path
   x ->
-    Left
-      $ "Invalid log destination "
-      <> x
-      <> ", must be stdout, stderr, or @{path}"
+    Left $
+      "Invalid log destination "
+        <> x
+        <> ", must be stdout, stderr, or @{path}"
 
 data LogFormat
-    = LogFormatJSON
-    | LogFormatTerminal
+  = LogFormatJSON
+  | LogFormatTerminal
 
 readLogFormat :: String -> Either String LogFormat
 readLogFormat = \case
@@ -83,20 +83,20 @@ readLogFormat = \case
   x -> Left $ "Invalid log format " <> x <> ", must be tty or json"
 
 data LogColor
-    = LogColorAuto
-    | LogColorAlways
-    | LogColorNever
+  = LogColorAuto
+  | LogColorAlways
+  | LogColorNever
 
 readLogColor :: String -> Either String LogColor
 readLogColor x
-  | x `elem` autoValues
-  = Right LogColorAuto
-  | x `elem` alwaysValues
-  = Right LogColorAlways
-  | x `elem` neverValues
-  = Right LogColorNever
-  | otherwise
-  = Left $ "Invalid log color " <> x <> ", must be auto, always, or never"
+  | x `elem` autoValues =
+      Right LogColorAuto
+  | x `elem` alwaysValues =
+      Right LogColorAlways
+  | x `elem` neverValues =
+      Right LogColorNever
+  | otherwise =
+      Left $ "Invalid log color " <> x <> ", must be auto, always, or never"
  where
   autoValues :: [String]
   autoValues = ["auto"]
@@ -108,29 +108,30 @@ readLogColor x
   neverValues = ["never", "off", "no", "false"]
 
 defaultLogSettings :: LogSettings
-defaultLogSettings = LogSettings
-  { lsLevels = LogLevels.defaultLogLevels
-  , lsDestination = LogDestinationStdout
-  , lsFormat = LogFormatTerminal
-  , lsColor = LogColorAuto
-  , lsBreakpoint = 120
-  , lsConcurrency = Nothing
-  }
+defaultLogSettings =
+  LogSettings
+    { lsLevels = LogLevels.defaultLogLevels
+    , lsDestination = LogDestinationStdout
+    , lsFormat = LogFormatTerminal
+    , lsColor = LogColorAuto
+    , lsBreakpoint = 120
+    , lsConcurrency = Nothing
+    }
 
 setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
-setLogSettingsLevels x ls = ls { lsLevels = x }
+setLogSettingsLevels x ls = ls {lsLevels = x}
 
 setLogSettingsDestination :: LogDestination -> LogSettings -> LogSettings
-setLogSettingsDestination x ls = ls { lsDestination = x }
+setLogSettingsDestination x ls = ls {lsDestination = x}
 
 setLogSettingsFormat :: LogFormat -> LogSettings -> LogSettings
-setLogSettingsFormat x ls = ls { lsFormat = x }
+setLogSettingsFormat x ls = ls {lsFormat = x}
 
 setLogSettingsColor :: LogColor -> LogSettings -> LogSettings
-setLogSettingsColor x ls = ls { lsColor = x }
+setLogSettingsColor x ls = ls {lsColor = x}
 
 setLogSettingsBreakpoint :: Int -> LogSettings -> LogSettings
-setLogSettingsBreakpoint x ls = ls { lsBreakpoint = x }
+setLogSettingsBreakpoint x ls = ls {lsBreakpoint = x}
 
 -- | Set the number of 'LoggerSet' Buffers used by @fast-logger@
 --
@@ -151,9 +152,8 @@ setLogSettingsBreakpoint x ls = ls { lsBreakpoint = x }
 -- +-----------------------------+------------+
 -- |  <3.0.5     | anywhere      | no         |
 -- +-----------------------------+------------+
---
 setLogSettingsConcurrency :: Maybe Int -> LogSettings -> LogSettings
-setLogSettingsConcurrency x ls = ls { lsConcurrency = x }
+setLogSettingsConcurrency x ls = ls {lsConcurrency = x}
 
 getLogSettingsLevels :: LogSettings -> LogLevels
 getLogSettingsLevels = lsLevels

@@ -9,7 +9,7 @@ import Prelude
 
 import Blammo.Logging
 import qualified Blammo.Logging.LogSettings.Env as Env
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.IO.Unlift (MonadUnliftIO)
 
 -- | Construct a 'Logger' configured via environment variables

@@ -5,15 +5,15 @@ module Blammo.Logging.Terminal.LogPiece
   , visibleLength
   , bytestring
 
-  -- * Built-in pieces
+    -- * Built-in pieces
   , offset
   ) where
 
 import Prelude
 
 import Data.ByteString (ByteString)
-import Data.Semigroup (Sum(..))
-import Data.String (IsString(..))
+import Data.Semigroup (Sum (..))
+import Data.String (IsString (..))
 import Data.Text (Text, pack)
 import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
@@ -22,15 +22,17 @@ data LogPiece = LogPiece
   { lpRendered :: Text
   , lpVisibleLength :: Sum Int
   }
-  -- TODO: When we drop support for ghc-8.6:
-  -- deriving stock Generic
-  -- deriving (Semigroup, Monoid) via (GenericSemigroupMonoid LogPiece)
+
+-- TODO: When we drop support for ghc-8.6:
+-- deriving stock Generic
+-- deriving (Semigroup, Monoid) via (GenericSemigroupMonoid LogPiece)
 
 instance Semigroup LogPiece where
-  a <> b = LogPiece
-    { lpRendered = lpRendered a <> lpRendered b
-    , lpVisibleLength = lpVisibleLength a <> lpVisibleLength b
-    }
+  a <> b =
+    LogPiece
+      { lpRendered = lpRendered a <> lpRendered b
+      , lpVisibleLength = lpVisibleLength a <> lpVisibleLength b
+      }
 
 instance Monoid LogPiece where
   mempty = LogPiece mempty mempty
@@ -45,7 +47,7 @@ logPiece
   -- ^ Raw
   -> LogPiece
 logPiece f t =
-  LogPiece { lpRendered = f t, lpVisibleLength = Sum $ T.length t }
+  LogPiece {lpRendered = f t, lpVisibleLength = Sum $ T.length t}
 
 render :: LogPiece -> Text
 render = lpRendered
@@ -57,4 +59,4 @@ visibleLength :: LogPiece -> Int
 visibleLength = getSum . lpVisibleLength
 
 offset :: Int -> LogPiece
-offset n = LogPiece { lpRendered = T.replicate n " ", lpVisibleLength = Sum n }
+offset n = LogPiece {lpRendered = T.replicate n " ", lpVisibleLength = Sum n}

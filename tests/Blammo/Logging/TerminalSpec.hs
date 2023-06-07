@@ -7,7 +7,7 @@ module Blammo.Logging.TerminalSpec
 import Prelude
 
 import Blammo.Logging
-import Blammo.Logging.Logger (LoggedMessage(..))
+import Blammo.Logging.Logger (LoggedMessage (..))
 import Blammo.Logging.Terminal
 import Data.Aeson
 import Data.ByteString (ByteString)
@@ -34,59 +34,71 @@ spec = do
 
     it "reformats LoggedMessages with complex attributes" $ do
       let
-        bs = BSL.toStrict $ encode LoggedMessage
-          { loggedMessageTimestamp = UTCTime
-            { utctDay = fromGregorian 2022 1 1
-            , utctDayTime = 0
-            }
-          , loggedMessageLevel = LevelInfo
-          , loggedMessageLoc = Nothing
-          , loggedMessageLogSource = Just "app"
-          , loggedMessageThreadContext = keyMap ["x" .= object ["y" .= True]]
-          , loggedMessageText = "I'm a log message"
-          , loggedMessageMeta = keyMap ["a" .= [1 :: Int, 2, 3]]
-          }
+        bs =
+          BSL.toStrict $
+            encode
+              LoggedMessage
+                { loggedMessageTimestamp =
+                    UTCTime
+                      { utctDay = fromGregorian 2022 1 1
+                      , utctDayTime = 0
+                      }
+                , loggedMessageLevel = LevelInfo
+                , loggedMessageLoc = Nothing
+                , loggedMessageLogSource = Just "app"
+                , loggedMessageThreadContext = keyMap ["x" .= object ["y" .= True]]
+                , loggedMessageText = "I'm a log message"
+                , loggedMessageMeta = keyMap ["a" .= [1 :: Int, 2, 3]]
+                }
 
-        expected = mconcat
-          [ "2022-01-01 00:00:00 [info     ] I'm a log message              "
-          , " source=app x={y: True} a=[1, 2, 3]"
-          ]
+        expected =
+          mconcat
+            [ "2022-01-01 00:00:00 [info     ] I'm a log message              "
+            , " source=app x={y: True} a=[1, 2, 3]"
+            ]
 
       reformatTerminal 120 False LevelInfo bs `shouldBe` expected
 
     it "moves attributes to multi-line at the given breakpoint" $ do
       let
-        bs = BSL.toStrict $ encode LoggedMessage
-          { loggedMessageTimestamp = UTCTime
-            { utctDay = fromGregorian 2022 1 1
-            , utctDayTime = 0
-            }
-          , loggedMessageLevel = LevelInfo
-          , loggedMessageLoc = Nothing
-          , loggedMessageLogSource = Just "app"
-          , loggedMessageThreadContext = mempty
-          , loggedMessageText = "I'm a log message"
-          , loggedMessageMeta = keyMap
-            [ "a" .= ("aaaaaaaaa" :: Text)
-            , "b" .= ("aaaaaaaaa" :: Text)
-            , "c" .= ("aaaaaaaaa" :: Text)
-            , "d" .= ("aaaaaaaaa" :: Text)
+        bs =
+          BSL.toStrict $
+            encode
+              LoggedMessage
+                { loggedMessageTimestamp =
+                    UTCTime
+                      { utctDay = fromGregorian 2022 1 1
+                      , utctDayTime = 0
+                      }
+                , loggedMessageLevel = LevelInfo
+                , loggedMessageLoc = Nothing
+                , loggedMessageLogSource = Just "app"
+                , loggedMessageThreadContext = mempty
+                , loggedMessageText = "I'm a log message"
+                , loggedMessageMeta =
+                    keyMap
+                      [ "a" .= ("aaaaaaaaa" :: Text)
+                      , "b" .= ("aaaaaaaaa" :: Text)
+                      , "c" .= ("aaaaaaaaa" :: Text)
+                      , "d" .= ("aaaaaaaaa" :: Text)
+                      ]
+                }
+
+        single =
+          mconcat
+            [ "2022-01-01 00:00:00 [info     ] I'm a log message              "
+            , " source=app a=aaaaaaaaa b=aaaaaaaaa c=aaaaaaaaa d=aaaaaaaaa"
             ]
-          }
 
-        single = mconcat
-          [ "2022-01-01 00:00:00 [info     ] I'm a log message              "
-          , " source=app a=aaaaaaaaa b=aaaaaaaaa c=aaaaaaaaa d=aaaaaaaaa"
-          ]
-
-        multi = mconcat
-          [ "2022-01-01 00:00:00 [info     ] I'm a log message              \n"
-          , "                                source=app\n"
-          , "                                a=aaaaaaaaa\n"
-          , "                                b=aaaaaaaaa\n"
-          , "                                c=aaaaaaaaa\n"
-          , "                                d=aaaaaaaaa"
-          ]
+        multi =
+          mconcat
+            [ "2022-01-01 00:00:00 [info     ] I'm a log message              \n"
+            , "                                source=app\n"
+            , "                                a=aaaaaaaaa\n"
+            , "                                b=aaaaaaaaa\n"
+            , "                                c=aaaaaaaaa\n"
+            , "                                d=aaaaaaaaa"
+            ]
 
         breakpoint = BS.length single
 
@@ -95,32 +107,38 @@ spec = do
 
   it "aligns multi-line correctly even with color escapes" $ do
     let
-      bs = BSL.toStrict $ encode LoggedMessage
-        { loggedMessageTimestamp = UTCTime
-          { utctDay = fromGregorian 2022 1 1
-          , utctDayTime = 0
-          }
-        , loggedMessageLevel = LevelInfo
-        , loggedMessageLoc = Nothing
-        , loggedMessageLogSource = Just "app"
-        , loggedMessageThreadContext = mempty
-        , loggedMessageText = "I'm a log message"
-        , loggedMessageMeta = keyMap
-          [ "a" .= ("aaaaaaaaa" :: Text)
-          , "b" .= ("aaaaaaaaa" :: Text)
-          , "c" .= ("aaaaaaaaa" :: Text)
-          , "d" .= ("aaaaaaaaa" :: Text)
-          ]
-        }
+      bs =
+        BSL.toStrict $
+          encode
+            LoggedMessage
+              { loggedMessageTimestamp =
+                  UTCTime
+                    { utctDay = fromGregorian 2022 1 1
+                    , utctDayTime = 0
+                    }
+              , loggedMessageLevel = LevelInfo
+              , loggedMessageLoc = Nothing
+              , loggedMessageLogSource = Just "app"
+              , loggedMessageThreadContext = mempty
+              , loggedMessageText = "I'm a log message"
+              , loggedMessageMeta =
+                  keyMap
+                    [ "a" .= ("aaaaaaaaa" :: Text)
+                    , "b" .= ("aaaaaaaaa" :: Text)
+                    , "c" .= ("aaaaaaaaa" :: Text)
+                    , "d" .= ("aaaaaaaaa" :: Text)
+                    ]
+              }
 
-      expected = mconcat
-        [ "2022-01-01 00:00:00 [info     ] I'm a log message              \n"
-        , "                                source=app\n"
-        , "                                a=aaaaaaaaa\n"
-        , "                                b=aaaaaaaaa\n"
-        , "                                c=aaaaaaaaa\n"
-        , "                                d=aaaaaaaaa"
-        ]
+      expected =
+        mconcat
+          [ "2022-01-01 00:00:00 [info     ] I'm a log message              \n"
+          , "                                source=app\n"
+          , "                                a=aaaaaaaaa\n"
+          , "                                b=aaaaaaaaa\n"
+          , "                                c=aaaaaaaaa\n"
+          , "                                d=aaaaaaaaa"
+          ]
 
     stripColor (reformatTerminal 120 True LevelInfo bs) `shouldBe` expected
 
