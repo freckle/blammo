@@ -61,9 +61,8 @@ spec = do
       shouldLogLevel ll2 "bar" LevelInfo `shouldBe` False
 
     it "can override multiple sources" $ do
-      let
-        ll =
-          newLogLevels LevelDebug [("Amazonka", LevelWarn), ("SQL", LevelInfo)]
+      let ll =
+            newLogLevels LevelDebug [("Amazonka", LevelWarn), ("SQL", LevelInfo)]
 
       shouldLogLevel ll "app" LevelDebug `shouldBe` True
       shouldLogLevel ll "Amazonka" LevelInfo `shouldBe` False

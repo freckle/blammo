@@ -13,7 +13,6 @@
 -- This format was designed to match Python's
 -- [structlog](https://www.structlog.org/en/stable/) package in its default
 -- configuration.
---
 module Blammo.Logging.Terminal
   ( reformatTerminal
   ) where
@@ -44,10 +43,13 @@ reformatTerminal breakpoint useColor logLevel bytes = fromMaybe bytes $ do
   let
     colors@Colors {..} = getColors useColor
 
-    logTimestampPiece = logPiece dim $ pack $ formatTime
-      defaultTimeLocale
-      "%F %X"
-      loggedMessageTimestamp
+    logTimestampPiece =
+      logPiece dim $
+        pack $
+          formatTime
+            defaultTimeLocale
+            "%F %X"
+            loggedMessageTimestamp
 
     logLevelPiece = case logLevel of
       LevelDebug -> logPiece gray $ padTo 9 "debug"
@@ -64,29 +66,28 @@ reformatTerminal breakpoint useColor logLevel bytes = fromMaybe bytes $ do
 
     logMessagePiece = logPiece bold $ padTo 31 loggedMessageText
 
-    logAttrsPiece = mconcat
-      [ colorizeKeyMap " " colors loggedSourceAsMap
-      , colorizeKeyMap " " colors loggedMessageThreadContext
-      , colorizeKeyMap " " colors loggedMessageMeta
-      ]
+    logAttrsPiece =
+      mconcat
+        [ colorizeKeyMap " " colors loggedSourceAsMap
+        , colorizeKeyMap " " colors loggedMessageThreadContext
+        , colorizeKeyMap " " colors loggedMessageMeta
+        ]
 
     oneLineLogPiece = mconcat [logPrefixPiece, logMessagePiece, logAttrsPiece]
 
     multiLineLogPiece =
-      let
-        shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
-      in
-        mconcat
-          [ logPrefixPiece
-          , logMessagePiece
-          , colorizeKeyMap shift colors loggedSourceAsMap
-          , colorizeKeyMap shift colors loggedMessageThreadContext
-          , colorizeKeyMap shift colors loggedMessageMeta
-          ]
+      let shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
+      in  mconcat
+            [ logPrefixPiece
+            , logMessagePiece
+            , colorizeKeyMap shift colors loggedSourceAsMap
+            , colorizeKeyMap shift colors loggedMessageThreadContext
+            , colorizeKeyMap shift colors loggedMessageMeta
+            ]
 
-  pure
-    $ LogPiece.bytestring
-    $ if LogPiece.visibleLength oneLineLogPiece <= breakpoint
+  pure $
+    LogPiece.bytestring $
+      if LogPiece.visibleLength oneLineLogPiece <= breakpoint
         then oneLineLogPiece
         else multiLineLogPiece
 

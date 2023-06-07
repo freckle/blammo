@@ -4,7 +4,7 @@ module Network.Wai.Middleware.Logging
   , requestLogger
   , requestLoggerWith
 
-  -- * Configuration
+    -- * Configuration
   , Config
   , defaultConfig
   , setConfigLogSource
@@ -30,7 +30,7 @@ import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8With)
 import Data.Text.Encoding.Error (lenientDecode)
 import Network.HTTP.Types.Header (Header, HeaderName)
-import Network.HTTP.Types.Status (Status(..))
+import Network.HTTP.Types.Status (Status (..))
 import Network.Wai
   ( Middleware
   , Request
@@ -86,7 +86,6 @@ addThreadContextFromRequest toContext app request respond = do
 --   }
 -- }
 -- @
---
 requestLogger :: HasLogger env => env -> Middleware
 requestLogger = requestLoggerWith defaultConfig
 
@@ -97,15 +96,17 @@ data Config = Config
   }
 
 defaultConfig :: Config
-defaultConfig = Config
-  { cLogSource = "requestLogger"
-  , cGetClientIp = \req ->
-    fromMaybe (pack $ show $ remoteHost req)
-      $ (firstValue =<< lookupRequestHeader "x-forwarded-for" req)
-      <|> lookupRequestHeader "x-real-ip" req
-  , cGetDestinationIp = lookupRequestHeader "x-real-ip"
-  }
-  where firstValue = find (not . T.null) . map T.strip . T.splitOn ","
+defaultConfig =
+  Config
+    { cLogSource = "requestLogger"
+    , cGetClientIp = \req ->
+        fromMaybe (pack $ show $ remoteHost req) $
+          (firstValue =<< lookupRequestHeader "x-forwarded-for" req)
+            <|> lookupRequestHeader "x-real-ip" req
+    , cGetDestinationIp = lookupRequestHeader "x-real-ip"
+    }
+ where
+  firstValue = find (not . T.null) . map T.strip . T.splitOn ","
 
 lookupRequestHeader :: HeaderName -> Request -> Maybe Text
 lookupRequestHeader h = fmap decodeUtf8 . lookup h . requestHeaders
@@ -113,17 +114,15 @@ lookupRequestHeader h = fmap decodeUtf8 . lookup h . requestHeaders
 -- | Change the source used for log messages
 --
 -- Default is @requestLogger@.
---
 setConfigLogSource :: LogSource -> Config -> Config
-setConfigLogSource x c = c { cLogSource = x }
+setConfigLogSource x c = c {cLogSource = x}
 
 -- | Change how the @clientIp@ field is determined
 --
 -- Default is looking up the first value in @x-forwarded-for@, then the
 -- @x-real-ip@ header, then finally falling back to 'Network.Wai.remoteHost'.
---
 setConfigGetClientIp :: (Request -> Text) -> Config -> Config
-setConfigGetClientIp x c = c { cGetClientIp = x }
+setConfigGetClientIp x c = c {cGetClientIp = x}
 
 -- | Change how the @destinationIp@ field is determined
 --
@@ -135,9 +134,8 @@ setConfigGetClientIp x c = c { cGetClientIp = x }
 -- containerized Warp on AWS/ECS, where this value holds the ECS target
 -- container's IP address. This is valuable debugging information and could, if
 -- you squint, be considered a /destination/.
---
 setConfigGetDestinationIp :: (Request -> Maybe Text) -> Config -> Config
-setConfigGetDestinationIp x c = c { cGetDestinationIp = x }
+setConfigGetDestinationIp x c = c {cGetDestinationIp = x}
 
 requestLoggerWith :: HasLogger env => Config -> env -> Middleware
 requestLoggerWith config env app req respond =
@@ -172,15 +170,16 @@ logResponse Config {..} duration req resp
     [ "method" .= decodeUtf8 (requestMethod req)
     , "path" .= decodeUtf8 (rawPathInfo req)
     , "query" .= decodeUtf8 (rawQueryString req)
-    , "status" .= object
-      [ "code" .= statusCode status
-      , "message" .= decodeUtf8 (statusMessage status)
-      ]
+    , "status"
+        .= object
+          [ "code" .= statusCode status
+          , "message" .= decodeUtf8 (statusMessage status)
+          ]
     , "clientIp" .= cGetClientIp req
     , "destinationIp" .= cGetDestinationIp req
     , "durationMs" .= duration
     , "requestHeaders"
-      .= headerObject ["authorization", "cookie"] (requestHeaders req)
+        .= headerObject ["authorization", "cookie"] (requestHeaders req)
     , "responseHeaders" .= headerObject ["set-cookie"] (responseHeaders resp)
     ]
 

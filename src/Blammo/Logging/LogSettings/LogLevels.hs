@@ -46,10 +46,9 @@
 -- Where @<level>@ defines the minimum level for anything not overridden by
 -- source. If you go on to add any @<source:level>@ pairs, that will change the
 -- minimum level for messages from that source.
---
 module Blammo.Logging.LogSettings.LogLevels
   ( LogLevels
-  , LogLevel(..)
+  , LogLevel (..)
   , newLogLevels
   , readLogLevels
   , showLogLevels
@@ -74,10 +73,11 @@ data LogLevels = LogLevels
   deriving stock (Eq, Show)
 
 newLogLevels :: LogLevel -> [(LogSource, LogLevel)] -> LogLevels
-newLogLevels level sourceLevels = LogLevels
-  { llDefaultLevel = level
-  , llSourceLevels = Map.fromList sourceLevels
-  }
+newLogLevels level sourceLevels =
+  LogLevels
+    { llDefaultLevel = level
+    , llSourceLevels = Map.fromList sourceLevels
+    }
 
 readLogLevels :: String -> Either String LogLevels
 readLogLevels s = toLogLevels . partitionEithers =<< traverse readPiece pieces
@@ -107,9 +107,12 @@ readLogLevel t = case T.toLower t of
 
 showLogLevels :: LogLevels -> String
 showLogLevels LogLevels {..} =
-  unpack $ T.intercalate "," $ showLogLevel llDefaultLevel : map
-    (\(s, l) -> s <> ":" <> showLogLevel l)
-    (Map.toList llSourceLevels)
+  unpack $
+    T.intercalate "," $
+      showLogLevel llDefaultLevel
+        : map
+          (\(s, l) -> s <> ":" <> showLogLevel l)
+          (Map.toList llSourceLevels)
 
 showLogLevel :: LogLevel -> Text
 showLogLevel = \case
@@ -121,18 +124,18 @@ showLogLevel = \case
 
 shouldLogLevel :: LogLevels -> LogSource -> LogLevel -> Bool
 shouldLogLevel LogLevels {..} source = (`lgte` minLevel)
-  where minLevel = fromMaybe llDefaultLevel $ Map.lookup source llSourceLevels
+ where
+  minLevel = fromMaybe llDefaultLevel $ Map.lookup source llSourceLevels
 
 defaultLogLevels :: LogLevels
 defaultLogLevels =
-  LogLevels { llDefaultLevel = LevelInfo, llSourceLevels = Map.empty }
+  LogLevels {llDefaultLevel = LevelInfo, llSourceLevels = Map.empty}
 
 -- | Like '(>=)', but treats @'LevelOther' "trace"@ as below 'LevelDebug'
 --
 -- Normally, 'LevelOther' is the highest level, but it's common to use the
 -- @trace@ level as more verbose than @debug@. With this comparison in use, we
 -- can safely use @'LevelOther' "trace"@ for that.
---
 lgte :: LogLevel -> LogLevel -> Bool
 lgte _ (LevelOther x) | T.toLower x == "trace" = True
 lgte (LevelOther x) _ | T.toLower x == "trace" = False

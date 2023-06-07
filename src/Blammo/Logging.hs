@@ -1,9 +1,9 @@
 module Blammo.Logging
   ( LogSettings
-  , LogLevel(..)
-  , LogDestination(..)
-  , LogFormat(..)
-  , LogColor(..)
+  , LogLevel (..)
+  , LogDestination (..)
+  , LogFormat (..)
+  , LogColor (..)
   , defaultLogSettings
   , setLogSettingsLevels
   , setLogSettingsDestination
@@ -12,38 +12,40 @@ module Blammo.Logging
   , setLogSettingsBreakpoint
   , setLogSettingsConcurrency
   , Logger
-  , HasLogger(..)
+  , HasLogger (..)
   , newLogger
   , runLoggerLoggingT
 
-  -- * Re-exports from "Control.Monad.Logger.Aeson"
-  -- ** Messages
-  , Message(..)
+    -- * Re-exports from "Control.Monad.Logger.Aeson"
+
+    -- ** Messages
+  , Message (..)
   , (.=)
   , Series
 
-  -- ** Thread Context
+    -- ** Thread Context
   , MonadMask
   , withThreadContext
   , myThreadContext
   , Pair
 
-  -- ** Transformer
-  , MonadLogger(..)
-  , MonadLoggerIO(..)
+    -- ** Transformer
+  , MonadLogger (..)
+  , MonadLoggerIO (..)
   , LoggingT
 
-  -- ** Common logging functions
-  -- | Import "Control.Monad.Logger.Aeson" if you want more
+    -- ** Common logging functions
 
-  -- *** Implicit call stack, no 'LogSource'
+    -- | Import "Control.Monad.Logger.Aeson" if you want more
+
+    -- *** Implicit call stack, no 'LogSource'
   , logDebug
   , logInfo
   , logWarn
   , logError
   , logOther
 
-  -- *** Implicit call stack, with 'LogSource'
+    -- *** Implicit call stack, with 'LogSource'
   , LogSource
   , logDebugNS
   , logInfoNS
@@ -54,8 +56,8 @@ module Blammo.Logging
 
 import Prelude
 
-import Blammo.Logging.Logger
 import Blammo.Logging.LogSettings
+import Blammo.Logging.Logger
 import Control.Lens ((^.))
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
@@ -71,7 +73,8 @@ runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
   runLoggingT
     (filterLogger (getLoggerShouldLog logger) f)
     (loggerOutput logger $ getLoggerReformat logger)
-  where logger = env ^. loggerL
+ where
+  logger = env ^. loggerL
 
 loggerOutput
   :: Logger

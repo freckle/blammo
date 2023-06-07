@@ -2,7 +2,7 @@
 
 module Blammo.Logging.Test
   ( LoggedMessages
-  , LoggedMessage(..)
+  , LoggedMessage (..)
   , newLoggedMessages
   , appendLogStr
   , appendLogStrLn
@@ -11,8 +11,8 @@ module Blammo.Logging.Test
 
 import Prelude
 
-import Control.Monad.IO.Class (MonadIO(..))
-import Control.Monad.Logger.Aeson (LoggedMessage(..))
+import Control.Monad.IO.Class (MonadIO (..))
+import Control.Monad.Logger.Aeson (LoggedMessage (..))
 import Data.Aeson (eitherDecodeStrict)
 import Data.DList (DList)
 import qualified Data.DList as DList
