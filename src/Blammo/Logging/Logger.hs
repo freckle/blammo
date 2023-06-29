@@ -22,11 +22,12 @@ module Blammo.Logging.Logger
 
 import Prelude
 
+import Blammo.Logging.Internal.Logger
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Terminal
 import Blammo.Logging.Test hiding (getLoggedMessages)
 import qualified Blammo.Logging.Test as LoggedMessages
-import Control.Lens (Lens', view)
+import Control.Lens (view)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
@@ -49,15 +50,6 @@ import System.Log.FastLogger.Compat
   , newStdoutLoggerSetN
   )
 import UnliftIO.Exception (throwString)
-
-data Logger = Logger
-  { lLogSettings :: LogSettings
-  , lLoggerSet :: LoggerSet
-  , lReformat :: LogLevel -> ByteString -> ByteString
-  , lShouldLog :: LogSource -> LogLevel -> Bool
-  , lShouldColor :: Bool
-  , lLoggedMessages :: Maybe LoggedMessages
-  }
 
 getLoggerLogSettings :: Logger -> LogSettings
 getLoggerLogSettings = lLogSettings
@@ -94,12 +86,6 @@ flushLogStr logger = case lLoggedMessages logger of
   Just _ -> pure ()
  where
   loggerSet = getLoggerLoggerSet logger
-
-class HasLogger env where
-  loggerL :: Lens' env Logger
-
-instance HasLogger Logger where
-  loggerL = id
 
 newLogger :: MonadIO m => LogSettings -> m Logger
 newLogger settings = do
