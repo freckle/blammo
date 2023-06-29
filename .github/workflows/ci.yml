@@ -23,19 +23,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: freckle/stack-cache-action@v2
-        with:
-          stack-yaml: ${{ matrix.stack-yaml }}
-      - uses: freckle/stack-action@v3
+      - uses: freckle/stack-action@v4
         with:
           stack-yaml: ${{ matrix.stack-yaml }}
 
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: rwe/actions-hlint-setup@v1
-      - uses: rwe/actions-hlint-run@v2
+      - uses: actions/checkout@v3
+      - uses: haskell/actions/hlint-setup@v2
+      - uses: haskell/actions/hlint-run@v2
         with:
           fail-on: warning
           path: '["src/", "tests/"]'
