@@ -1,1 +1,4 @@
 resolver: nightly-2022-12-08
+
+extra-deps:
+  - libsystemd-journal-1.4.5

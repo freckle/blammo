@@ -2,3 +2,4 @@ resolver: lts-18.28
 extra-deps:
   - monad-logger-aeson-0.2.0.1
   - context-0.2.0.0
+  - libsystemd-journal-1.4.5

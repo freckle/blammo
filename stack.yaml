@@ -1,1 +1,4 @@
 resolver: lts-20.20
+
+extra-deps:
+  - libsystemd-journal-1.4.5
