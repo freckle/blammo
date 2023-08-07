@@ -136,13 +136,13 @@ For such cases, you can set `LOG_CONCURRENCY=1` to use a single buffer.
 
 ## Configuration
 
-| Setting     | Setter                      | Environment variable and format           |
-| ---         | ---                         | ---                                       |
-| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`  |
-| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>` |
-| Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`           |
-| Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                 |
-| Concurrency | `setLogSettingsConcurrency` | `LOG_CONCURRENCY=<number>`                |
+| Setting     | Setter                      | Environment variable and format                    |
+| ---         | ---                         | ---                                                |
+| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`           |
+| Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>|journald` |
+| Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`                    |
+| Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                          |
+| Concurrency | `setLogSettingsConcurrency` | `LOG_CONCURRENCY=<number>`                         |
 
 ## Advanced Usage
 
