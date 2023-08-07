@@ -60,6 +60,7 @@ data LogDestination
   = LogDestinationStdout
   | LogDestinationStderr
   | LogDestinationFile FilePath
+  | LogDestinationJournald
 
 readLogDestination :: String -> Either String LogDestination
 readLogDestination = \case
