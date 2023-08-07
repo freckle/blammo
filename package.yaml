@@ -51,6 +51,7 @@ library:
     - exceptions
     - fast-logger
     - lens
+    - libsystemd-journal
     - monad-logger-aeson
     - mtl
     - text

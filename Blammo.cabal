@@ -64,6 +64,7 @@ library
     , fast-logger
     , http-types
     , lens
+    , libsystemd-journal
     , monad-logger-aeson
     , mtl
     , text
