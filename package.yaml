@@ -85,8 +85,8 @@ tests:
     main: README.lhs
     ghc-options: -pgmL markdown-unlit
     dependencies:
-      - aeson
       - Blammo
+      - aeson
       - markdown-unlit
       - monad-logger
       - mtl
