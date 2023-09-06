@@ -28,6 +28,7 @@ All built on the well-known `MonadLogger` interface and using an efficient
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Main (module Main) where
 
@@ -37,6 +38,9 @@ import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
 import Text.Markdown.Unlit ()
+import Control.Monad.IO.Class (MonadIO (liftIO))
+import Control.Monad.Logger (Loc, LogStr, ToLogStr (toLogStr))
+import Control.Monad.Reader (asks, MonadReader, ReaderT (runReaderT))
 ```
 -->
 
@@ -187,6 +191,64 @@ Use `runLoggerLoggingT`,
 ```hs
 runAppT :: App -> ReaderT App (LoggingT IO) a -> IO a
 runAppT app f = runLoggerLoggingT app $ runReaderT f app
+```
+
+## Use without `LoggingT`
+
+If your app monad is not a transformer stack containing `LoggingT` (ex: the
+[ReaderT pattern](https://www.fpcomplete.com/blog/readert-design-pattern/)), you
+can implement a custom instance of `MonadLogger`:
+
+```haskell
+data AppEnv = AppEnv
+  { appLogFunc :: Loc -> LogSource -> LogLevel -> LogStr -> IO ()
+  -- ...
+  }
+
+newtype App a = App
+  { unApp :: ReaderT AppEnv IO a }
+  deriving newtype
+    ( Functor
+    , Applicative
+    , Monad
+    , MonadIO
+    , MonadReader AppEnv
+    )
+
+instance MonadLogger App where
+  monadLoggerLog loc logSource logLevel msg = do
+    logFunc <- asks appLogFunc
+    liftIO $ logFunc loc logSource logLevel (toLogStr msg)
+
+runApp :: AppEnv -> App a -> IO a
+runApp env action =
+  runReaderT (unApp action) env
+```
+
+In your app you can use code written against the `MonadLogger` interface, like
+the actions defined earlier:
+
+```haskell
+app :: App ()
+app = do
+  action1
+  action2
+```
+
+To retrieve the log function from Blammo, use `askLoggerIO` (from
+`MonadLoggerIO`) with `runSimpleLoggingT` (or `runLoggerLoggingT` if you need
+more customization options), when you initialize the app:
+
+```haskell
+main2 :: IO ()
+main2 = do
+  logFunc <- runSimpleLoggingT askLoggerIO
+  let appEnv =
+        AppEnv
+          { appLogFunc = logFunc
+          -- ...
+          }
+  runApp appEnv app
 ```
 
 ## Integration with RIO
