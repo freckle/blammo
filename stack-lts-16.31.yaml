@@ -4,3 +4,4 @@ extra-deps:
   - envparse-0.4.1
   - monad-logger-aeson-0.2.0.1
   - context-0.2.0.0
+  - libsystemd-journal-1.4.5

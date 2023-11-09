@@ -60,11 +60,13 @@ data LogDestination
   = LogDestinationStdout
   | LogDestinationStderr
   | LogDestinationFile FilePath
+  | LogDestinationJournald
 
 readLogDestination :: String -> Either String LogDestination
 readLogDestination = \case
   "stdout" -> Right LogDestinationStdout
   "stderr" -> Right LogDestinationStderr
+  "journald" -> Right LogDestinationJournald
   ('@' : path) -> Right $ LogDestinationFile path
   x ->
     Left $
