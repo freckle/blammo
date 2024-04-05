@@ -34,10 +34,14 @@ spec = do
       getLogSettingsConcurrency settings `shouldBe` Nothing
 
     it "Respects explicit LOG_CONCURRENCY" $ do
-      settingsTTY1 <- parseLogSettings [("LOG_CONCURRENCY", "2"), ("LOG_FORMAT", "tty")]
-      settingsTTY2 <- parseLogSettings [("LOG_FORMAT", "tty"), ("LOG_CONCURRENCY", "3")]
-      settingsJSON1 <- parseLogSettings [("LOG_FORMAT", "json"), ("LOG_CONCURRENCY", "4")]
-      settingsJSON2 <- parseLogSettings [("LOG_CONCURRENCY", "5"), ("LOG_FORMAT", "json")]
+      settingsTTY1 <-
+        parseLogSettings [("LOG_CONCURRENCY", "2"), ("LOG_FORMAT", "tty")]
+      settingsTTY2 <-
+        parseLogSettings [("LOG_FORMAT", "tty"), ("LOG_CONCURRENCY", "3")]
+      settingsJSON1 <-
+        parseLogSettings [("LOG_FORMAT", "json"), ("LOG_CONCURRENCY", "4")]
+      settingsJSON2 <-
+        parseLogSettings [("LOG_CONCURRENCY", "5"), ("LOG_FORMAT", "json")]
 
       getLogSettingsConcurrency settingsTTY1 `shouldBe` Just 2
       getLogSettingsConcurrency settingsTTY2 `shouldBe` Just 3
