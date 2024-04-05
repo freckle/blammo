@@ -1,6 +1,5 @@
 # Blammo
 
-
 [![Hackage](https://img.shields.io/hackage/v/Blammo.svg?style=flat)](https://hackage.haskell.org/package/Blammo)
 [![Stackage Nightly](http://stackage.org/package/Blammo/badge/nightly)](http://stackage.org/nightly/package/Blammo)
 [![Stackage LTS](http://stackage.org/package/Blammo/badge/lts)](http://stackage.org/lts/package/Blammo)
@@ -127,14 +126,18 @@ large number to disable this feature.
 ## Out of Order Messages
 
 Blammo is built on [fast-logger], which offers concurrent logging through
-multiple buffers. By default, it uses {number-of-processors} buffers. This
-concurrent logging is fast, but may deliver messages out of order. You want this
-on production: your aggregator should be inspecting the message's time-stamp to
-re-order as necessary on the other side. However, this can be problematic in a
-CLI, where there is both little need for such high performance and a lower
-tolerance for the confusion of out of order messages.
+multiple buffers. This concurrent logging is fast, but may deliver messages out
+of order. You want this on production: your aggregator should be inspecting the
+message's time-stamp to re-order as necessary on the other side. However, this
+can be problematic in a CLI, where there is both little need for such high
+performance and a lower tolerance for the confusion of out of order messages.
 
-For such cases, you can set `LOG_CONCURRENCY=1` to use a single buffer.
+For this reason, the default behavior is to _not_ use concurrent logging, but
+setting the format to `json` will automatically enable it (with
+{number-of-cores} as the value).
+
+If you want to handle this explicitly, you can set `LOG_CONCURRENCY`; just be
+sure to do it after `LOG_FORMAT`.
 
 [fast-logger]: https://hackage.haskell.org/package/fast-logger
 
@@ -142,6 +145,7 @@ For such cases, you can set `LOG_CONCURRENCY=1` to use a single buffer.
 
 | Setting     | Setter                      | Environment variable and format           |
 | ---         | ---                         | ---                                       |
+| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty\|json`                    |
 | Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`  |
 | Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|@<path>` |
 | Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`           |

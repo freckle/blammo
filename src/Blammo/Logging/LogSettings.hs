@@ -115,7 +115,7 @@ defaultLogSettings =
     , lsFormat = LogFormatTerminal
     , lsColor = LogColorAuto
     , lsBreakpoint = 120
-    , lsConcurrency = Nothing
+    , lsConcurrency = Just 1
     }
 
 setLogSettingsLevels :: LogLevels -> LogSettings -> LogSettings
@@ -125,7 +125,17 @@ setLogSettingsDestination :: LogDestination -> LogSettings -> LogSettings
 setLogSettingsDestination x ls = ls {lsDestination = x}
 
 setLogSettingsFormat :: LogFormat -> LogSettings -> LogSettings
-setLogSettingsFormat x ls = ls {lsFormat = x}
+setLogSettingsFormat x ls = case x of
+  LogFormatTerminal ->
+    ls
+      { lsFormat = x
+      , lsConcurrency = Just 1
+      }
+  _ ->
+    ls
+      { lsFormat = x
+      , lsConcurrency = Nothing
+      }
 
 setLogSettingsColor :: LogColor -> LogSettings -> LogSettings
 setLogSettingsColor x ls = ls {lsColor = x}
@@ -135,9 +145,9 @@ setLogSettingsBreakpoint x ls = ls {lsBreakpoint = x}
 
 -- | Set the number of 'LoggerSet' Buffers used by @fast-logger@
 --
--- By default this matches 'getNumCapabilities', which is more performant but
--- does not guarantee message order. If this matters, such as in a CLI, set this
--- value to @1@.
+-- A value of 'Nothing' means to use 'getNumCapabilities'. Higher is more
+-- performant, but may deliver messages out of order. The defualt is set for TTY
+-- usage (so, @1@), but is also changed through 'setLogSettingsFormat' is used.
 --
 -- Support for this option depends on your version of @fast-logger@:
 --

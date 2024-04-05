@@ -14,6 +14,13 @@
 --   recognized (e.g. @yes@ or @no@) but should not be relied on. Unrecognized
 --   values will produce an error
 --
+-- - @LOG_BREAKPOINT@: a number representing the column-width at which to break
+--   into multi-line format.
+--
+-- - @LOG_CONCURRENCY@: number of log buffers to use. More will perform faster
+--   but result in out-of-order delivery. This is automatically disabled for
+--   @LOG_FORMAT=tty@ and set to /number-of-cores/ for @LOG_FORMAT=json@.
+--
 -- This module is meant to be imported @qualified@.
 --
 -- @
@@ -67,10 +74,10 @@ parserWith defaults =
     <$> sequenceA
       [ var (endo readLogLevels setLogSettingsLevels) "LOG_LEVEL" (def mempty)
       , var (endo readLogDestination setLogSettingsDestination) "LOG_DESTINATION" (def mempty)
-      , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
       , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)
       , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
       , var (endo readEither (setLogSettingsConcurrency . Just)) "LOG_CONCURRENCY" (def mempty)
+      , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
       ]
 
 endo
