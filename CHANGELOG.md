@@ -1,4 +1,13 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.2.1...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.2.2...main)
+
+## [v1.1.2.2](https://github.com/freckle/blammo/compare/v1.1.2.1...v1.1.2.2)
+
+- Don't automatically colorize if `TERM=dumb` is found in ENV
+- Respect [`NO_COLOR`](http://no-color.org/)
+- Automatically adjust log concurrency based on `LOG_FORMAT`:
+
+  Disable concurrency for `tty` (making that the new default) and enable it for
+  `json`. Setting `LOG_CONCURRENCY` will still be respected.
 
 ## [v1.1.2.1](https://github.com/freckle/blammo/compare/v1.1.2.0...v1.1.2.1)
 
