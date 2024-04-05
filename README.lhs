@@ -134,10 +134,8 @@ performance and a lower tolerance for the confusion of out of order messages.
 
 For this reason, the default behavior is to _not_ use concurrent logging, but
 setting the format to `json` will automatically enable it (with
-{number-of-cores} as the value).
-
-If you want to handle this explicitly, you can set `LOG_CONCURRENCY`; just be
-sure to do it after `LOG_FORMAT`.
+{number-of-cores} as the value). To handle this explicitly, set
+`LOG_CONCURRENCY`.
 
 [fast-logger]: https://hackage.haskell.org/package/fast-logger
 
