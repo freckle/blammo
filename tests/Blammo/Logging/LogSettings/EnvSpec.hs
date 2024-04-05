@@ -29,18 +29,20 @@ spec = do
       getLogSettingsConcurrency settingsTTY `shouldBe` Just 1
 
     it "Unsets LOG_CONCURRENCY if format is not tty" $ do
-      settings <- parseLogSettings []
-      settingsJSON <- parseLogSettings [("LOG_FORMAT", "json")]
+      settings <- parseLogSettings [("LOG_FORMAT", "json")]
 
-      getLogSettingsConcurrency settings `shouldBe` Just 1
-      getLogSettingsConcurrency settingsJSON `shouldBe` Nothing
+      getLogSettingsConcurrency settings `shouldBe` Nothing
 
     it "Respects explicit LOG_CONCURRENCY" $ do
-      settingsTTY <- parseLogSettings [("LOG_FORMAT", "tty"), ("LOG_CONCURRENCY", "2")]
-      settingsJSON <- parseLogSettings [("LOG_FORMAT", "json"), ("LOG_CONCURRENCY", "3")]
+      settingsTTY1 <- parseLogSettings [("LOG_CONCURRENCY", "2"), ("LOG_FORMAT", "tty")]
+      settingsTTY2 <- parseLogSettings [("LOG_FORMAT", "tty"), ("LOG_CONCURRENCY", "3")]
+      settingsJSON1 <- parseLogSettings [("LOG_FORMAT", "json"), ("LOG_CONCURRENCY", "4")]
+      settingsJSON2 <- parseLogSettings [("LOG_CONCURRENCY", "5"), ("LOG_FORMAT", "json")]
 
-      getLogSettingsConcurrency settingsTTY `shouldBe` Just 2
-      getLogSettingsConcurrency settingsJSON `shouldBe` Just 3
+      getLogSettingsConcurrency settingsTTY1 `shouldBe` Just 2
+      getLogSettingsConcurrency settingsTTY2 `shouldBe` Just 3
+      getLogSettingsConcurrency settingsJSON1 `shouldBe` Just 4
+      getLogSettingsConcurrency settingsJSON2 `shouldBe` Just 5
 
   context "NO_COLOR" $ do
     it "changes LOG_COLOR to never" $ do
@@ -53,9 +55,11 @@ spec = do
       getLogSettingsColor settingsNC `shouldBe` LogColorNever
 
     it "respects explicit LOG_COLOR after" $ do
-      settings <- parseLogSettings [("NO_COLOR", "x"), ("LOG_COLOR", "always")]
+      settings1 <- parseLogSettings [("LOG_COLOR", "always"), ("NO_COLOR", "x")]
+      settings2 <- parseLogSettings [("NO_COLOR", "x"), ("LOG_COLOR", "always")]
 
-      getLogSettingsColor settings `shouldBe` LogColorAlways
+      getLogSettingsColor settings1 `shouldBe` LogColorAlways
+      getLogSettingsColor settings2 `shouldBe` LogColorAlways
 
   context "TERM=dumb" $ do
     it "changes LOG_COLOR to never" $ do
@@ -68,11 +72,11 @@ spec = do
       getLogSettingsColor settingsNC `shouldBe` LogColorNever
 
     it "respects explicit LOG_COLOR after" $ do
-      settings <- parseLogSettings [("TERM", "dumb"), ("LOG_COLOR", "always")]
+      settings1 <- parseLogSettings [("LOG_COLOR", "always"), ("TERM", "dumb")]
+      settings2 <- parseLogSettings [("TERM", "dumb"), ("LOG_COLOR", "always")]
 
-      getLogSettingsColor settings `shouldBe` LogColorAlways
-
--- context "TERM=dumb" $ do
+      getLogSettingsColor settings1 `shouldBe` LogColorAlways
+      getLogSettingsColor settings2 `shouldBe` LogColorAlways
 
 parseLogSettings :: [(String, String)] -> IO LogSettings
 parseLogSettings env = do
