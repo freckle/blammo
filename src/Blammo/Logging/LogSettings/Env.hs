@@ -21,6 +21,10 @@
 --   but result in out-of-order delivery. This is automatically disabled for
 --   @LOG_FORMAT=tty@ and set to /number-of-cores/ for @LOG_FORMAT=json@.
 --
+-- - @NO_COLOR@: if present and non-empty, behave as if @LOG_COLOR=never@
+--
+-- - @TERM@: if present and the value @dumb@, behave as if @LOG_COLOR=never@.
+--
 -- This module is meant to be imported @qualified@.
 --
 -- @
@@ -52,7 +56,9 @@ import Prelude
 
 import Blammo.Logging.LogSettings
 import Data.Bifunctor (first)
+import Data.Bool (bool)
 import Data.Semigroup (Endo (..))
+import Data.Text (Text)
 import Env hiding (parse)
 import qualified Env
 import Text.Read (readEither)
@@ -78,6 +84,9 @@ parserWith defaults =
       , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
       , var (endo readEither (setLogSettingsConcurrency . Just)) "LOG_CONCURRENCY" (def mempty)
       , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
+      , endoWhen (setLogSettingsColor LogColorNever) <$> switch "NO_COLOR" mempty
+      , endoWhen (setLogSettingsColor LogColorNever) . (== Just "dumb")
+          <$> optional (var (nonempty @_ @Text) "TERM" mempty)
       ]
 
 endo
@@ -88,3 +97,9 @@ endo
   -- ^ How to turn the parsed value into a setter
   -> Reader e (Endo b)
 endo reader setter x = first unread $ Endo . setter <$> reader x
+
+endoWhen
+  :: (a -> a)
+  -> Bool
+  -> Endo a
+endoWhen f = bool mempty (Endo f)
