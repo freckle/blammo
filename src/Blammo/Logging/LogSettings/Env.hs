@@ -72,22 +72,29 @@ parser = parserWith defaultLogSettings
 parseWith :: LogSettings -> IO LogSettings
 parseWith = Env.parse id . parserWith
 
--- brittany-next-binding --columns 100
-
 parserWith :: LogSettings -> Parser Error LogSettings
 parserWith defaults =
   ($ defaults) . appEndo . mconcat
     <$> sequenceA
-      [ var (endo readLogLevels setLogSettingsLevels) "LOG_LEVEL" (def mempty)
-      , var (endo readLogDestination setLogSettingsDestination) "LOG_DESTINATION" (def mempty)
-      , var (endo readLogColor setLogSettingsColor) "LOG_COLOR" (def mempty)
-      , var (endo readEither setLogSettingsBreakpoint) "LOG_BREAKPOINT" (def mempty)
-      , var (endo readEither (setLogSettingsConcurrency . Just)) "LOG_CONCURRENCY" (def mempty)
-      , var (endo readLogFormat setLogSettingsFormat) "LOG_FORMAT" (def mempty)
-      , endoWhen (setLogSettingsColor LogColorNever) <$> switch "NO_COLOR" mempty
-      , endoWhen (setLogSettingsColor LogColorNever) . (== Just "dumb")
-          <$> optional (var (nonempty @_ @Text) "TERM" mempty)
+      [ endoVar readLogLevels setLogSettingsLevels "LOG_LEVEL"
+      , endoVar readLogDestination setLogSettingsDestination "LOG_DESTINATION"
+      , endoVar readLogColor setLogSettingsColor "LOG_COLOR"
+      , endoVar readEither setLogSettingsBreakpoint "LOG_BREAKPOINT"
+      , endoVar readEither (setLogSettingsConcurrency . Just) "LOG_CONCURRENCY"
+      , endoVar readLogFormat setLogSettingsFormat "LOG_FORMAT"
+      , endoSwitch (setLogSettingsColor LogColorNever) "NO_COLOR"
+      , endoOn "dumb" (setLogSettingsColor LogColorNever) "TERM"
       ]
+
+endoVar
+  :: (AsUnset e, AsUnread e)
+  => (String -> Either String a)
+  -- ^ How to parse the value
+  -> (a -> b -> b)
+  -- ^ How to turn the parsed value into a setter
+  -> String
+  -> Parser e (Endo b)
+endoVar reader setter x = var (endo reader setter) x $ def mempty
 
 endo
   :: AsUnread e
@@ -97,6 +104,12 @@ endo
   -- ^ How to turn the parsed value into a setter
   -> Reader e (Endo b)
 endo reader setter x = first unread $ Endo . setter <$> reader x
+
+endoSwitch :: (a -> a) -> String -> Parser e (Endo a)
+endoSwitch f x = endoWhen f <$> switch x mempty
+
+endoOn :: AsUnset e => Text -> (a -> a) -> String -> Parser e (Endo a)
+endoOn val f x = endoWhen f . (== Just val) <$> optional (var str x mempty)
 
 endoWhen
   :: (a -> a)
