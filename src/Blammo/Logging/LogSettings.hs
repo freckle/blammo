@@ -86,6 +86,7 @@ data LogColor
   = LogColorAuto
   | LogColorAlways
   | LogColorNever
+  deriving stock (Eq, Show)
 
 readLogColor :: String -> Either String LogColor
 readLogColor x

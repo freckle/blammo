@@ -111,6 +111,7 @@ test-suite spec
   main-is: Spec.hs
   other-modules:
       Blammo.Logging.LoggerSpec
+      Blammo.Logging.LogSettings.EnvSpec
       Blammo.Logging.LogSettings.LogLevelsSpec
       Blammo.Logging.TerminalSpec
       Paths_Blammo
@@ -129,6 +130,7 @@ test-suite spec
     , aeson
     , base <5
     , bytestring
+    , envparse
     , hspec
     , mtl
     , text
