@@ -27,6 +27,7 @@ import Blammo.Logging.LogSettings
 import Blammo.Logging.Terminal
 import Blammo.Logging.Test hiding (getLoggedMessages)
 import qualified Blammo.Logging.Test as LoggedMessages
+import Control.Concurrent (threadDelay)
 import Control.Lens (view)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (MonadIO (..))
@@ -82,7 +83,11 @@ pushLogStrLn logger str = case lLoggedMessages logger of
 
 flushLogStr :: MonadIO m => Logger -> m ()
 flushLogStr logger = case lLoggedMessages logger of
-  Nothing -> liftIO $ FastLogger.flushLogStr loggerSet
+  Nothing -> liftIO $ do
+    -- Delay for 0.1s before flushing to work around
+    -- https://github.com/kazu-yamamoto/logger/issues/213
+    threadDelay 100000
+    FastLogger.flushLogStr loggerSet
   Just _ -> pure ()
  where
   loggerSet = getLoggerLoggerSet logger
