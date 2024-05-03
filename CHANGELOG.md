@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.2.2...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.2.3...main)
+
+## [v1.1.2.3](https://github.com/freckle/blammo/compare/v1.1.2.2...v1.1.2.3)
+
+- Add small delay (0.1s) in `flushLogger` to work around fast-logger bug
 
 ## [v1.1.2.2](https://github.com/freckle/blammo/compare/v1.1.2.1...v1.1.2.2)
 
