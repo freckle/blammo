@@ -27,7 +27,7 @@ packages:
     hackage: monad-logger-aeson-0.4.0.3
 snapshots:
 - completed:
-    sha256: 0ce5b34f94d7dda9e8c00cc04aa4554818d293861038bbc83fbc8ffb7c7207b3
-    size: 558543
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/12/8.yaml
-  original: nightly-2022-12-08
+    sha256: 95b923f4f2efe2b6ba05c93ded367dfab81c545c0700731e5bef70bab03d9903
+    size: 644344
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2024/5/28.yaml
+  original: nightly-2024-05-28
