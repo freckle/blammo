@@ -1,4 +1,6 @@
 resolver: lts-18.28
 extra-deps:
-  - monad-logger-aeson-0.2.0.1
+  - fast-logger-3.2.3
+  - monad-logger-0.3.39
+  - monad-logger-aeson-0.4.0.3
   - context-0.2.0.0

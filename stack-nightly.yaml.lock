@@ -3,7 +3,28 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: fast-logger-3.2.3@sha256:41b4f1c07d5ee4a7cc785689eb7772554d29ddbbcced3cc184fe50fc63ece3f7,2176
+    pantry-tree:
+      sha256: c4a8dcfa5f5bc3bd77cfe86d904e96f90607adc1e4f3f1cf082e722673ee7230
+      size: 1302
+  original:
+    hackage: fast-logger-3.2.3
+- completed:
+    hackage: monad-logger-0.3.39@sha256:edd49f160b77abe4883f0579839d30403cd425853ab83397abb44473ebc5445a,1759
+    pantry-tree:
+      sha256: 3c41320fd5a111cc02b13f1190bdb98b92cc270d7d52cfe5a85c667b08fbc528
+      size: 396
+  original:
+    hackage: monad-logger-0.3.39
+- completed:
+    hackage: monad-logger-aeson-0.4.0.3@sha256:1fc0f9f1f2dc8598c8f6f24625023b892a477cee3abaa67a4cc0e81b0dcdf6c6,6215
+    pantry-tree:
+      sha256: c2b3130a2326606a1087c8548c8f1682a299b554ffe84d9a460b7c382b3ebd84
+      size: 7096
+  original:
+    hackage: monad-logger-aeson-0.4.0.3
 snapshots:
 - completed:
     sha256: 0ce5b34f94d7dda9e8c00cc04aa4554818d293861038bbc83fbc8ffb7c7207b3
