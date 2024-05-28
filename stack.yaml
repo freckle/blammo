@@ -1,1 +1,8 @@
 resolver: lts-20.3
+extra-deps:
+  - fast-logger-3.2.3
+  - monad-logger-0.3.39
+
+allow-newer: true
+allow-newer-deps:
+  - monad-logger-aeson

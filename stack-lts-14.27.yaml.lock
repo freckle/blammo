@@ -7,69 +7,83 @@ packages:
 - completed:
     hackage: envparse-0.5.0@sha256:ba9ad793ed2fcfce644b3ebb8eb6c2fef2e44924f75e1b324956340e664c416e,2849
     pantry-tree:
-      size: 1181
       sha256: 419a6843224ad32755064276f8e36500c71238db1b5807a2c9596fa4ed909a5a
+      size: 1181
   original:
     hackage: envparse-0.5.0
 - completed:
-    hackage: monad-logger-aeson-0.3.0.2@sha256:28b424cef9799aa4a3e8680431dd571ba07b2fb05d4928703c209ee07a0c0a97,5193
+    hackage: fast-logger-3.2.3@sha256:41b4f1c07d5ee4a7cc785689eb7772554d29ddbbcced3cc184fe50fc63ece3f7,2176
     pantry-tree:
-      size: 5103
-      sha256: 9650ba64ec9e7eacb0ea6132c262ad458c78dfa9bc29cee5ade8c0bd8994cb27
+      sha256: c4a8dcfa5f5bc3bd77cfe86d904e96f90607adc1e4f3f1cf082e722673ee7230
+      size: 1302
   original:
-    hackage: monad-logger-aeson-0.3.0.2
+    hackage: fast-logger-3.2.3
+- completed:
+    hackage: monad-logger-0.3.39@sha256:edd49f160b77abe4883f0579839d30403cd425853ab83397abb44473ebc5445a,1759
+    pantry-tree:
+      sha256: 3c41320fd5a111cc02b13f1190bdb98b92cc270d7d52cfe5a85c667b08fbc528
+      size: 396
+  original:
+    hackage: monad-logger-0.3.39
+- completed:
+    hackage: monad-logger-aeson-0.4.0.3@sha256:1fc0f9f1f2dc8598c8f6f24625023b892a477cee3abaa67a4cc0e81b0dcdf6c6,6215
+    pantry-tree:
+      sha256: c2b3130a2326606a1087c8548c8f1682a299b554ffe84d9a460b7c382b3ebd84
+      size: 7096
+  original:
+    hackage: monad-logger-aeson-0.4.0.3
 - completed:
     hackage: aeson-1.5.2.0@sha256:d00c7aa51969b2849550e4dee14c9ce188504d55ed8d7f734ce9f6976db452f6,6786
     pantry-tree:
-      size: 39758
       sha256: 992b01282d72e4db664289db69a846a4ec675379ca96824ba902a7541104d409
+      size: 39758
   original:
     hackage: aeson-1.5.2.0
 - completed:
     hackage: context-0.2.0.1@sha256:b5a1390a5ad11b7edd0449c9ef96823f082bff4988bd09583e37a4e93e9aad10,1891
     pantry-tree:
-      size: 952
       sha256: ebb043dd007864588c6b1676a0d30e521deab4353a3f19716f6f6f7d52b62817
+      size: 952
   original:
     hackage: context-0.2.0.1
 - completed:
     hackage: hspec-2.7.9@sha256:74cc9958698d9964047072971cb5557c95ebb4ee8a605d8a9458ac86a41da6ec,1709
     pantry-tree:
-      size: 583
       sha256: 0505115fce89d92eea16223d996e7aae57302c83d588db0de84abdd1b110a230
+      size: 583
   original:
     hackage: hspec-2.7.9
 - completed:
-    hackage: hspec-core-2.7.9@sha256:5153ef21166ad380abf800cae27a3956ed5409bf1a1f1b58356733747a03bff5,4730
+    hackage: hspec-core-2.7.9@sha256:c17d18974f057edb662dca266cc114c0650f1d5674e0ddc65969137e92feb946,4748
     pantry-tree:
+      sha256: c510d5513116c815a5a675eb09e8d1ad79e8efcd8d482bfd3734335b35499e04
       size: 3886
-      sha256: f07977ee2b6f33671b4fa993f579179f2b07b78a4d8cd2a1989b537afaeb0360
   original:
     hackage: hspec-core-2.7.9
 - completed:
     hackage: hspec-discover-2.7.9@sha256:7b16072af84135b8a66c4fd2cce3a9b30d0a6509ac4ca6cb4394ab038efc8ed5,2183
     pantry-tree:
-      size: 1131
       sha256: ee98d716f75904f3d7359c2a4df85cddff94e70befd6a687d5d8c17346cecaed
+      size: 1131
   original:
     hackage: hspec-discover-2.7.9
 - completed:
-    hackage: primitive-0.7.4.0@sha256:89b88a3e08493b7727fa4089b0692bfbdf7e1e666ef54635f458644eb8358764,2857
+    hackage: primitive-0.7.4.0@sha256:c2f0ed97b3dce97f2f43b239c3be8b136e4368f1eb7b61322ee9ac98f604622b,2982
     pantry-tree:
+      sha256: 1cd1f40729b3038f1140fbf506ce59ab2db3f745b1727e0beba6390621aa9630
       size: 1655
-      sha256: 71a850c658b70e869da19f61615d87d9d6ecec597f0e3d4b498da56559114829
   original:
     hackage: primitive-0.7.4.0
 - completed:
     hackage: these-1.1@sha256:18ff38deaaf314cec509f9bd41c2a7a2a6b64210846eed89976173534b5bccb6,2650
     pantry-tree:
-      size: 351
       sha256: 3b40e44bbd8f184b5c4a1a3134a4a0826a2aa03cd8b33f2e6533bd336e6f9fe8
+      size: 351
   original:
     hackage: these-1.1
 snapshots:
 - completed:
+    sha256: 7ea31a280c56bf36ff591a7397cc384d0dff622e7f9e4225b47d8980f019a0f0
     size: 524996
     url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/27.yaml
-    sha256: 7ea31a280c56bf36ff591a7397cc384d0dff622e7f9e4225b47d8980f019a0f0
   original: lts-14.27

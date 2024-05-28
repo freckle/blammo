@@ -1,1 +1,7 @@
-resolver: nightly-2022-12-08
+resolver: nightly-2024-05-28
+extra-deps:
+  - fast-logger-3.2.3
+
+allow-newer: true
+allow-newer-deps:
+  - monad-logger-aeson
