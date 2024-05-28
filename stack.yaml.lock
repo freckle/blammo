@@ -18,13 +18,6 @@ packages:
       size: 396
   original:
     hackage: monad-logger-0.3.39
-- completed:
-    hackage: monad-logger-aeson-0.4.0.3@sha256:1fc0f9f1f2dc8598c8f6f24625023b892a477cee3abaa67a4cc0e81b0dcdf6c6,6215
-    pantry-tree:
-      sha256: c2b3130a2326606a1087c8548c8f1682a299b554ffe84d9a460b7c382b3ebd84
-      size: 7096
-  original:
-    hackage: monad-logger-aeson-0.4.0.3
 snapshots:
 - completed:
     sha256: 03cec7d96ed78877b03b5c2bc5e31015b47f69af2fe6a62d994a42b7a43c5805
