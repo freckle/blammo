@@ -58,10 +58,11 @@ import Prelude
 
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
+import Blammo.Logging.LoggingT
 import Control.Lens ((^.))
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
-import Control.Monad.Logger.Aeson
+import Control.Monad.Logger.Aeson hiding (LoggingT (..), filterLogger)
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
 import Data.ByteString (ByteString)

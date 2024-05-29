@@ -54,10 +54,14 @@ library:
     - exceptions
     - fast-logger >= 3.2.3 # fix for bad flush behavior
     - lens
+    - monad-control
     - monad-logger-aeson
     - mtl
+    - resourcet
     - text
     - time
+    - transformers
+    - transformers-base
     - vector
     - unliftio
 

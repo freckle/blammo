@@ -29,6 +29,7 @@ library
       Blammo.Logging.Colors
       Blammo.Logging.Internal.Logger
       Blammo.Logging.Logger
+      Blammo.Logging.LoggingT
       Blammo.Logging.LogSettings
       Blammo.Logging.LogSettings.Env
       Blammo.Logging.LogSettings.LogLevels
@@ -64,10 +65,14 @@ library
     , fast-logger >=3.2.3
     , http-types
     , lens
+    , monad-control
     , monad-logger-aeson
     , mtl
+    , resourcet
     , text
     , time
+    , transformers
+    , transformers-base
     , unliftio
     , unliftio-core
     , unordered-containers
