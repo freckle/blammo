@@ -7,6 +7,7 @@ module Blammo.Logging.LoggingT (LoggingT (..), filterLogger) where
 
 import Prelude
 
+import Blammo.Logging.Internal.LogAction
 import Control.Applicative (Alternative (..), Applicative (..))
 import Control.Monad (when)
 import Control.Monad.Base (MonadBase (..))
@@ -21,8 +22,8 @@ import Control.Monad.Trans.Control
   )
 import Control.Monad.Trans.Resource (MonadResource (..))
 
-newtype LoggingT m a = LoggingT
-  {runLoggingT :: (Loc -> LogSource -> LogLevel -> LogStr -> IO ()) -> m a}
+newtype LoggingT m a = LoggingT {runLoggingT :: LogAction IO -> m a}
+
 instance Functor m => Functor (LoggingT m) where
   fmap f logger = LoggingT (fmap f . runLoggingT logger)
 
@@ -89,10 +90,10 @@ instance MonadBaseControl b m => MonadBaseControl b (LoggingT m) where
   restoreM = LoggingT . const . restoreM
 
 instance MonadIO m => MonadLogger (LoggingT m) where
-  monadLoggerLog a b c d = LoggingT $ \f -> liftIO $ f a b c (toLogStr d)
+  monadLoggerLog a b c d = LoggingT $ \f -> liftIO $ runLogAction f a b c d
 
 instance MonadIO m => MonadLoggerIO (LoggingT m) where
-  askLoggerIO = LoggingT return
+  askLoggerIO = LoggingT $ \(LogAction f) -> pure f
 
 instance MonadUnliftIO m => MonadUnliftIO (LoggingT m) where
   withRunInIO inner =
@@ -113,6 +114,6 @@ filterLogger
   :: (LogSource -> LogLevel -> Bool)
   -> LoggingT m a
   -> LoggingT m a
-filterLogger p (LoggingT f) = LoggingT $ \logger ->
-  f $ \loc src level msg ->
+filterLogger p (LoggingT f) = LoggingT $ \(LogAction logger) ->
+  f $ LogAction $ \loc src level msg ->
     when (p src level) $ logger loc src level msg
