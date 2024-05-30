@@ -3,9 +3,11 @@
 ## [v1.2.0.0](https://github.com/freckle/blammo/compare/v1.1.3.0...v1.2.0.0)
 
 - Defined new `LoggerT` instead of re-exporting from the `monad-logger` package.
-  This `LoggerT` is now internally a `ReaderT` of our `Logger` type rather than
-  of a `monad-logger` log action `Loc -> LogSource -> LogLevel -> LogStr -> IO ()`,
-  which makes it a bit more powerful as the latter can be obtained from the former.
+  This `LoggerT` is also a `ReaderT`-like newtype but based on our `Logger` type
+  rather than rather than on a log action
+  `Loc -> LogSource -> LogLevel -> LogStr -> IO ()`,
+  which makes it a bit more powerful, since the log can be obtained from the
+  `Logger`.
 
 ## [v1.1.3.0](https://github.com/freckle/blammo/compare/v1.1.2.3...v1.1.3.0)
 
