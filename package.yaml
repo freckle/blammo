@@ -41,6 +41,7 @@ default-extensions:
   - NoImplicitPrelude
   - OverloadedStrings
   - RecordWildCards
+  - StandaloneDeriving
   - TypeApplications
 
 library:
