@@ -8,6 +8,9 @@
   `Loc -> LogSource -> LogLevel -> LogStr -> IO ()`,
   which makes it a bit more powerful, since the log can be obtained from the
   `Logger`.
+- Added new `LoggerT'` which is a generalized variant of `LoggerT`; rather than
+  being fixed to `Logger` as the reader context, it has a type parameter which
+  should be something with a `HasLogger` instance.
 
 ## [v1.1.3.0](https://github.com/freckle/blammo/compare/v1.1.2.3...v1.1.3.0)
 

@@ -4,7 +4,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Blammo.Logging.LoggingT (LoggingT, runLoggerLoggingT) where
+module Blammo.Logging.LoggingT (LoggingT, LoggingT' (..), runLoggerLoggingT) where
 
 import Prelude
 

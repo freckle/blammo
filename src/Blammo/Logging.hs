@@ -33,6 +33,7 @@ module Blammo.Logging
   , MonadLogger (..)
   , MonadLoggerIO (..)
   , LoggingT
+  , LoggingT' (..)
 
     -- ** Common logging functions
 
