@@ -4,17 +4,20 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Blammo.Logging.LoggingT (LoggingT (..), filterLogger) where
+module Blammo.Logging.LoggingT (LoggingT (..), runLoggerLoggingT, filterLogger) where
 
 import Prelude
 
 import Blammo.Logging.Internal.LogAction
+import Blammo.Logging.Internal.LoggerLogAction (loggerLogAction)
+import Blammo.Logging.Logger
 import Control.Applicative (Alternative (..), Applicative (..))
+import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Catch (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import Control.Monad.IO.Class (MonadIO (..))
-import Control.Monad.IO.Unlift (MonadUnliftIO (..))
+import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
   ( LogLevel
   , LogSource
@@ -28,6 +31,7 @@ import Control.Monad.Trans.Control
   )
 import Control.Monad.Trans.Reader (ReaderT (..))
 import Control.Monad.Trans.Resource (MonadResource (..))
+import UnliftIO.Exception (finally)
 
 newtype LoggingT m a = LoggingT {runLoggingT :: LogAction IO -> m a}
   deriving
@@ -86,3 +90,12 @@ filterLogger
 filterLogger p (LoggingT f) = LoggingT $ \(LogAction logger) ->
   f $ LogAction $ \loc src level msg ->
     when (p src level) $ logger loc src level msg
+
+runLoggerLoggingT
+  :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
+runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
+  runLoggingT
+    (filterLogger (getLoggerShouldLog logger) f)
+    (loggerLogAction logger)
+ where
+  logger = env ^. loggerL
