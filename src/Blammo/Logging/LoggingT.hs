@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -8,10 +9,15 @@ module Blammo.Logging.LoggingT (LoggingT, LoggingT' (..), runLoggerLoggingT) whe
 
 import Prelude
 
+#if MIN_VERSION_base(4, 19, 0)
+#else
+import Control.Applicative (Applicative (..))
+#endif
+
 import Blammo.Logging.Internal.LogAction
 import Blammo.Logging.Internal.LoggerLogAction (loggerLogAction)
 import Blammo.Logging.Logger
-import Control.Applicative (Alternative (..), Applicative (..))
+import Control.Applicative (Alternative (..))
 import Control.Lens ((^.))
 import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Catch (MonadCatch (..), MonadMask (..), MonadThrow (..))
