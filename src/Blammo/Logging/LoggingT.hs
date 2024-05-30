@@ -10,6 +10,13 @@ module Blammo.Logging.LoggingT (LoggingT, LoggingT' (..), runLoggerLoggingT) whe
 
 import Prelude
 
+#if MIN_VERSION_base(4, 13, 0)
+#else
+#if MIN_VERSION_base(4, 9, 0)
+import Control.Monad.Fail (MonadFail (..))
+#endif
+#endif
+
 #if MIN_VERSION_base(4, 19, 0)
 #else
 import Control.Applicative (Applicative (..))
@@ -45,7 +52,6 @@ newtype LoggingT' env m a = LoggingT {runLoggingT :: env -> m a}
     , Applicative
     , Alternative
     , Monad
-    , MonadFail
     , MonadIO
     , MonadThrow
     , MonadCatch
@@ -57,6 +63,11 @@ newtype LoggingT' env m a = LoggingT {runLoggingT :: env -> m a}
     ( MonadTrans
     )
     via ReaderT env
+
+#if MIN_VERSION_base(4, 9, 0)
+deriving via ReaderT env m
+  instance MonadFail m => MonadFail (LoggingT' env m)
+#endif
 
 #if MIN_VERSION_unliftio_core(0, 2, 0)
 deriving via (ReaderT env m)
