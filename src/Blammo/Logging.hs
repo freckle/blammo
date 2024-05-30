@@ -14,6 +14,7 @@ module Blammo.Logging
   , Logger
   , HasLogger (..)
   , newLogger
+  , withLogger
   , runLoggerLoggingT
 
     -- * Re-exports from "Control.Monad.Logger.Aeson"
@@ -58,7 +59,15 @@ module Blammo.Logging
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.LoggingT
-import Control.Monad.Catch (MonadMask)
+import Control.Monad.Catch (MonadMask, finally)
+import Control.Monad.IO.Class
 import Control.Monad.Logger.Aeson hiding (LoggingT (..), filterLogger)
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
+
+-- | Create a new 'Logger', pass it to a callback, and ensure
+--   that the logger is flushed afterward
+withLogger :: (MonadIO m, MonadMask m) => LogSettings -> (Logger -> m a) -> m a
+withLogger settings f = do
+  logger <- newLogger settings
+  f logger `finally` flushLogStr logger
