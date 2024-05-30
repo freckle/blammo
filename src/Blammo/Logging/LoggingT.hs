@@ -4,7 +4,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Blammo.Logging.LoggingT (LoggingT (..), runLoggerLoggingT, filterLogger) where
+module Blammo.Logging.LoggingT (LoggingT (..), runLoggerLoggingT) where
 
 import Prelude
 
@@ -13,15 +13,12 @@ import Blammo.Logging.Internal.LoggerLogAction (loggerLogAction)
 import Blammo.Logging.Logger
 import Control.Applicative (Alternative (..), Applicative (..))
 import Control.Lens ((^.))
-import Control.Monad (when)
 import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Catch (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
-  ( LogLevel
-  , LogSource
-  , MonadLogger (..)
+  ( MonadLogger (..)
   , MonadLoggerIO (..)
   )
 import Control.Monad.Trans.Class (MonadTrans (..))
@@ -33,7 +30,7 @@ import Control.Monad.Trans.Reader (ReaderT (..))
 import Control.Monad.Trans.Resource (MonadResource (..))
 import UnliftIO.Exception (finally)
 
-newtype LoggingT m a = LoggingT {runLoggingT :: LogAction IO -> m a}
+newtype LoggingT m a = LoggingT {runLoggingT :: Logger -> m a}
   deriving
     ( Functor
     , Applicative
@@ -47,11 +44,11 @@ newtype LoggingT m a = LoggingT {runLoggingT :: LogAction IO -> m a}
     , MonadMask
     , MonadResource
     )
-    via ReaderT (LogAction IO) m
+    via ReaderT Logger m
   deriving
     ( MonadTrans
     )
-    via ReaderT (LogAction IO)
+    via ReaderT Logger
 
 instance MonadBase b m => MonadBase b (LoggingT m) where
   liftBase = lift . liftBase
@@ -69,10 +66,12 @@ instance MonadBaseControl b m => MonadBaseControl b (LoggingT m) where
   restoreM = LoggingT . const . restoreM
 
 instance MonadIO m => MonadLogger (LoggingT m) where
-  monadLoggerLog a b c d = LoggingT $ \f -> liftIO $ runLogAction f a b c d
+  monadLoggerLog a b c d = LoggingT $ \logger ->
+    liftIO $ runLogAction (loggerLogAction logger) a b c d
 
 instance MonadIO m => MonadLoggerIO (LoggingT m) where
-  askLoggerIO = LoggingT $ \(LogAction f) -> pure f
+  askLoggerIO = LoggingT $ \logger ->
+    pure $ runLogAction $ loggerLogAction logger
 
 instance (Applicative m, Semigroup a) => Semigroup (LoggingT m a) where
   (<>) = liftA2 (<>)
@@ -80,22 +79,9 @@ instance (Applicative m, Semigroup a) => Semigroup (LoggingT m a) where
 instance (Applicative m, Monoid a) => Monoid (LoggingT m a) where
   mempty = pure mempty
 
--- | Only log messages passing the given predicate function
---
--- This can be a convenient way, for example, to ignore debug level messages.
-filterLogger
-  :: (LogSource -> LogLevel -> Bool)
-  -> LoggingT m a
-  -> LoggingT m a
-filterLogger p (LoggingT f) = LoggingT $ \(LogAction logger) ->
-  f $ LogAction $ \loc src level msg ->
-    when (p src level) $ logger loc src level msg
-
 runLoggerLoggingT
   :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
-runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
-  runLoggingT
-    (filterLogger (getLoggerShouldLog logger) f)
-    (loggerLogAction logger)
+runLoggerLoggingT env f =
+  runLoggingT f logger `finally` flushLogStr logger
  where
   logger = env ^. loggerL
