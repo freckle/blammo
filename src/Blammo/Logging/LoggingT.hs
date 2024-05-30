@@ -2,6 +2,7 @@
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -22,7 +23,7 @@ import Control.Lens ((^.))
 import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Catch (MonadCatch (..), MonadMask (..), MonadThrow (..))
 import Control.Monad.IO.Class (MonadIO (..))
-import Control.Monad.IO.Unlift (MonadUnliftIO)
+import Control.Monad.IO.Unlift (MonadUnliftIO (..))
 import Control.Monad.Logger.Aeson
   ( MonadLogger (..)
   , MonadLoggerIO (..)
@@ -46,7 +47,6 @@ newtype LoggingT' env m a = LoggingT {runLoggingT :: env -> m a}
     , Monad
     , MonadFail
     , MonadIO
-    , MonadUnliftIO
     , MonadThrow
     , MonadCatch
     , MonadMask
@@ -57,6 +57,24 @@ newtype LoggingT' env m a = LoggingT {runLoggingT :: env -> m a}
     ( MonadTrans
     )
     via ReaderT env
+
+#if MIN_VERSION_unliftio_core(0, 2, 0)
+deriving via (ReaderT env m)
+  instance MonadUnliftIO m => MonadUnliftIO (LoggingT' env m)
+#else
+instance MonadUnliftIO m => MonadUnliftIO (LoggingT' env m) where
+#if MIN_VERSION_unliftio_core(0, 1, 1)
+  withRunInIO inner =
+    LoggingT $ \r ->
+    withRunInIO $ \run ->
+    inner (run . flip runLoggingT r)
+#else
+  askUnliftIO =
+    LoggingT $ \f ->
+    withUnliftIO $ \u ->
+    return (UnliftIO (unliftIO u . flip runLoggingT f))
+#endif
+#endif
 
 instance MonadBase b m => MonadBase b (LoggingT' env m) where
   liftBase = lift . liftBase
