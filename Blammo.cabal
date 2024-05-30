@@ -29,6 +29,7 @@ library
       Blammo.Logging.Colors
       Blammo.Logging.Internal.LogAction
       Blammo.Logging.Internal.Logger
+      Blammo.Logging.Internal.LoggerLogAction
       Blammo.Logging.Logger
       Blammo.Logging.LoggingT
       Blammo.Logging.LogSettings

@@ -56,7 +56,7 @@ module Blammo.Logging
 
 import Prelude
 
-import Blammo.Logging.Internal.LogAction
+import Blammo.Logging.Internal.LoggerLogAction (loggerLogAction)
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.LoggingT
@@ -73,13 +73,6 @@ runLoggerLoggingT
 runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
   runLoggingT
     (filterLogger (getLoggerShouldLog logger) f)
-    (loggerOutput logger)
+    (loggerLogAction logger)
  where
   logger = env ^. loggerL
-
-loggerOutput :: Logger -> LogAction IO
-loggerOutput logger =
-  LogAction $
-    defaultOutputWith $
-      defaultOutputOptions $ \logLevel bytes ->
-        pushLogStrLn logger $ toLogStr $ getLoggerReformat logger logLevel bytes
