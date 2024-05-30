@@ -18,14 +18,14 @@ import Control.Monad.Fail (MonadFail (..))
 #endif
 
 #if MIN_VERSION_base(4, 19, 0)
+import Control.Applicative (Alternative (..))
 #else
-import Control.Applicative (Applicative (..))
+import Control.Applicative (Alternative (..), Applicative (..))
 #endif
 
 import Blammo.Logging.Internal.LogAction
 import Blammo.Logging.Internal.LoggerLogAction (loggerLogAction)
 import Blammo.Logging.Logger
-import Control.Applicative (Alternative (..))
 import Control.Lens ((^.))
 import Control.Monad.Base (MonadBase (..))
 import Control.Monad.Catch (MonadCatch (..), MonadMask (..), MonadThrow (..))
