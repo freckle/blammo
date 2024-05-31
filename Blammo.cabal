@@ -45,6 +45,7 @@ library
       src
   default-extensions:
       DerivingStrategies
+      GeneralisedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -88,6 +89,7 @@ test-suite readme
       Paths_Blammo
   default-extensions:
       DerivingStrategies
+      GeneralisedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -123,6 +125,7 @@ test-suite spec
       tests
   default-extensions:
       DerivingStrategies
+      GeneralisedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings

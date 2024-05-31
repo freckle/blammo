@@ -37,6 +37,7 @@ dependencies:
 
 default-extensions:
   - DerivingStrategies
+  - GeneralisedNewtypeDeriving
   - LambdaCase
   - NoImplicitPrelude
   - OverloadedStrings
