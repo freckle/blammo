@@ -67,26 +67,12 @@ import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
-import Data.ByteString (ByteString)
 import UnliftIO.Exception (finally)
 
 runLoggerLoggingT
   :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
 runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
-  runLoggingT
-    (filterLogger (getLoggerShouldLog logger) f)
-    (loggerOutput logger $ getLoggerReformat logger)
+  runLoggingT f $ \loc source level msg ->
+    runLogAction logger loc source level msg
  where
   logger = env ^. loggerL
-
-loggerOutput
-  :: Logger
-  -> (LogLevel -> ByteString -> ByteString)
-  -> Loc
-  -> LogSource
-  -> LogLevel
-  -> LogStr
-  -> IO ()
-loggerOutput logger reformat =
-  defaultOutputWith $ defaultOutputOptions $ \logLevel bytes -> do
-    pushLogStrLn logger $ toLogStr $ reformat logLevel bytes
