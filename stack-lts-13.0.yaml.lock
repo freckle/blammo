@@ -75,9 +75,9 @@ packages:
   original:
     hackage: hspec-2.7.9
 - completed:
-    hackage: hspec-core-2.7.9@sha256:5153ef21166ad380abf800cae27a3956ed5409bf1a1f1b58356733747a03bff5,4730
+    hackage: hspec-core-2.7.9@sha256:c17d18974f057edb662dca266cc114c0650f1d5674e0ddc65969137e92feb946,4748
     pantry-tree:
-      sha256: f07977ee2b6f33671b4fa993f579179f2b07b78a4d8cd2a1989b537afaeb0360
+      sha256: c510d5513116c815a5a675eb09e8d1ad79e8efcd8d482bfd3734335b35499e04
       size: 3886
   original:
     hackage: hspec-core-2.7.9
@@ -89,9 +89,9 @@ packages:
   original:
     hackage: hspec-discover-2.7.9
 - completed:
-    hackage: primitive-0.7.4.0@sha256:89b88a3e08493b7727fa4089b0692bfbdf7e1e666ef54635f458644eb8358764,2857
+    hackage: primitive-0.7.4.0@sha256:c2f0ed97b3dce97f2f43b239c3be8b136e4368f1eb7b61322ee9ac98f604622b,2982
     pantry-tree:
-      sha256: 71a850c658b70e869da19f61615d87d9d6ecec597f0e3d4b498da56559114829
+      sha256: 1cd1f40729b3038f1140fbf506ce59ab2db3f745b1727e0beba6390621aa9630
       size: 1655
   original:
     hackage: primitive-0.7.4.0
@@ -146,7 +146,7 @@ packages:
     hackage: vector-algorithms-0.8.0.1
 snapshots:
 - completed:
-    sha256: 95f014df58d0679b1c4a2b7bf2b652b61da8d30de5f571abb0d59015ef678646
-    size: 509471
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/12/26.yaml
-  original: lts-12.26
+    sha256: 8d3c33e0feab8e04b9ed31452e0219a2b827ed1338c809f79d986c71a177e6ba
+    size: 491155
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/0.yaml
+  original: lts-13.0

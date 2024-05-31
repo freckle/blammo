@@ -1,4 +1,4 @@
-resolver: lts-12.26
+resolver: lts-13.0
 extra-deps:
   - envparse-0.5.0
   - fast-logger-3.2.3
