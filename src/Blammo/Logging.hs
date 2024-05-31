@@ -30,10 +30,11 @@ module Blammo.Logging
   , myThreadContext
   , Pair
 
-    -- ** Transformer
+    -- ** Transformers
   , MonadLogger (..)
   , MonadLoggerIO (..)
   , LoggingT
+  , WithLogger (..)
 
     -- ** Common logging functions
 
@@ -59,6 +60,7 @@ import Prelude
 
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
+import Blammo.Logging.WithLogger
 import Control.Lens ((^.))
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)

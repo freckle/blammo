@@ -36,6 +36,7 @@ library
       Blammo.Logging.Terminal
       Blammo.Logging.Terminal.LogPiece
       Blammo.Logging.Test
+      Blammo.Logging.WithLogger
       Data.Aeson.Compat
       Network.Wai.Middleware.Logging
       System.Log.FastLogger.Compat
