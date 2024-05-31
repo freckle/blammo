@@ -2,6 +2,9 @@
 
 ## [v1.1.4.0](https://github.com/freckle/blammo/compare/v1.1.3.0...v1.1.4.0)
 
+- Add `Blammo.Logging.withLogger`
+- Add `Blammo.Logging.Logger.runLogAction`
+
 ## [v1.1.3.0](https://github.com/freckle/blammo/compare/v1.1.2.3...v1.1.3.0)
 
 - Update fast-logger to fix log flushing bug, and remove 0.1s delay that was

@@ -13,6 +13,7 @@ module Blammo.Logging
   , setLogSettingsConcurrency
   , Logger
   , HasLogger (..)
+  , withLogger
   , newLogger
   , runLoggerLoggingT
 
