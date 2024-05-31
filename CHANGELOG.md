@@ -1,4 +1,6 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.3.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.4.0...main)
+
+## [v1.1.4.0](https://github.com/freckle/blammo/compare/v1.1.3.0...v1.1.4.0)
 
 ## [v1.1.3.0](https://github.com/freckle/blammo/compare/v1.1.2.3...v1.1.3.0)
 
