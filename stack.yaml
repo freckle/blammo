@@ -1,4 +1,4 @@
-resolver: lts-20.3
+resolver: lts-20.26
 extra-deps:
   - fast-logger-3.2.3
   - monad-logger-0.3.39
