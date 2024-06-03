@@ -61,7 +61,7 @@ import Prelude
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.WithLogger
-import Control.Lens ((^.))
+import Control.Lens (view)
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
@@ -75,4 +75,4 @@ runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
   runLoggingT f $ \loc source level msg ->
     runLogAction logger loc source level msg
  where
-  logger = env ^. loggerL
+  logger = view loggerL env
