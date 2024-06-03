@@ -339,6 +339,8 @@ waiMiddleware app =
 ## Integration with Warp
 
 ```hs
+import qualified Network.Wai.Handler.Warp as Warp
+
 instance HasLogger App where
   -- ...
 
@@ -346,7 +348,7 @@ warpSettings :: App -> Settings
 warpSettings app = setOnException onEx $ defaultSettings
  where
   onEx _req ex =
-    when (Network.Wai.Handler.Warp.defaultShouldDisplayException ex)
+    when (Warp.defaultShouldDisplayException ex)
       $ runWithLogger app
       $ logError
       $ "Warp exception" :# ["exception" .= displayException ex]
