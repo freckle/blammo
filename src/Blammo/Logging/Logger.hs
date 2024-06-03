@@ -54,7 +54,7 @@ import System.Log.FastLogger.Compat
 import UnliftIO (MonadUnliftIO)
 import UnliftIO.Exception (finally, throwString)
 
--- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end.
+-- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end
 --
 -- Applications should avoid calling this more than once in their lifecycle.
 withLogger :: MonadUnliftIO m => LogSettings -> (Logger -> m a) -> m a

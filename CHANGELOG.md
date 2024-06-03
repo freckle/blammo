@@ -2,6 +2,7 @@
 
 ## [v1.2.1.0](https://github.com/freckle/blammo/compare/1.2.0.0...v1.2.1.0)
 
+- Add `Blammo.Logging.Single.withLoggerEnv`
 - Add instance `MonadUnliftIO m => MonadUnliftIO (WithLogger env m)`
 
 ## [v1.2.0.0](https://github.com/freckle/blammo/compare/v1.1.3.0...v1.2.0.0)
