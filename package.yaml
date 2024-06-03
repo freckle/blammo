@@ -37,7 +37,6 @@ dependencies:
 
 default-extensions:
   - DerivingStrategies
-  - DerivingVia
   - GeneralizedNewtypeDeriving
   - LambdaCase
   - NoImplicitPrelude

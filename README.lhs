@@ -26,6 +26,7 @@ All built on the well-known `MonadLogger` interface and using an efficient
 ```haskell
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingVia #-}
 
 module Main (module Main) where
 
