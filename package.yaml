@@ -93,7 +93,7 @@ tests:
     dependencies:
       - Blammo
       - aeson
+      - lens
       - markdown-unlit
-      - monad-logger
       - mtl
       - text

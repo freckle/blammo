@@ -26,8 +26,6 @@ All built on the well-known `MonadLogger` interface and using an efficient
 ```haskell
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Main (module Main) where
 
@@ -37,9 +35,9 @@ import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
 import Text.Markdown.Unlit ()
-import Control.Monad.IO.Class (MonadIO (liftIO))
-import Control.Monad.Logger (Loc, LogStr, ToLogStr (toLogStr))
-import Control.Monad.Reader (asks, MonadReader, ReaderT (runReaderT))
+import Control.Lens (lens)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Reader (MonadReader, ReaderT (runReaderT))
 ```
 -->
 
@@ -199,13 +197,16 @@ runAppT app f = runLoggerLoggingT app $ runReaderT f app
 
 If your app monad is not a transformer stack containing `LoggingT` (ex: the
 [ReaderT pattern](https://www.fpcomplete.com/blog/readert-design-pattern/)), you
-can implement a custom instance of `MonadLogger`:
+can derive `MonadLogger` via `WithLogger`:
 
 ```haskell
 data AppEnv = AppEnv
-  { appLogFunc :: Loc -> LogSource -> LogLevel -> LogStr -> IO ()
+  { appLogger :: Logger
   -- ...
   }
+
+instance HasLogger AppEnv where
+  loggerL = lens appLogger $ \x y -> x {appLogger = y}
 
 newtype App a = App
   { unApp :: ReaderT AppEnv IO a }
@@ -216,11 +217,8 @@ newtype App a = App
     , MonadIO
     , MonadReader AppEnv
     )
-
-instance MonadLogger App where
-  monadLoggerLog loc logSource logLevel msg = do
-    logFunc <- asks appLogFunc
-    liftIO $ logFunc loc logSource logLevel (toLogStr msg)
+  deriving (MonadLogger, MonadLoggerIO)
+    via (WithLogger AppEnv IO)
 
 runApp :: AppEnv -> App a -> IO a
 runApp env action =
@@ -237,20 +235,18 @@ app = do
   action2
 ```
 
-To retrieve the log function from Blammo, use `askLoggerIO` (from
-`MonadLoggerIO`) with `runSimpleLoggingT` (or `runLoggerLoggingT` if you need
-more customization options), when you initialize the app:
+In initialize the app, with `withLogger`.
 
 ```haskell
 main2 :: IO ()
-main2 = do
-  logFunc <- runSimpleLoggingT askLoggerIO
-  let appEnv =
-        AppEnv
-          { appLogFunc = logFunc
-          -- ...
-          }
-  runApp appEnv app
+main2 =
+  withLogger defaultLogSettings $ \logger -> do
+    let appEnv =
+          AppEnv
+            { appLogger = logger
+            -- ...
+            }
+    runApp appEnv app
 ```
 
 ## Integration with RIO
@@ -299,11 +295,11 @@ data App = App
 instance HasLogger App where
   -- ...
 
-runApp :: ReaderT App (LoggingT IO) a -> IO a
-runApp f = do
-  logger <- newLogger defaultLogSettings
-  app <- App logger <$> runLoggerLoggingT logger awsDiscover
-  runLoggerLoggingT app $ runReaderT f app
+runApp :: MonadUnliftIO m => ReaderT App m a -> m a
+runApp f =
+  withLogger defaultLogSettings $ \logger -> do
+    aws <- runWithLogger logger awsDiscover
+    runReaderT f $ App logger aws
 
 awsDiscover :: (MonadIO m, MonadLoggerIO m) => m AWS.Env
 awsDiscover = do
@@ -349,11 +345,10 @@ warpSettings :: App -> Settings
 warpSettings app = setOnException onEx $ defaultSettings
  where
   onEx _req ex =
-    when (defaultShouldDisplayException ex)
-      $ runLoggerLoggingT app
+    when (Network.Wai.Handler.Warp.defaultShouldDisplayException ex)
+      $ runWithLogger app
       $ logError
-      $ "Warp exception"
-      :# ["exception" .= displayException ex]
+      $ "Warp exception" :# ["exception" .= displayException ex]
 ```
 
 ## Integration with Yesod
@@ -366,7 +361,7 @@ instance Yesod App where
   -- ...
 
   messageLoggerSource app _logger loc source level msg =
-    runLoggerLoggingT app $ monadLoggerLog loc source level msg
+    runWithLogger app $ monadLoggerLog loc source level msg
 ```
 
 ---
