@@ -47,7 +47,7 @@ library
   default-extensions:
       DerivingStrategies
       DerivingVia
-      GeneralisedNewtypeDeriving
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -92,7 +92,7 @@ test-suite readme
   default-extensions:
       DerivingStrategies
       DerivingVia
-      GeneralisedNewtypeDeriving
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -129,7 +129,7 @@ test-suite spec
   default-extensions:
       DerivingStrategies
       DerivingVia
-      GeneralisedNewtypeDeriving
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
