@@ -68,7 +68,7 @@ import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
 import UnliftIO.Exception (finally)
 
--- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end.
+-- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end
 --
 -- Applications should avoid calling this more than once in their lifecycle.
 runLoggerLoggingT
