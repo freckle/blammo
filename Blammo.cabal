@@ -5,7 +5,7 @@ cabal-version: 1.18
 -- see: https://github.com/sol/hpack
 
 name:           Blammo
-version:        1.1.3.0
+version:        1.2.0.0
 synopsis:       Batteries-included Structured Logging library
 description:    Please see README.md
 category:       Utils
@@ -36,6 +36,7 @@ library
       Blammo.Logging.Terminal
       Blammo.Logging.Terminal.LogPiece
       Blammo.Logging.Test
+      Blammo.Logging.WithLogger
       Data.Aeson.Compat
       Network.Wai.Middleware.Logging
       System.Log.FastLogger.Compat
@@ -45,6 +46,7 @@ library
       src
   default-extensions:
       DerivingStrategies
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -88,6 +90,7 @@ test-suite readme
       Paths_Blammo
   default-extensions:
       DerivingStrategies
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings
@@ -98,8 +101,8 @@ test-suite readme
       Blammo
     , aeson
     , base <5
+    , lens
     , markdown-unlit
-    , monad-logger
     , mtl
     , text
   default-language: Haskell2010
@@ -123,6 +126,7 @@ test-suite spec
       tests
   default-extensions:
       DerivingStrategies
+      GeneralizedNewtypeDeriving
       LambdaCase
       NoImplicitPrelude
       OverloadedStrings

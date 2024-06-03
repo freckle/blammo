@@ -6,23 +6,26 @@ on:
     branches: main
 
 jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: generate
+        uses: freckle/stack-action/generate-matrix@v5
+    outputs:
+      stack-yamls: ${{ steps.generate.outputs.stack-yamls }}
+
   test:
     runs-on: ubuntu-latest
+    needs: generate
 
     strategy:
       matrix:
-        stack-yaml:
-          - stack-nightly.yaml   # ghc-9.4
-          - stack.yaml           # ghc-9.2
-          - stack-lts-19.33.yaml # ghc-9.0
-          - stack-lts-18.28.yaml # ghc-8.10
-          - stack-lts-16.31.yaml # ghc-8.8
-          - stack-lts-14.27.yaml # ghc-8.6
-          - stack-lts-12.26.yaml # ghc-8.4
+        stack-yaml: ${{ fromJSON(needs.generate.outputs.stack-yamls) }}
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: freckle/stack-action@v4
         with:
           stack-yaml: ${{ matrix.stack-yaml }}
@@ -30,9 +33,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: haskell/actions/hlint-setup@v2
-      - uses: haskell/actions/hlint-run@v2
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/hlint-setup@v2
+      - uses: haskell-actions/hlint-run@v2
         with:
           fail-on: warning
           path: '["src/", "tests/"]'

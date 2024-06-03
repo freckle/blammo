@@ -1,4 +1,12 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.1.3.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.2.0.0...main)
+
+## [v1.2.0.0](https://github.com/freckle/blammo/compare/v1.1.3.0...v1.2.0.0)
+
+- New in `Blammo.Logging`: `withLogger`, `WithLogger(..), runWithLogger`
+- New in `Blammo.Logging.Logger`: `runLogAction`
+- WAI middleware no longer performs a log flush. Wrap your entire application
+  in either `withLoggerLoggingT` or `withLogger` to ensure a log flush at
+  application shutdown.
 
 ## [v1.1.3.0](https://github.com/freckle/blammo/compare/v1.1.2.3...v1.1.3.0)
 

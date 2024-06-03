@@ -13,6 +13,7 @@ module Blammo.Logging
   , setLogSettingsConcurrency
   , Logger
   , HasLogger (..)
+  , withLogger
   , newLogger
   , runLoggerLoggingT
 
@@ -29,10 +30,12 @@ module Blammo.Logging
   , myThreadContext
   , Pair
 
-    -- ** Transformer
+    -- ** Transformers
   , MonadLogger (..)
   , MonadLoggerIO (..)
   , LoggingT
+  , WithLogger (..)
+  , runWithLogger
 
     -- ** Common logging functions
 
@@ -54,36 +57,23 @@ module Blammo.Logging
   , logOtherNS
   ) where
 
-import Prelude
-
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
-import Control.Lens ((^.))
+import Blammo.Logging.WithLogger
+import Control.Lens (view)
 import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
 import Data.Aeson.Types (Pair)
-import Data.ByteString (ByteString)
 import UnliftIO.Exception (finally)
 
+-- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end.
+--
+-- Applications should avoid calling this more than once in their lifecycle.
 runLoggerLoggingT
   :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
-runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
-  runLoggingT
-    (filterLogger (getLoggerShouldLog logger) f)
-    (loggerOutput logger $ getLoggerReformat logger)
+runLoggerLoggingT env f =
+  runLoggingT f (runLogAction logger) `finally` flushLogStr logger
  where
-  logger = env ^. loggerL
-
-loggerOutput
-  :: Logger
-  -> (LogLevel -> ByteString -> ByteString)
-  -> Loc
-  -> LogSource
-  -> LogLevel
-  -> LogStr
-  -> IO ()
-loggerOutput logger reformat =
-  defaultOutputWith $ defaultOutputOptions $ \logLevel bytes -> do
-    pushLogStrLn logger $ toLogStr $ reformat logLevel bytes
+  logger = view loggerL env

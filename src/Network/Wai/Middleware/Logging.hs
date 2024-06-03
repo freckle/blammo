@@ -139,15 +139,14 @@ setConfigGetDestinationIp x c = c {cGetDestinationIp = x}
 
 requestLoggerWith :: HasLogger env => Config -> env -> Middleware
 requestLoggerWith config env app req respond =
-  runLoggerLoggingT env $ withRunInIO $ \runInIO -> do
+  withRunInIO $ \runInIO -> do
     begin <- getTime
     app req $ \resp -> do
       recvd <- respond resp
       duration <- toMillis . subtract begin <$> getTime
-      recvd <$ runInIO (logResponse config duration req resp)
+      recvd <$ runInIO (runWithLogger env $ logResponse config duration req resp)
  where
   getTime = Clock.getTime Clock.Monotonic
-
   toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
 
 logResponse :: MonadLogger m => Config -> Double -> Request -> Response -> m ()

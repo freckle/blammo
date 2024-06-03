@@ -1,6 +1,7 @@
 module Blammo.Logging.Logger
   ( Logger
   , HasLogger (..)
+  , withLogger
   , newLogger
   , flushLogger
   , pushLogger
@@ -11,6 +12,7 @@ module Blammo.Logging.Logger
   , getLoggerShouldColor
   , pushLogStrLn
   , flushLogStr
+  , runLogAction
 
     -- * Testing
   , newTestLogger
@@ -28,7 +30,7 @@ import Blammo.Logging.Terminal
 import Blammo.Logging.Test hiding (getLoggedMessages)
 import qualified Blammo.Logging.Test as LoggedMessages
 import Control.Lens (view)
-import Control.Monad (unless)
+import Control.Monad (unless, when)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
 import Control.Monad.Reader (MonadReader)
@@ -49,7 +51,34 @@ import System.Log.FastLogger.Compat
   , newStderrLoggerSetN
   , newStdoutLoggerSetN
   )
-import UnliftIO.Exception (throwString)
+import UnliftIO (MonadUnliftIO)
+import UnliftIO.Exception (finally, throwString)
+
+-- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end.
+--
+-- Applications should avoid calling this more than once in their lifecycle.
+withLogger :: MonadUnliftIO m => LogSettings -> (Logger -> m a) -> m a
+withLogger settings f = do
+  logger <- newLogger settings
+  f logger `finally` flushLogStr logger
+
+-- | Write a message to the 'Logger', unless the logger's filter options
+--   reject it based on its 'LogSource' and 'LogLevel'
+runLogAction
+  :: (MonadIO m, ToLogStr msg)
+  => Logger
+  -> Loc
+  -> LogSource
+  -> LogLevel
+  -> msg
+  -> m ()
+runLogAction logger loc source level msg =
+  liftIO $
+    when (lShouldLog logger source level) $
+      defaultOutputWith options loc source level (toLogStr msg)
+ where
+  options = defaultOutputOptions $ \logLevel bytes ->
+    pushLogStrLn logger $ toLogStr $ getLoggerReformat logger logLevel bytes
 
 getLoggerLogSettings :: Logger -> LogSettings
 getLoggerLogSettings = lLogSettings
