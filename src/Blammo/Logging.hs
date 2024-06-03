@@ -57,8 +57,6 @@ module Blammo.Logging
   , logOtherNS
   ) where
 
-import Prelude
-
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.WithLogger
@@ -75,8 +73,7 @@ import UnliftIO.Exception (finally)
 -- Applications should avoid calling this more than once in their lifecycle.
 runLoggerLoggingT
   :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
-runLoggerLoggingT env f = (`finally` flushLogStr logger) $ do
-  runLoggingT f $ \loc source level msg ->
-    runLogAction logger loc source level msg
+runLoggerLoggingT env f =
+  runLoggingT f (runLogAction logger) `finally` flushLogStr logger
  where
   logger = view loggerL env
