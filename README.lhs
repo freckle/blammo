@@ -235,7 +235,7 @@ app = do
   action2
 ```
 
-In initialize the app, with `withLogger`.
+Initialize the app with `withLogger`.
 
 ```haskell
 main2 :: IO ()
