@@ -7,15 +7,27 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        package:
+          - Blammo
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - id: tag
         uses: freckle/haskell-tag-action@v1
+        with:
+          package-yaml: ${{ matrix.package }}/package.yaml
+          tag-prefix: ${{ matrix.package }}-v
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: steps.tag.outputs.tag
-        uses: freckle/stack-upload-action@v2
+        run: stack upload --pvp-bounds lower
+        with:
+          working-directory: ${{ matrix.package }}
         env:
-          HACKAGE_API_KEY: ${{ secrets.HACKAGE_UPLOAD_API_KEY }}
+          HACKAGE_KEY: ${{ secrets.HACKAGE_UPLOAD_API_KEY }}
+          STACK_YAML: ../stack-lts-14.27.yaml
