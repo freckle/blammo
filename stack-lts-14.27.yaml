@@ -13,3 +13,6 @@ extra-deps:
   - hspec-discover-2.7.9
   - primitive-0.7.4.0
   - these-1.1
+
+packages:
+  - Blammo
