@@ -33,6 +33,7 @@ appendLogStr (LoggedMessages ref) str =
 appendLogStrLn :: MonadIO m => LoggedMessages -> LogStr -> m ()
 appendLogStrLn lm = appendLogStr lm . (<> "\n")
 
-getLoggedMessages :: MonadIO m => LoggedMessages -> m [Either String LoggedMessage]
+getLoggedMessages
+  :: MonadIO m => LoggedMessages -> m [Either String LoggedMessage]
 getLoggedMessages (LoggedMessages ref) =
   map (eitherDecodeStrict . fromLogStr) . DList.toList <$> readIORef ref

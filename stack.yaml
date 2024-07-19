@@ -6,3 +6,6 @@ extra-deps:
 allow-newer: true
 allow-newer-deps:
   - monad-logger-aeson
+
+packages:
+  - Blammo
