@@ -321,52 +321,6 @@ awsDiscover = do
     }
 ```
 
-## Integration with WAI
-
-```hs
-import Network.Wai.Middleware.Logging
-
-instance HasLogger App where
-  -- ...
-
-waiMiddleware :: App -> Middleware
-waiMiddleware app =
-  addThreadContext ["app" .= ("my-app" :: Text)]
-    $ requestLogger app
-    $ defaultMiddlewaresNoLogging
-```
-
-## Integration with Warp
-
-```hs
-import qualified Network.Wai.Handler.Warp as Warp
-
-instance HasLogger App where
-  -- ...
-
-warpSettings :: App -> Settings
-warpSettings app = setOnException onEx $ defaultSettings
- where
-  onEx _req ex =
-    when (Warp.defaultShouldDisplayException ex)
-      $ runWithLogger app
-      $ logError
-      $ "Warp exception" :# ["exception" .= displayException ex]
-```
-
-## Integration with Yesod
-
-```hs
-instance HasLogger App where
-  -- ...
-
-instance Yesod App where
-  -- ...
-
-  messageLoggerSource app _logger loc source level msg =
-    runWithLogger app $ monadLoggerLog loc source level msg
-```
-
 ---
 
 [LICENSE](./LICENSE) | [CHANGELOG](./CHANGELOG.md)

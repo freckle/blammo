@@ -7,3 +7,4 @@ extra-deps:
 
 packages:
   - Blammo
+  - Blammo-wai

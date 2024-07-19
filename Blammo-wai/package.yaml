@@ -1,9 +1,9 @@
-name: Blammo
-version: 2.0.0.0
+name: Blammo-wai
+version: 1.2.1.0
 maintainer: Freckle Education
-category: Logging
+category: Logging, Web
 github: freckle/blammo
-synopsis: Batteries-included Structured Logging library
+synopsis: Using Blammo with WAI
 description: Please see README.md
 
 extra-doc-files:
@@ -48,45 +48,26 @@ library:
   source-dirs: src
   dependencies:
     - aeson
+    - Blammo
     - bytestring
-    - containers
-    - dlist
-    - envparse
-    - exceptions
-    - fast-logger >= 3.2.3 # fix for bad flush behavior
-    - lens
-    - monad-logger-aeson
-    - mtl
+    - case-insensitive
+    - clock
+    - http-types
     - text
-    - time
-    - vector
-    - unliftio
     - unliftio-core
-
-    # For aeson 1.x
-    - unordered-containers
+    - wai
 
 tests:
-  spec:
-    main: Spec.hs
-    source-dirs: tests
-    dependencies:
-      - Blammo
-      - aeson
-      - envparse
-      - bytestring
-      - hspec
-      - mtl
-      - text
-      - time
-
   readme:
     main: README.lhs
     ghc-options: -pgmL markdown-unlit
     dependencies:
       - Blammo
+      - Blammo-wai
       - aeson
       - lens
       - markdown-unlit
-      - mtl
       - text
+      - wai
+      - warp
+      - yesod-core

@@ -12,6 +12,7 @@ jobs:
       matrix:
         package:
           - Blammo
+          - Blammo-wai
 
     steps:
       - uses: actions/checkout@v4
