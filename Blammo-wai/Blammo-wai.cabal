@@ -12,6 +12,8 @@ category:       Logging, Web
 homepage:       https://github.com/freckle/blammo#readme
 bug-reports:    https://github.com/freckle/blammo/issues
 maintainer:     Freckle Education
+license:        MIT
+license-file:   LICENSE
 build-type:     Simple
 extra-doc-files:
     README.md
