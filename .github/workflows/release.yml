@@ -26,8 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - if: steps.tag.outputs.tag
-        run: stack upload --pvp-bounds lower
-        working-directory: ${{ matrix.package }}
+        run: stack upload --pvp-bounds lower ${{ matrix.package }}
         env:
           HACKAGE_KEY: ${{ secrets.HACKAGE_UPLOAD_API_KEY }}
           STACK_YAML: ../stack-lts-16.31.yaml
