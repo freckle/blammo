@@ -9,3 +9,4 @@ allow-newer-deps:
 
 packages:
   - Blammo
+  - Blammo-wai

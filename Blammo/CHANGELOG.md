@@ -1,5 +1,10 @@
 ## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.2.1.0...main)
 
+## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...v2.0.0.0)
+
+- Remove module `Network.Wai.Middleware.Logging`. It is moved to a new
+  package, `Blammo-wai`.
+
 ## [v1.2.1.0](https://github.com/freckle/blammo/compare/1.2.0.0...v1.2.1.0)
 
 - Add `Blammo.Logging.Simple.withLoggerEnv`
