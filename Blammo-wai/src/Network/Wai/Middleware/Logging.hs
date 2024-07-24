@@ -158,59 +158,56 @@ requestLoggerWith config env app req respond =
     _ -> False
 
 logRawResponse :: MonadLogger m => Config -> Double -> Request -> m ()
-logRawResponse Config {..} duration req =
+logRawResponse config@Config {..} duration req =
   logDebugNS cLogSource $ message :# details
  where
-  message =
-    decodeUtf8 (requestMethod req)
-      <> " "
-      <> decodeUtf8 (rawPathInfo req)
-      <> " => <raw response>"
-
-  details =
-    [ "method" .= decodeUtf8 (requestMethod req)
-    , "path" .= decodeUtf8 (rawPathInfo req)
-    , "query" .= decodeUtf8 (rawQueryString req)
-    , "clientIp" .= cGetClientIp req
-    , "destinationIp" .= cGetDestinationIp req
-    , "durationMs" .= duration
-    , "requestHeaders"
-        .= headerObject ["authorization", "cookie"] (requestHeaders req)
-    ]
+  message = requestMessage req "<raw response>"
+  details = requestDetails config req <> ["durationMs" .= duration]
 
 logResponse :: MonadLogger m => Config -> Double -> Request -> Response -> m ()
-logResponse Config {..} duration req resp
+logResponse config@Config {..} duration req resp
   | statusCode status >= 500 = logErrorNS cLogSource $ message :# details
   | statusCode status == 404 = logDebugNS cLogSource $ message :# details
   | statusCode status >= 400 = logWarnNS cLogSource $ message :# details
   | otherwise = logDebugNS cLogSource $ message :# details
  where
-  message =
-    decodeUtf8 (requestMethod req)
-      <> " "
-      <> decodeUtf8 (rawPathInfo req)
-      <> " => "
-      <> pack (show $ statusCode status)
-      <> " "
-      <> decodeUtf8 (statusMessage status)
-
+  message = requestMessage req $ decodeUtf8 (statusMessage status)
   details =
-    [ "method" .= decodeUtf8 (requestMethod req)
-    , "path" .= decodeUtf8 (rawPathInfo req)
-    , "query" .= decodeUtf8 (rawQueryString req)
-    , "status"
-        .= object
-          [ "code" .= statusCode status
-          , "message" .= decodeUtf8 (statusMessage status)
-          ]
-    , "clientIp" .= cGetClientIp req
-    , "destinationIp" .= cGetDestinationIp req
-    , "durationMs" .= duration
-    , "requestHeaders"
-        .= headerObject ["authorization", "cookie"] (requestHeaders req)
-    , "responseHeaders" .= headerObject ["set-cookie"] (responseHeaders resp)
-    ]
+    requestDetails config req
+      <> responseDetails resp
+      <> ["durationMs" .= duration]
 
+  status = responseStatus resp
+
+requestMessage :: Request -> Text -> Text
+requestMessage req suffix =
+  decodeUtf8 (requestMethod req)
+    <> " "
+    <> decodeUtf8 (rawPathInfo req)
+    <> " => "
+    <> suffix
+
+requestDetails :: KeyValue a => Config -> Request -> [a]
+requestDetails Config {..} req =
+  [ "method" .= decodeUtf8 (requestMethod req)
+  , "path" .= decodeUtf8 (rawPathInfo req)
+  , "query" .= decodeUtf8 (rawQueryString req)
+  , "clientIp" .= cGetClientIp req
+  , "destinationIp" .= cGetDestinationIp req
+  , "requestHeaders"
+      .= headerObject ["authorization", "cookie"] (requestHeaders req)
+  ]
+
+responseDetails :: KeyValue a => Response -> [a]
+responseDetails resp =
+  [ "status"
+      .= object
+        [ "code" .= statusCode status
+        , "message" .= decodeUtf8 (statusMessage status)
+        ]
+  , "responseHeaders" .= headerObject ["set-cookie"] (responseHeaders resp)
+  ]
+ where
   status = responseStatus resp
 
 headerObject :: [HeaderName] -> [Header] -> Value
