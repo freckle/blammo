@@ -18,6 +18,7 @@ import Blammo.Logging
 import Control.Applicative ((<|>))
 import Control.Arrow ((***))
 import Control.Monad.IO.Unlift (withRunInIO)
+import Control.Monad.Logger.Aeson (SeriesElem)
 import Data.Aeson
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
@@ -187,7 +188,7 @@ requestMessage req suffix =
     <> " => "
     <> suffix
 
-requestDetails :: KeyValue a => Config -> Request -> [a]
+requestDetails :: Config -> Request -> [SeriesElem]
 requestDetails Config {..} req =
   [ "method" .= decodeUtf8 (requestMethod req)
   , "path" .= decodeUtf8 (rawPathInfo req)
@@ -198,7 +199,7 @@ requestDetails Config {..} req =
       .= headerObject ["authorization", "cookie"] (requestHeaders req)
   ]
 
-responseDetails :: KeyValue a => Response -> [a]
+responseDetails :: Response -> [SeriesElem]
 responseDetails resp =
   [ "status"
       .= object
