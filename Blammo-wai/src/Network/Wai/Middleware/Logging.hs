@@ -155,8 +155,10 @@ requestLoggerWith config env app req respond =
   getTime = Clock.getTime Clock.Monotonic
   toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
   isRaw = \case
+    ResponseFile {} -> False
+    ResponseBuilder {} -> False
+    ResponseStream {} -> False
     ResponseRaw {} -> True
-    _ -> False
 
 logRawResponse :: MonadLogger m => Config -> Double -> Request -> m ()
 logRawResponse config@Config {..} duration req =
