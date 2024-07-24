@@ -47,6 +47,7 @@ library
     , case-insensitive
     , clock
     , http-types
+    , monad-logger-aeson
     , text
     , unliftio-core
     , wai
