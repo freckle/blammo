@@ -34,7 +34,6 @@ import Network.HTTP.Types.Status (Status (..))
 import Network.Wai
   ( Middleware
   , Request
-  , Response
   , rawPathInfo
   , rawQueryString
   , remoteHost
@@ -43,6 +42,7 @@ import Network.Wai
   , responseHeaders
   , responseStatus
   )
+import Network.Wai.Internal (Response (..))
 import qualified System.Clock as Clock
 
 -- | Add context to any logging done from the request-handling thread
@@ -144,10 +144,39 @@ requestLoggerWith config env app req respond =
     app req $ \resp -> do
       recvd <- respond resp
       duration <- toMillis . subtract begin <$> getTime
-      recvd <$ runInIO (runWithLogger env $ logResponse config duration req resp)
+      runInIO $
+        runWithLogger env $
+          if isRaw resp
+            then logRawResponse config duration req
+            else logResponse config duration req resp
+      pure recvd
  where
   getTime = Clock.getTime Clock.Monotonic
   toMillis x = fromIntegral (Clock.toNanoSecs x) / nsPerMs
+  isRaw = \case
+    ResponseRaw {} -> True
+    _ -> False
+
+logRawResponse :: MonadLogger m => Config -> Double -> Request -> m ()
+logRawResponse Config {..} duration req =
+  logDebugNS cLogSource $ message :# details
+ where
+  message =
+    decodeUtf8 (requestMethod req)
+      <> " "
+      <> decodeUtf8 (rawPathInfo req)
+      <> " => <raw response>"
+
+  details =
+    [ "method" .= decodeUtf8 (requestMethod req)
+    , "path" .= decodeUtf8 (rawPathInfo req)
+    , "query" .= decodeUtf8 (rawQueryString req)
+    , "clientIp" .= cGetClientIp req
+    , "destinationIp" .= cGetDestinationIp req
+    , "durationMs" .= duration
+    , "requestHeaders"
+        .= headerObject ["authorization", "cookie"] (requestHeaders req)
+    ]
 
 logResponse :: MonadLogger m => Config -> Double -> Request -> Response -> m ()
 logResponse Config {..} duration req resp
