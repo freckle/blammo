@@ -5,7 +5,7 @@ cabal-version: 1.18
 -- see: https://github.com/sol/hpack
 
 name:           Blammo-wai
-version:        0.0.0.0
+version:        0.0.0.1
 synopsis:       Using Blammo with WAI
 description:    Please see README.md
 category:       Logging, Web
