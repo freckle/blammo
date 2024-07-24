@@ -1,6 +1,6 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/v1.2.1.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.0.0.0...main)
 
-## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...v2.0.0.0)
+## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...Blammo-v2.0.0.0)
 
 - Remove module `Network.Wai.Middleware.Logging`. It is moved to a new
   package, `Blammo-wai`.
