@@ -2,8 +2,16 @@
 
 ## [v2.1.0.0](https://github.com/freckle/blammo/compare/v2.0.0.0...Blammo-v2.1.0.0)
 
-- Moved `MonadMask`, `withThreadContext`, `myThreadContext`, `Pair` from
-  `Blammo.Logging` to `Blammo.Logging.ThreadContext`.
+Removes less frequently used definitions from the main `Blammo.Logging` module
+into other modules.
+
+- Moved from `Blammo.Logging` to new module `Blammo.Logging.ThreadContext`:
+  `MonadMask`, `withThreadContext`, `myThreadContext`, `Pair`.
+- Removed from `Blammo.Logging` (still available in `Blammo.Logging.LogSettings`):
+  `LogSettings`, `LogDestination (..)`, `LogFormat (..)`, `defaultLogSettings`,
+  `LogColor (..)`, `setLogSettingsLevels`, `setLogSettingsDestination`,
+  `setLogSettingsFormat`, `setLogSettingsColor`, `setLogSettingsBreakpoint`,
+  `setLogSettingsConcurrency`.
 
 ## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...Blammo-v2.0.0.0)
 

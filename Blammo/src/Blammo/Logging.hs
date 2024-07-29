@@ -1,16 +1,5 @@
 module Blammo.Logging
-  ( LogSettings
-  , LogLevel (..)
-  , LogDestination (..)
-  , LogFormat (..)
-  , LogColor (..)
-  , defaultLogSettings
-  , setLogSettingsLevels
-  , setLogSettingsDestination
-  , setLogSettingsFormat
-  , setLogSettingsColor
-  , setLogSettingsBreakpoint
-  , setLogSettingsConcurrency
+  ( LogLevel (..)
   , Logger
   , HasLogger (..)
   , withLogger
@@ -51,7 +40,6 @@ module Blammo.Logging
   , logOtherNS
   ) where
 
-import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.WithLogger
 import Control.Lens (view)

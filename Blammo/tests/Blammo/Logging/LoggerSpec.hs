@@ -7,6 +7,7 @@ module Blammo.Logging.LoggerSpec
 import Prelude
 
 import Blammo.Logging
+import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Control.Monad.Reader (runReaderT)
 import Data.Aeson (Value (..))

@@ -44,6 +44,7 @@ import Control.Monad.Reader (MonadReader, ReaderT (runReaderT))
 
 ```haskell
 import Blammo.Logging.Simple
+import Blammo.Logging.LogSettings
 import Blammo.Logging.ThreadContext
 ```
 
