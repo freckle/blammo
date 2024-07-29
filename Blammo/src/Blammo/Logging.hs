@@ -24,12 +24,6 @@ module Blammo.Logging
   , (.=)
   , Series
 
-    -- ** Thread Context
-  , MonadMask
-  , withThreadContext
-  , myThreadContext
-  , Pair
-
     -- ** Transformers
   , MonadLogger (..)
   , MonadLoggerIO (..)
@@ -61,11 +55,9 @@ import Blammo.Logging.LogSettings
 import Blammo.Logging.Logger
 import Blammo.Logging.WithLogger
 import Control.Lens (view)
-import Control.Monad.Catch (MonadMask)
 import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
-import Data.Aeson.Types (Pair)
 import UnliftIO.Exception (finally)
 
 -- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end

@@ -15,6 +15,7 @@ module Network.Wai.Middleware.Logging
 import Prelude
 
 import Blammo.Logging
+import Blammo.Logging.ThreadContext
 import Control.Applicative ((<|>))
 import Control.Arrow ((***))
 import Control.Monad.IO.Unlift (withRunInIO)
