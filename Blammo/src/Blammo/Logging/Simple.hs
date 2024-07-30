@@ -4,6 +4,8 @@ module Blammo.Logging.Simple
   , withLoggerEnv
   , runSimpleLoggingT
   , module Blammo.Logging
+  , module Blammo.Logging.LogSettings
+  , module Blammo.Logging.ThreadContext
   ) where
 
 import Prelude
@@ -12,6 +14,8 @@ import Blammo.Logging
 import qualified Blammo.Logging.LogSettings.Env as Env
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.IO.Unlift (MonadUnliftIO)
+import Blammo.Logging.LogSettings
+import Blammo.Logging.ThreadContext
 
 -- | Construct a 'Logger' configured via environment variables
 newLoggerEnv :: MonadIO m => m Logger

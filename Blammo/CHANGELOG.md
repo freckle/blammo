@@ -13,6 +13,11 @@ into other modules.
   `setLogSettingsFormat`, `setLogSettingsColor`, `setLogSettingsBreakpoint`,
   `setLogSettingsConcurrency`.
 
+`Blammo.Logging.Simple` has been expanded to include reëxports of:
+
+- `Blammo.Logging.LogSettings`
+- `Blammo.Logging.ThreadContext`
+
 ## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...Blammo-v2.0.0.0)
 
 - Remove module `Network.Wai.Middleware.Logging`. It is moved to a new

@@ -44,8 +44,6 @@ import Control.Monad.Reader (MonadReader, ReaderT (runReaderT))
 
 ```haskell
 import Blammo.Logging.Simple
-import Blammo.Logging.LogSettings
-import Blammo.Logging.ThreadContext
 ```
 
 Throughout your application, you should write against the ubiquitous
