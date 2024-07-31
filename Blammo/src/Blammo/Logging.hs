@@ -1,10 +1,6 @@
 module Blammo.Logging
   ( LogLevel (..)
   , Logger
-  , HasLogger (..)
-  , withLogger
-  , newLogger
-  , runLoggerLoggingT
 
     -- * Re-exports from "Control.Monad.Logger.Aeson"
 
@@ -13,12 +9,9 @@ module Blammo.Logging
   , (.=)
   , Series
 
-    -- ** Transformers
+    -- ** Classes
   , MonadLogger (..)
   , MonadLoggerIO (..)
-  , LoggingT
-  , WithLogger (..)
-  , runWithLogger
 
     -- ** Common logging functions
 
@@ -41,19 +34,5 @@ module Blammo.Logging
   ) where
 
 import Blammo.Logging.Logger
-import Blammo.Logging.WithLogger
-import Control.Lens (view)
-import Control.Monad.IO.Unlift (MonadUnliftIO)
 import Control.Monad.Logger.Aeson
 import Data.Aeson (Series)
-import UnliftIO.Exception (finally)
-
--- | Initialize logging, pass a 'Logger' to the callback, and clean up at the end
---
--- Applications should avoid calling this more than once in their lifecycle.
-runLoggerLoggingT
-  :: (MonadUnliftIO m, HasLogger env) => env -> LoggingT m a -> m a
-runLoggerLoggingT env f =
-  runLoggingT f (runLogAction logger) `finally` flushLogStr logger
- where
-  logger = view loggerL env

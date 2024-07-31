@@ -12,10 +12,14 @@ into other modules.
   `LogColor (..)`, `setLogSettingsLevels`, `setLogSettingsDestination`,
   `setLogSettingsFormat`, `setLogSettingsColor`, `setLogSettingsBreakpoint`,
   `setLogSettingsConcurrency`.
+- Moved from `Blammo.Logging` to new module `Blammo.Logging.Setup`:
+  `HasLogger (..)`, `withLogger`, `newLogger`, `runLoggerLoggingT`, `LoggingT`,
+  `WithLogger (..)`, `runWithLogger`
 
 `Blammo.Logging.Simple` has been expanded to include reëxports of:
 
 - `Blammo.Logging.LogSettings`
+- `Blammo.Logging.Setup`
 - `Blammo.Logging.ThreadContext`
 
 ## [v2.0.0.0](https://github.com/freckle/blammo/compare/v1.2.1.0...Blammo-v2.0.0.0)

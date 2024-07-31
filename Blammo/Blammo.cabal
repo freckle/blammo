@@ -32,6 +32,7 @@ library
       Blammo.Logging.LogSettings
       Blammo.Logging.LogSettings.Env
       Blammo.Logging.LogSettings.LogLevels
+      Blammo.Logging.Setup
       Blammo.Logging.Simple
       Blammo.Logging.Terminal
       Blammo.Logging.Terminal.LogPiece
