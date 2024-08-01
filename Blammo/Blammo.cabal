@@ -5,7 +5,7 @@ cabal-version: 1.18
 -- see: https://github.com/sol/hpack
 
 name:           Blammo
-version:        2.0.0.0
+version:        2.1.0.0
 synopsis:       Batteries-included Structured Logging library
 description:    Please see README.md
 category:       Logging
@@ -32,10 +32,12 @@ library
       Blammo.Logging.LogSettings
       Blammo.Logging.LogSettings.Env
       Blammo.Logging.LogSettings.LogLevels
+      Blammo.Logging.Setup
       Blammo.Logging.Simple
       Blammo.Logging.Terminal
       Blammo.Logging.Terminal.LogPiece
       Blammo.Logging.Test
+      Blammo.Logging.ThreadContext
       Blammo.Logging.WithLogger
       Data.Aeson.Compat
       System.Log.FastLogger.Compat

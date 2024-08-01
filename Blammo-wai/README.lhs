@@ -27,7 +27,7 @@ import Control.Lens (lens)
 
 ```haskell
 -- Blammo
-import Blammo.Logging
+import Blammo.Logging.Simple
 
 -- wai
 import Network.Wai (Middleware)

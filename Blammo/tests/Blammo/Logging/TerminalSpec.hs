@@ -9,7 +9,8 @@ import Prelude
 import Blammo.Logging
 import Blammo.Logging.Logger (LoggedMessage (..))
 import Blammo.Logging.Terminal
-import Data.Aeson
+import Data.Aeson (encode, object)
+import Data.Aeson.Types (Object, Pair, Value (..))
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BS8

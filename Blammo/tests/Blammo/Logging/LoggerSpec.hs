@@ -6,8 +6,8 @@ module Blammo.Logging.LoggerSpec
 
 import Prelude
 
-import Blammo.Logging
 import Blammo.Logging.Logger
+import Blammo.Logging.Simple
 import Control.Monad.Reader (runReaderT)
 import Data.Aeson (Value (..))
 import qualified Data.Aeson.Compat as KeyMap
