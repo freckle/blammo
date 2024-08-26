@@ -43,6 +43,7 @@ import qualified Blammo.Logging.LogSettings.LogLevels as LogLevels
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
 import System.IO (Handle, hIsTerminalDevice)
+import qualified System.Info
 
 data LogSettings = LogSettings
   { lsLevels :: LogLevels
@@ -65,12 +66,13 @@ readLogDestination :: String -> Either String LogDestination
 readLogDestination = \case
   "stdout" -> Right LogDestinationStdout
   "stderr" -> Right LogDestinationStderr
+  "null" -> Right $ LogDestinationFile nullDevice
   ('@' : path) -> Right $ LogDestinationFile path
   x ->
     Left $
       "Invalid log destination "
         <> x
-        <> ", must be stdout, stderr, or @{path}"
+        <> ", must be stdout, stderr, null, or @{path}"
 
 data LogFormat
   = LogFormatJSON
@@ -196,3 +198,14 @@ shouldColorAuto LogSettings {..} f = case lsColor of
 shouldColorHandle :: MonadIO m => LogSettings -> Handle -> m Bool
 shouldColorHandle settings h =
   shouldColorAuto settings $ liftIO $ hIsTerminalDevice h
+
+-- | @/dev/null@ or @NUL@ on windows
+--
+-- See <https://stackoverflow.com/a/58177337>.
+nullDevice :: FilePath
+nullDevice
+  | System.Info.os == windowsOS = "\\\\.\\NUL"
+  | otherwise = "/dev/null"
+
+windowsOS :: String
+windowsOS = "mingw32"
