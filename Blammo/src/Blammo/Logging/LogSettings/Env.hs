@@ -3,9 +3,9 @@
 -- - @LOG_LEVEL@: a known log level (case insensitive) and optional levels by
 --   source. See "Logging.LogSettings.LogLevels".
 --
--- - @LOG_DESTINATION@: the string @stderr@ or @stdout@ (case sensitive), or
---   @\@{path}@ to log to the file at @path@. Unrecognized values will produce
---   and error.
+-- - @LOG_DESTINATION@: the string @stderr@, @stdout@ or @null@, (case
+--   sensitive), or @\@{path}@ to log to the file at @path@. Unrecognized values
+--   will produce an error.
 --
 -- - @LOG_FORMAT@: the string @tty@ or @json@. Unrecognized values will produce
 --   an error.
