@@ -140,14 +140,14 @@ setting the format to `json` will automatically enable it (with
 
 ## Configuration
 
-| Setting     | Setter                      | Environment variable and format           |
-| ----------- | --------------------------- | ----------------------------------------- |
-| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty\|json`                    |
-| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`  |
+| Setting     | Setter                      | Environment variable and format                 |
+| ----------- | --------------------------- | ----------------------------------------------- |
+| Format      | `setLogSettingsFormat`      | `LOG_FORMAT=tty\|json`                          |
+| Level(s)    | `setLogSettingsLevels`      | `LOG_LEVEL=<level>[,<source:level>,...]`        |
 | Destination | `setLogSettingsDestination` | `LOG_DESTINATION=stdout\|stderr\|null\|@<path>` |
-| Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`           |
-| Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                 |
-| Concurrency | `setLogSettingsConcurrency` | `LOG_CONCURRENCY=<number>`                |
+| Color       | `setLogSettingsColor `      | `LOG_COLOR=auto\|always\|never`                 |
+| Breakpoint  | `setLogSettingsBreakpoint`  | `LOG_BREAKPOINT=<number>`                       |
+| Concurrency | `setLogSettingsConcurrency` | `LOG_CONCURRENCY=<number>`                      |
 
 ## Advanced Usage
 
