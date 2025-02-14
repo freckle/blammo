@@ -20,6 +20,7 @@ module Blammo.Logging.Terminal
 import Prelude
 
 import Blammo.Logging.Colors
+import Blammo.Logging.LogSettings (LogSettings, getLogSettingsBreakpoint)
 import Blammo.Logging.Terminal.LogPiece (LogPiece, logPiece)
 import qualified Blammo.Logging.Terminal.LogPiece as LogPiece
 import Control.Monad.Logger.Aeson
@@ -28,7 +29,6 @@ import Data.Aeson.Compat (KeyMap)
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
 import Data.ByteString (ByteString)
-import qualified Data.ByteString.Lazy as BSL
 import Data.List (sortOn)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
@@ -36,60 +36,57 @@ import qualified Data.Text as T
 import Data.Time (defaultTimeLocale, formatTime)
 import qualified Data.Vector as V
 
-reformatTerminal :: Int -> Bool -> LogLevel -> ByteString -> ByteString
-reformatTerminal breakpoint useColor logLevel bytes = fromMaybe bytes $ do
-  LoggedMessage {..} <- decode $ BSL.fromStrict bytes
+reformatTerminal
+  :: LogSettings -> Colors -> LogLevel -> LoggedMessage -> ByteString
+reformatTerminal settings colors@Colors {..} logLevel LoggedMessage {..} = do
+  LogPiece.bytestring $
+    if LogPiece.visibleLength oneLineLogPiece <= breakpoint
+      then oneLineLogPiece
+      else multiLineLogPiece
+ where
+  breakpoint = getLogSettingsBreakpoint settings
 
-  let
-    colors@Colors {..} = getColors useColor
+  logTimestampPiece =
+    logPiece dim $
+      pack $
+        formatTime
+          defaultTimeLocale
+          "%F %X"
+          loggedMessageTimestamp
 
-    logTimestampPiece =
-      logPiece dim $
-        pack $
-          formatTime
-            defaultTimeLocale
-            "%F %X"
-            loggedMessageTimestamp
+  logLevelPiece = case logLevel of
+    LevelDebug -> logPiece gray $ padTo 9 "debug"
+    LevelInfo -> logPiece green $ padTo 9 "info"
+    LevelWarn -> logPiece yellow $ padTo 9 "warn"
+    LevelError -> logPiece red $ padTo 9 "error"
+    LevelOther x -> logPiece blue $ padTo 9 x
 
-    logLevelPiece = case logLevel of
-      LevelDebug -> logPiece gray $ padTo 9 "debug"
-      LevelInfo -> logPiece green $ padTo 9 "info"
-      LevelWarn -> logPiece yellow $ padTo 9 "warn"
-      LevelError -> logPiece red $ padTo 9 "error"
-      LevelOther x -> logPiece blue $ padTo 9 x
+  loggedSourceAsMap =
+    foldMap (KeyMap.singleton "source" . String) loggedMessageLogSource
 
-    loggedSourceAsMap =
-      foldMap (KeyMap.singleton "source" . String) loggedMessageLogSource
+  logPrefixPiece =
+    logTimestampPiece <> " [" <> logLevelPiece <> "] "
 
-    logPrefixPiece =
-      logTimestampPiece <> " [" <> logLevelPiece <> "] "
+  logMessagePiece = logPiece bold $ padTo 31 loggedMessageText
 
-    logMessagePiece = logPiece bold $ padTo 31 loggedMessageText
+  logAttrsPiece =
+    mconcat
+      [ colorizeKeyMap " " colors loggedSourceAsMap
+      , colorizeKeyMap " " colors loggedMessageThreadContext
+      , colorizeKeyMap " " colors loggedMessageMeta
+      ]
 
-    logAttrsPiece =
-      mconcat
-        [ colorizeKeyMap " " colors loggedSourceAsMap
-        , colorizeKeyMap " " colors loggedMessageThreadContext
-        , colorizeKeyMap " " colors loggedMessageMeta
-        ]
+  oneLineLogPiece = mconcat [logPrefixPiece, logMessagePiece, logAttrsPiece]
 
-    oneLineLogPiece = mconcat [logPrefixPiece, logMessagePiece, logAttrsPiece]
-
-    multiLineLogPiece =
-      let shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
-      in  mconcat
-            [ logPrefixPiece
-            , logMessagePiece
-            , colorizeKeyMap shift colors loggedSourceAsMap
-            , colorizeKeyMap shift colors loggedMessageThreadContext
-            , colorizeKeyMap shift colors loggedMessageMeta
-            ]
-
-  pure $
-    LogPiece.bytestring $
-      if LogPiece.visibleLength oneLineLogPiece <= breakpoint
-        then oneLineLogPiece
-        else multiLineLogPiece
+  multiLineLogPiece =
+    let shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
+    in  mconcat
+          [ logPrefixPiece
+          , logMessagePiece
+          , colorizeKeyMap shift colors loggedSourceAsMap
+          , colorizeKeyMap shift colors loggedMessageThreadContext
+          , colorizeKeyMap shift colors loggedMessageMeta
+          ]
 
 colorizeKeyMap :: LogPiece -> Colors -> KeyMap Value -> LogPiece
 colorizeKeyMap sep Colors {..} km

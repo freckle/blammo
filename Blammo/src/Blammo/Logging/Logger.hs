@@ -8,6 +8,7 @@ module Blammo.Logging.Logger
   , pushLoggerLn
   , getLoggerLogSettings
   , getLoggerReformat
+  , setLoggerReformat
   , getLoggerShouldLog
   , getLoggerShouldColor
   , pushLogStrLn
@@ -24,6 +25,7 @@ module Blammo.Logging.Logger
 
 import Prelude
 
+import Blammo.Logging.Colors (Colors, getColors)
 import Blammo.Logging.Internal.Logger
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Terminal
@@ -34,9 +36,11 @@ import Control.Monad (unless, when)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson
 import Control.Monad.Reader (MonadReader)
+import qualified Data.Aeson as Aeson
 import Data.ByteString (ByteString)
 import Data.Either (partitionEithers, rights)
 import Data.List (intercalate)
+import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
@@ -89,6 +93,17 @@ getLoggerLoggerSet = lLoggerSet
 getLoggerReformat :: Logger -> LogLevel -> ByteString -> ByteString
 getLoggerReformat = lReformat
 
+setLoggerReformat
+  :: (LogSettings -> Colors -> LogLevel -> LoggedMessage -> ByteString)
+  -> Logger
+  -> Logger
+setLoggerReformat f logger =
+  logger
+    { lReformat = \level bytes -> fromMaybe bytes $ do
+        lm <- Aeson.decodeStrict bytes
+        pure $ f (lLogSettings logger) (getColors $ lShouldColor logger) level lm
+    }
+
 getLoggerShouldLog :: Logger -> LogSource -> LogLevel -> Bool
 getLoggerShouldLog = lShouldLog
 
@@ -133,18 +148,20 @@ newLogger settings = do
           <$> newFileLoggerSetN defaultBufSize concurrency path
           <*> shouldColorAuto settings (pure False)
 
-  let
-    lReformat = case getLogSettingsFormat settings of
-      LogFormatJSON -> const id -- breakpoint and color ignored
-      LogFormatTerminal -> reformatTerminal breakpoint lShouldColor
+  let logger =
+        Logger
+          { lLogSettings = settings
+          , lLoggerSet = lLoggerSet
+          , lReformat = const id -- By default render (JSON) bytestring as-is
+          , lShouldLog = shouldLogLevel settings
+          , lShouldColor = lShouldColor
+          , lLoggedMessages = Nothing
+          }
 
-    lShouldLog = shouldLogLevel settings
-    lLoggedMessages = Nothing
-    lLogSettings = settings
-
-  pure $ Logger {..}
+  pure $ case getLogSettingsFormat settings of
+    LogFormatJSON -> logger
+    LogFormatTerminal -> setLoggerReformat reformatTerminal logger
  where
-  breakpoint = getLogSettingsBreakpoint settings
   concurrency = getLogSettingsConcurrency settings
 
 flushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => m ()

@@ -7,14 +7,19 @@ module Blammo.Logging.TerminalSpec
 import Prelude
 
 import Blammo.Logging
+import Blammo.Logging.Colors (noColors)
+import Blammo.Logging.LogSettings
+  ( LogSettings
+  , defaultLogSettings
+  , setLogSettingsBreakpoint
+  )
 import Blammo.Logging.Logger (LoggedMessage (..))
 import Blammo.Logging.Terminal
-import Data.Aeson (encode, object)
+import Data.Aeson (object)
 import Data.Aeson.Types (Object, Pair, Value (..))
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BS8
-import qualified Data.ByteString.Lazy as BSL
 import Data.Text (Text)
 import Data.Time
 import Test.Hspec
@@ -22,35 +27,22 @@ import Test.Hspec
 spec :: Spec
 spec = do
   describe "reformatTerminal" $ do
-    it "passes-through none-LoggedMessages as-is" $ do
-      let
-        bs :: ByteString
-        bs = "I'm not even JSON"
-
-        bsJSON :: ByteString
-        bsJSON = "{\"I'm\":\"Valid JSON, but not LoggedMessage\"}"
-
-      reformatTerminal 0 False LevelInfo bs `shouldBe` bs
-      reformatTerminal 0 False LevelInfo bsJSON `shouldBe` bsJSON
-
     it "reformats LoggedMessages with complex attributes" $ do
       let
-        bs =
-          BSL.toStrict $
-            encode
-              LoggedMessage
-                { loggedMessageTimestamp =
-                    UTCTime
-                      { utctDay = fromGregorian 2022 1 1
-                      , utctDayTime = 0
-                      }
-                , loggedMessageLevel = LevelInfo
-                , loggedMessageLoc = Nothing
-                , loggedMessageLogSource = Just "app"
-                , loggedMessageThreadContext = keyMap ["x" .= object ["y" .= True]]
-                , loggedMessageText = "I'm a log message"
-                , loggedMessageMeta = keyMap ["a" .= [1 :: Int, 2, 3]]
-                }
+        lm =
+          LoggedMessage
+            { loggedMessageTimestamp =
+                UTCTime
+                  { utctDay = fromGregorian 2022 1 1
+                  , utctDayTime = 0
+                  }
+            , loggedMessageLevel = LevelInfo
+            , loggedMessageLoc = Nothing
+            , loggedMessageLogSource = Just "app"
+            , loggedMessageThreadContext = keyMap ["x" .= object ["y" .= True]]
+            , loggedMessageText = "I'm a log message"
+            , loggedMessageMeta = keyMap ["a" .= [1 :: Int, 2, 3]]
+            }
 
         expected =
           mconcat
@@ -58,32 +50,30 @@ spec = do
             , " source=app x={y: True} a=[1, 2, 3]"
             ]
 
-      reformatTerminal 120 False LevelInfo bs `shouldBe` expected
+      reformatTerminal (settings 120) noColors LevelInfo lm `shouldBe` expected
 
     it "moves attributes to multi-line at the given breakpoint" $ do
       let
-        bs =
-          BSL.toStrict $
-            encode
-              LoggedMessage
-                { loggedMessageTimestamp =
-                    UTCTime
-                      { utctDay = fromGregorian 2022 1 1
-                      , utctDayTime = 0
-                      }
-                , loggedMessageLevel = LevelInfo
-                , loggedMessageLoc = Nothing
-                , loggedMessageLogSource = Just "app"
-                , loggedMessageThreadContext = mempty
-                , loggedMessageText = "I'm a log message"
-                , loggedMessageMeta =
-                    keyMap
-                      [ "a" .= ("aaaaaaaaa" :: Text)
-                      , "b" .= ("aaaaaaaaa" :: Text)
-                      , "c" .= ("aaaaaaaaa" :: Text)
-                      , "d" .= ("aaaaaaaaa" :: Text)
-                      ]
-                }
+        lm =
+          LoggedMessage
+            { loggedMessageTimestamp =
+                UTCTime
+                  { utctDay = fromGregorian 2022 1 1
+                  , utctDayTime = 0
+                  }
+            , loggedMessageLevel = LevelInfo
+            , loggedMessageLoc = Nothing
+            , loggedMessageLogSource = Just "app"
+            , loggedMessageThreadContext = mempty
+            , loggedMessageText = "I'm a log message"
+            , loggedMessageMeta =
+                keyMap
+                  [ "a" .= ("aaaaaaaaa" :: Text)
+                  , "b" .= ("aaaaaaaaa" :: Text)
+                  , "c" .= ("aaaaaaaaa" :: Text)
+                  , "d" .= ("aaaaaaaaa" :: Text)
+                  ]
+            }
 
         single =
           mconcat
@@ -103,33 +93,32 @@ spec = do
 
         breakpoint = BS.length single
 
-      reformatTerminal breakpoint False LevelInfo bs `shouldBe` single
-      reformatTerminal (breakpoint - 1) False LevelInfo bs `shouldBe` multi
+      reformatTerminal (settings breakpoint) noColors LevelInfo lm `shouldBe` single
+      reformatTerminal (settings $ breakpoint - 1) noColors LevelInfo lm
+        `shouldBe` multi
 
   it "aligns multi-line correctly even with color escapes" $ do
     let
-      bs =
-        BSL.toStrict $
-          encode
-            LoggedMessage
-              { loggedMessageTimestamp =
-                  UTCTime
-                    { utctDay = fromGregorian 2022 1 1
-                    , utctDayTime = 0
-                    }
-              , loggedMessageLevel = LevelInfo
-              , loggedMessageLoc = Nothing
-              , loggedMessageLogSource = Just "app"
-              , loggedMessageThreadContext = mempty
-              , loggedMessageText = "I'm a log message"
-              , loggedMessageMeta =
-                  keyMap
-                    [ "a" .= ("aaaaaaaaa" :: Text)
-                    , "b" .= ("aaaaaaaaa" :: Text)
-                    , "c" .= ("aaaaaaaaa" :: Text)
-                    , "d" .= ("aaaaaaaaa" :: Text)
-                    ]
-              }
+      lm =
+        LoggedMessage
+          { loggedMessageTimestamp =
+              UTCTime
+                { utctDay = fromGregorian 2022 1 1
+                , utctDayTime = 0
+                }
+          , loggedMessageLevel = LevelInfo
+          , loggedMessageLoc = Nothing
+          , loggedMessageLogSource = Just "app"
+          , loggedMessageThreadContext = mempty
+          , loggedMessageText = "I'm a log message"
+          , loggedMessageMeta =
+              keyMap
+                [ "a" .= ("aaaaaaaaa" :: Text)
+                , "b" .= ("aaaaaaaaa" :: Text)
+                , "c" .= ("aaaaaaaaa" :: Text)
+                , "d" .= ("aaaaaaaaa" :: Text)
+                ]
+          }
 
       expected =
         mconcat
@@ -141,7 +130,11 @@ spec = do
           , "                                d=aaaaaaaaa"
           ]
 
-    stripColor (reformatTerminal 120 True LevelInfo bs) `shouldBe` expected
+    stripColor (reformatTerminal (settings 120) noColors LevelInfo lm)
+      `shouldBe` expected
+
+settings :: Int -> LogSettings
+settings breakpoint = setLogSettingsBreakpoint breakpoint defaultLogSettings
 
 keyMap :: [Pair] -> Object
 keyMap ps = km where Object km = object ps
