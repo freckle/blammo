@@ -74,7 +74,7 @@ parseWith = Env.parse id . parserWith
 
 parserWith :: LogSettings -> Parser Error LogSettings
 parserWith defaults =
-  ($ defaults) . appEndo . mconcat
+  flip (appEndo . mconcat) defaults
     <$> sequenceA
       [ endoVar readLogLevels setLogSettingsLevels "LOG_LEVEL"
       , endoVar readLogDestination setLogSettingsDestination "LOG_DESTINATION"
