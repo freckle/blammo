@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.1.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.2.0...main)
+
+## [v2.1.2.0](https://github.com/freckle/blammo/compare/v2.1.1.0...Blammo-v2.1.2.0)
+
+- Add `setLoggerReformat`
 
 ## [v2.1.1.0](https://github.com/freckle/blammo/compare/v2.1.0.0...Blammo-v2.1.1.0)
 
