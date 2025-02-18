@@ -1,6 +1,6 @@
 ## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.1.0...main)
 
-## [v2.1.1.0](https://github.com/freckle/blammo/compare/v2.0.0.0...Blammo-v2.1.0.0)
+## [v2.1.1.0](https://github.com/freckle/blammo/compare/v2.1.0.0...Blammo-v2.1.1.0)
 
 - Accept special value `null` for `LOG_DESTINATION` as a synonym for the null
   device (`/dev/null` or `\\.\NUL` on windows).
