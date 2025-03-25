@@ -1,4 +1,7 @@
-resolver: nightly-2025-03-24
+resolver: lts-20.26
+extra-deps:
+  - fast-logger-3.2.3
+  - monad-logger-0.3.39
 
 allow-newer: true
 allow-newer-deps:
