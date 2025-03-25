@@ -1,7 +1,7 @@
 {
   inputs = {
-    stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    freckle.url = "git+ssh://git@github.com/freckle/flakes?dir=main";
+    stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    freckle.url = "github:freckle/flakes?dir=main";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs =
@@ -26,7 +26,7 @@
           fourmolu = freckle.fourmolu-0-13-x;
 
           ghc = freckleLib.haskellBundle {
-            ghcVersion = "ghc-9-2-8";
+            ghcVersion = "ghc-9-8-4";
             enableHLS = true;
           };
         };
