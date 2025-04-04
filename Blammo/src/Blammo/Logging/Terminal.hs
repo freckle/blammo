@@ -94,7 +94,7 @@ colorizeKeyMap sep Colors {..} km
   | otherwise = foldMap (uncurry fromPair) $ sortOn fst $ KeyMap.toList km
  where
   fromPair k v =
-    sep <> logPiece cyan (Key.toText k) <> "=" <> logPiece magenta (fromValue v)
+    sep <> logPiece cyan (Key.toText k) <> " = " <> logPiece magenta (fromValue v)
 
   fromValue = \case
     Object m -> obj $ map (uncurry renderPairNested) $ KeyMap.toList m
