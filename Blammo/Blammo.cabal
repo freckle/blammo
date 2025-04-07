@@ -27,6 +27,7 @@ library
   exposed-modules:
       Blammo.Logging
       Blammo.Logging.Colors
+      Blammo.Logging.Internal.Colors
       Blammo.Logging.Internal.Logger
       Blammo.Logging.Logger
       Blammo.Logging.LogSettings
