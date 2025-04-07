@@ -20,7 +20,7 @@ import Prelude
 
 import Blammo.Logging.Internal.Colors
 import Blammo.Logging.Internal.Logger
-import Blammo.Logging.LogSettings (shouldColorHandle)
+import Blammo.Logging.LogSettings (adjustColors, shouldColorHandle)
 import Control.Lens (to, view)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Reader (MonadReader)
@@ -28,7 +28,9 @@ import System.IO (Handle, stderr, stdout)
 
 -- | Return 'Colors' consistent with whatever your logging is doing
 getColorsLogger :: (MonadReader env m, HasLogger env) => m Colors
-getColorsLogger = view $ loggerL . to (getColors . lShouldColor)
+getColorsLogger = do
+  f <- view $ loggerL . to (adjustColors . lLogSettings)
+  view $ loggerL . to (f . getColors . lShouldColor)
 
 -- | Return 'Colors' consistent with logging, but for 'Handle'
 --
@@ -49,7 +51,7 @@ getColorsHandle
   :: (MonadIO m, MonadReader env m, HasLogger env) => Handle -> m Colors
 getColorsHandle h = do
   ls <- view $ loggerL . to lLogSettings
-  getColors <$> shouldColorHandle ls h
+  adjustColors ls . getColors <$> shouldColorHandle ls h
 
 -- | Short-cut for @'getColorsHandle' 'stdout'@
 getColorsStdout :: (MonadIO m, MonadReader env m, HasLogger env) => m Colors

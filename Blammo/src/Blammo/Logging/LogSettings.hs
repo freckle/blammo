@@ -19,6 +19,7 @@ module Blammo.Logging.LogSettings
   , setLogSettingsDestination
   , setLogSettingsFormat
   , setLogSettingsColor
+  , setLogSettingsColors
   , setLogSettingsBreakpoint
   , setLogSettingsConcurrency
 
@@ -31,6 +32,7 @@ module Blammo.Logging.LogSettings
   , getLogSettingsConcurrency
 
     -- * Logic
+  , adjustColors
   , shouldLogLevel
   , shouldColorAuto
   , shouldColorHandle
@@ -38,6 +40,7 @@ module Blammo.Logging.LogSettings
 
 import Prelude
 
+import Blammo.Logging.Internal.Colors (Colors)
 import Blammo.Logging.LogSettings.LogLevels (LogLevels)
 import qualified Blammo.Logging.LogSettings.LogLevels as LogLevels
 import Control.Monad.IO.Class (MonadIO (..))
@@ -50,6 +53,7 @@ data LogSettings = LogSettings
   , lsDestination :: LogDestination
   , lsFormat :: LogFormat
   , lsColor :: LogColor
+  , lsColors :: Colors -> Colors
   , lsBreakpoint :: Int
   , lsConcurrency :: Maybe Int
   }
@@ -117,6 +121,7 @@ defaultLogSettings =
     , lsDestination = LogDestinationStdout
     , lsFormat = LogFormatTerminal
     , lsColor = LogColorAuto
+    , lsColors = id
     , lsBreakpoint = 120
     , lsConcurrency = Just 1
     }
@@ -168,6 +173,10 @@ setLogSettingsBreakpoint x ls = ls {lsBreakpoint = x}
 setLogSettingsConcurrency :: Maybe Int -> LogSettings -> LogSettings
 setLogSettingsConcurrency x ls = ls {lsConcurrency = x}
 
+-- | Set a function to modify 'Colors' used in logging
+setLogSettingsColors :: (Colors -> Colors) -> LogSettings -> LogSettings
+setLogSettingsColors f ls = ls {lsColors = f}
+
 getLogSettingsLevels :: LogSettings -> LogLevels
 getLogSettingsLevels = lsLevels
 
@@ -185,6 +194,9 @@ getLogSettingsBreakpoint = lsBreakpoint
 
 getLogSettingsConcurrency :: LogSettings -> Maybe Int
 getLogSettingsConcurrency = lsConcurrency
+
+adjustColors :: LogSettings -> Colors -> Colors
+adjustColors = lsColors
 
 shouldLogLevel :: LogSettings -> LogSource -> LogLevel -> Bool
 shouldLogLevel = LogLevels.shouldLogLevel . getLogSettingsLevels
