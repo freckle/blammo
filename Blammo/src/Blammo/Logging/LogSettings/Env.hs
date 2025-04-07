@@ -25,6 +25,9 @@
 --
 -- - @TERM@: if present and the value @dumb@, behave as if @LOG_COLOR=never@.
 --
+-- - @GITHUB_ACTIONS@: if present and the value @true@, adjust some colors for
+--   better behavior on GitHub Actions.
+--
 -- This module is meant to be imported @qualified@.
 --
 -- @
@@ -54,6 +57,7 @@ module Blammo.Logging.LogSettings.Env
 
 import Prelude
 
+import Blammo.Logging.Colors (Colors (..))
 import Blammo.Logging.LogSettings
 import Data.Bifunctor (first)
 import Data.Bool (bool)
@@ -84,6 +88,7 @@ parserWith defaults =
       , endoVar readLogFormat setLogSettingsFormat "LOG_FORMAT"
       , endoSwitch (setLogSettingsColor LogColorNever) "NO_COLOR"
       , endoOn "dumb" (setLogSettingsColor LogColorNever) "TERM"
+      , endoOn "true" (setLogSettingsColors fixGitHubActions) "GITHUB_ACTIONS"
       ]
 
 endoVar
@@ -116,3 +121,20 @@ endoWhen
   -> Bool
   -> Endo a
 endoWhen f = bool mempty (Endo f)
+
+-- |
+--
+-- GitHub Actions doesn't support 'dim' (such content just appears white). But
+-- if you use 'gray', it looks like 'dim' should. But one shouldn't just use
+-- 'gray' all the time because that won't look right /not/ in GitHub Actions.
+--
+-- We can help by automatically substituting 'gray' for 'dim', only in the
+-- GitHub Actions environment. We take on this extra complexity because:
+--
+-- 1. It's trivial and zero dependency
+-- 2. It's lower complexity overall to do here, vs from the outside
+-- 3. GitHub Actions is a very common logging environment, and
+-- 4. I suspect we'll encounter more cases where GitHub Actions can be improved
+--    though such means, increasing its usefulness
+fixGitHubActions :: Colors -> Colors
+fixGitHubActions colors = colors {dim = gray colors}
