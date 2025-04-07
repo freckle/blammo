@@ -55,6 +55,11 @@ noColors =
     , dim = id
     }
 
+-- | Return colorful 'Colors' if given 'True'
+--
+-- __NOTE__: Direct use of this function is discouraged. It does not apply any
+-- color modifications done through 'LogSettings'. Use one of the @get@
+-- functions in "Blammo.Logging.Colors" instead, which do.
 getColors :: Bool -> Colors
 getColors = \case
   True -> colors
