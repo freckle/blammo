@@ -73,8 +73,8 @@ readLogDestination = \case
   "null" -> Right $ LogDestinationFile nullDevice
   ('@' : path) -> Right $ LogDestinationFile path
   x ->
-    Left $
-      "Invalid log destination "
+    Left
+      $ "Invalid log destination "
         <> x
         <> ", must be stdout, stderr, null, or @{path}"
 

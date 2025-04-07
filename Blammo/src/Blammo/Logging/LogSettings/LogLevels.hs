@@ -107,12 +107,12 @@ readLogLevel t = case T.toLower t of
 
 showLogLevels :: LogLevels -> String
 showLogLevels LogLevels {..} =
-  unpack $
-    T.intercalate "," $
-      showLogLevel llDefaultLevel
-        : map
-          (\(s, l) -> s <> ":" <> showLogLevel l)
-          (Map.toList llSourceLevels)
+  unpack
+    $ T.intercalate ","
+    $ showLogLevel llDefaultLevel
+      : map
+        (\(s, l) -> s <> ":" <> showLogLevel l)
+        (Map.toList llSourceLevels)
 
 showLogLevel :: LogLevel -> Text
 showLogLevel = \case
