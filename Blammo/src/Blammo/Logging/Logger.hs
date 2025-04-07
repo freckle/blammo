@@ -101,7 +101,8 @@ setLoggerReformat f logger =
   logger
     { lReformat = \level bytes -> fromMaybe bytes $ do
         lm <- Aeson.decodeStrict bytes
-        pure $ f (lLogSettings logger) (getColors $ lShouldColor logger) level lm
+        let g = adjustColors $ lLogSettings logger
+        pure $ f (lLogSettings logger) (g $ getColors $ lShouldColor logger) level lm
     }
 
 getLoggerShouldLog :: Logger -> LogSource -> LogLevel -> Bool
