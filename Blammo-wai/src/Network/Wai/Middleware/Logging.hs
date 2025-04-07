@@ -103,8 +103,8 @@ defaultConfig =
   Config
     { cLogSource = "requestLogger"
     , cGetClientIp = \req ->
-        fromMaybe (pack $ show $ remoteHost req) $
-          (firstValue =<< lookupRequestHeader "x-forwarded-for" req)
+        fromMaybe (pack $ show $ remoteHost req)
+          $ (firstValue =<< lookupRequestHeader "x-forwarded-for" req)
             <|> lookupRequestHeader "x-real-ip" req
     , cGetDestinationIp = lookupRequestHeader "x-real-ip"
     }
@@ -147,11 +147,11 @@ requestLoggerWith config env app req respond =
     app req $ \resp -> do
       recvd <- respond resp
       duration <- toMillis . subtract begin <$> getTime
-      runInIO $
-        runWithLogger env $
-          if isRaw resp
-            then logRawResponse config duration req
-            else logResponse config duration req resp
+      runInIO
+        $ runWithLogger env
+        $ if isRaw resp
+          then logRawResponse config duration req
+          else logResponse config duration req resp
       pure recvd
  where
   getTime = Clock.getTime Clock.Monotonic

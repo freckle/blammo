@@ -77,9 +77,9 @@ runLogAction
   -> msg
   -> m ()
 runLogAction logger loc source level msg =
-  liftIO $
-    when (lShouldLog logger source level) $
-      defaultOutputWith options loc source level (toLogStr msg)
+  liftIO
+    $ when (lShouldLog logger source level)
+    $ defaultOutputWith options loc source level (toLogStr msg)
  where
   options = defaultOutputOptions $ \logLevel bytes ->
     pushLogStrLn logger $ toLogStr $ getLoggerReformat logger logLevel bytes
@@ -214,8 +214,8 @@ getLoggedMessagesUnsafe = do
   succeeded
     <$ unless
       (null failed)
-      ( throwString $
-          intercalate "\n" $
-            "Messages were logged that didn't parse as LoggedMessage:"
-              : failed
+      ( throwString
+          $ intercalate "\n"
+          $ "Messages were logged that didn't parse as LoggedMessage:"
+            : failed
       )

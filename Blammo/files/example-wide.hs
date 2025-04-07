@@ -9,11 +9,11 @@ import Data.Text (Text)
 
 main :: IO ()
 main = runSimpleLoggingT $ do
-  logInfo $
-    "Here is a normal line"
+  logInfo
+    $ "Here is a normal line"
       :# ["vehicle" .= t "firetruck", "accountNumber" .= t "are"]
-  logInfo $
-    "And here are really wide lines"
+  logInfo
+    $ "And here are really wide lines"
       :# [ "vehicle" .= t "firetruck"
          , "accountNumber" .= t "are"
          , "url" .= t "http://example.com/foo/bar/baz/bat"
@@ -22,8 +22,8 @@ main = runSimpleLoggingT $ do
          , "state" .= t "PA"
          , "hey" .= t "hio"
          ]
-  logInfo $
-    "Some more log lines"
+  logInfo
+    $ "Some more log lines"
       :# [ "orange" .= t "how"
          , "there" .= t "do"
          , "state" .= t "PA"
@@ -32,8 +32,8 @@ main = runSimpleLoggingT $ do
          , "frog" .= t "hippity hoppity"
          , "hey" .= t "hio"
          ]
-  logInfo $
-    "Such a big attribute list"
+  logInfo
+    $ "Such a big attribute list"
       :# [ "apple" .= t "hi"
          , "orange" .= t "how"
          , "accountNumber" .= t "are"

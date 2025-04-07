@@ -10,6 +10,10 @@ haddock-style: single-line
 let-style: mixed
 in-style: left-align
 single-constraint-parens: never # ignored until v12 / ghc-9.6
+sort-constraints: false # default
+sort-derived-classes: false # default
+sort-derived-clauses: false # default
+trailing-section-operators: false # needs fourmolu >= v0.17
 unicode: never # default
 respectful: true # default
 fixities: [] # default

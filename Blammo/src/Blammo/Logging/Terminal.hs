@@ -39,20 +39,20 @@ import qualified Data.Vector as V
 reformatTerminal
   :: LogSettings -> Colors -> LogLevel -> LoggedMessage -> ByteString
 reformatTerminal settings colors@Colors {..} logLevel LoggedMessage {..} = do
-  LogPiece.bytestring $
-    if LogPiece.visibleLength oneLineLogPiece <= breakpoint
+  LogPiece.bytestring
+    $ if LogPiece.visibleLength oneLineLogPiece <= breakpoint
       then oneLineLogPiece
       else multiLineLogPiece
  where
   breakpoint = getLogSettingsBreakpoint settings
 
   logTimestampPiece =
-    logPiece dim $
-      pack $
-        formatTime
-          defaultTimeLocale
-          "%F %X"
-          loggedMessageTimestamp
+    logPiece dim
+      $ pack
+      $ formatTime
+        defaultTimeLocale
+        "%F %X"
+        loggedMessageTimestamp
 
   logLevelPiece = case logLevel of
     LevelDebug -> logPiece gray $ padTo 9 "debug"
