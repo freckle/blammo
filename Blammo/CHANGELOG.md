@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.2.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.3.0...main)
+
+## [v2.1.3.0](https://github.com/freckle/blammo/compare/v2.1.2.0...Blammo-v2.1.3.0)
+
+- Add `setLogSettingsColors` to support customizing colors
 
 ## [v2.1.2.0](https://github.com/freckle/blammo/compare/v2.1.1.0...Blammo-v2.1.2.0)
 
