@@ -6,12 +6,19 @@ import Blammo.Logging.Logger (HasLogger (..), runLogAction)
 import Control.Lens (view)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Logger.Aeson (MonadLogger (..), MonadLoggerIO (..))
-import Control.Monad.Reader (MonadReader, ReaderT (ReaderT), asks)
+import Control.Monad.Reader (MonadReader, ReaderT (ReaderT), asks, MonadTrans)
 
 -- | Useful with the @DerivingVia@ language extension to derive
 --   'MonadLogger' for your application monad
 newtype WithLogger env m a = WithLogger (ReaderT env m a)
-  deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader env)
+  deriving newtype
+    ( Functor
+    , Applicative
+    , Monad
+    , MonadIO
+    , MonadReader env
+    , MonadTrans
+    )
 
 runWithLogger :: env -> WithLogger env m a -> m a
 runWithLogger env (WithLogger (ReaderT f)) = f env
