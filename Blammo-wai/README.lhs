@@ -20,7 +20,6 @@ import Control.Exception (displayException)
 import Control.Monad (when)
 import Data.Aeson
 import Data.Text (Text)
-import Text.Markdown.Unlit ()
 import Control.Lens (lens)
 ```
 -->

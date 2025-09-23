@@ -67,8 +67,9 @@ tests:
       - Blammo-wai
       - aeson
       - lens
-      - markdown-unlit
       - text
       - wai
       - warp
       - yesod-core
+    build-tools:
+      - markdown-unlit

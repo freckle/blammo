@@ -87,6 +87,7 @@ tests:
       - Blammo
       - aeson
       - lens
-      - markdown-unlit
       - mtl
       - text
+    build-tools:
+      - markdown-unlit
