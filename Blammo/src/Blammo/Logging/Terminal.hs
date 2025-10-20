@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 -- | Colorful logging for humans
 --
 -- Lines are formatted as
@@ -19,99 +21,83 @@ module Blammo.Logging.Terminal
 
 import Prelude
 
-import Blammo.Logging.Colors
-import Blammo.Logging.LogSettings (LogSettings, getLogSettingsBreakpoint)
-import Blammo.Logging.Terminal.LogPiece (LogPiece, logPiece)
-import qualified Blammo.Logging.Terminal.LogPiece as LogPiece
+import Blammo.Logging.Terminal.Doc
 import Control.Monad.Logger.Aeson
 import Data.Aeson
-import Data.Aeson.Compat (KeyMap)
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
-import Data.ByteString (ByteString)
-import Data.List (sortOn)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
 import qualified Data.Text as T
-import Data.Time (defaultTimeLocale, formatTime)
+import Data.Time (UTCTime, defaultTimeLocale, formatTime)
 import qualified Data.Vector as V
+import Prettyprinter hiding (list)
+import Prettyprinter.Util (reflow)
 
-reformatTerminal
-  :: LogSettings -> Colors -> LogLevel -> LoggedMessage -> ByteString
-reformatTerminal settings colors@Colors {..} logLevel LoggedMessage {..} = do
-  LogPiece.bytestring
-    $ if LogPiece.visibleLength oneLineLogPiece <= breakpoint
-      then oneLineLogPiece
-      else multiLineLogPiece
+reformatTerminal :: LogLevel -> LoggedMessage -> Doc Ann
+reformatTerminal logLevel LoggedMessage {..} =
+  prettyTimestamp loggedMessageTimestamp
+    <+> prettyLogLevel logLevel
+    <+> align
+      ( fill 31 (prettyMessage loggedMessageText)
+          <> group (flatAlt multiline oneline)
+      )
  where
-  breakpoint = getLogSettingsBreakpoint settings
+  oneline = " " <> hsep metas
+  multiline = hardline <> vsep metas
 
-  logTimestampPiece =
-    logPiece dim
-      $ pack
-      $ formatTime
-        defaultTimeLocale
-        "%F %X"
-        loggedMessageTimestamp
+  metas :: [Doc Ann]
+  metas =
+    map (uncurry prettyPair)
+      $ maybe mempty (pure . ("source",) . String) loggedMessageLogSource
+        <> KeyMap.toList loggedMessageThreadContext
+        <> KeyMap.toList loggedMessageMeta
 
-  logLevelPiece = case logLevel of
-    LevelDebug -> logPiece gray $ padTo 9 "debug"
-    LevelInfo -> logPiece green $ padTo 9 "info"
-    LevelWarn -> logPiece yellow $ padTo 9 "warn"
-    LevelError -> logPiece red $ padTo 9 "error"
-    LevelOther x -> logPiece blue $ padTo 9 x
+prettyTimestamp :: UTCTime -> Doc Ann
+prettyTimestamp =
+  annotate AnnTimestamp . pretty . formatTime defaultTimeLocale "%F %X"
 
-  loggedSourceAsMap =
-    foldMap (KeyMap.singleton "source" . String) loggedMessageLogSource
-
-  logPrefixPiece =
-    logTimestampPiece <> " [" <> logLevelPiece <> "] "
-
-  logMessagePiece = logPiece bold $ padTo 31 loggedMessageText
-
-  logAttrsPiece =
-    mconcat
-      [ colorizeKeyMap " " colors loggedSourceAsMap
-      , colorizeKeyMap " " colors loggedMessageThreadContext
-      , colorizeKeyMap " " colors loggedMessageMeta
-      ]
-
-  oneLineLogPiece = mconcat [logPrefixPiece, logMessagePiece, logAttrsPiece]
-
-  multiLineLogPiece =
-    let shift = "\n" <> LogPiece.offset (LogPiece.visibleLength logPrefixPiece)
-    in  mconcat
-          [ logPrefixPiece
-          , logMessagePiece
-          , colorizeKeyMap shift colors loggedSourceAsMap
-          , colorizeKeyMap shift colors loggedMessageThreadContext
-          , colorizeKeyMap shift colors loggedMessageMeta
-          ]
-
-colorizeKeyMap :: LogPiece -> Colors -> KeyMap Value -> LogPiece
-colorizeKeyMap sep Colors {..} km
-  | KeyMap.null km = mempty
-  | otherwise = foldMap (uncurry fromPair) $ sortOn fst $ KeyMap.toList km
+prettyLogLevel :: LogLevel -> Doc Ann
+prettyLogLevel l = enclose "[" "]" $ annotate (AnnByLevel l) $ levelDoc 9
  where
-  fromPair k v =
-    sep <> logPiece cyan (Key.toText k) <> "=" <> logPiece magenta (fromValue v)
+  levelDoc :: Int -> Doc ann
+  levelDoc n =
+    fill n $ case l of
+      LevelDebug -> "debug"
+      LevelInfo -> "info"
+      LevelWarn -> "warn"
+      LevelError -> "error"
+      LevelOther x -> pretty $ T.take n x
 
-  fromValue = \case
-    Object m -> obj $ map (uncurry renderPairNested) $ KeyMap.toList m
-    Array a -> list $ map fromValue $ V.toList a
-    String x -> x
-    Number n -> sci n
-    Bool b -> pack $ show b
-    Null -> "null"
+prettyMessage :: Text -> Doc Ann
+prettyMessage = vsep . map reflow . T.lines
 
-  renderPairNested k v = Key.toText k <> ": " <> fromValue v
+prettyPair :: Key -> Value -> Doc Ann
+prettyPair k v =
+  annotate AnnKey (pretty $ Key.toText k)
+    <> "="
+    <> annotate AnnValue (fromValue v)
 
-  obj xs = "{" <> T.intercalate ", " xs <> "}"
-  list xs = "[" <> T.intercalate ", " xs <> "]"
-  sci = dropSuffix ".0" . pack . show
+fromValue :: Value -> Doc Ann
+fromValue = \case
+  Object m -> list "{" "}" $ map (uncurry pair) $ KeyMap.toList m
+  Array a -> list "[" "]" $ map fromValue $ V.toList a
+  String x -> annotate AnnString $ pretty x
+  Number n -> annotate AnnNumber $ pretty $ dropSuffix ".0" $ pack $ show n
+  Bool b -> annotate AnnBoolean $ pretty $ show b
+  Null -> annotate AnnNull "null"
+
+pair :: Key -> Value -> Doc Ann
+pair k v =
+  pretty (Key.toText k)
+    <> annotate AnnPunctuation ": "
+    <> fromValue v
+
+list :: Doc Ann -> Doc Ann -> [Doc Ann] -> Doc Ann
+list l r =
+  enclose (annotate AnnPunctuation l) (annotate AnnPunctuation r)
+    . hcat
+    . punctuate (annotate AnnPunctuation ", ")
 
 dropSuffix :: Text -> Text -> Text
 dropSuffix suffix t = fromMaybe t $ T.stripSuffix suffix t
-
-padTo :: Int -> Text -> Text
-padTo n t = t <> T.replicate pad " " where pad = max 0 $ n - T.length t

@@ -57,6 +57,8 @@ library:
     - lens
     - monad-logger-aeson
     - mtl
+    - prettyprinter
+    - prettyprinter-ansi-terminal
     - text
     - time
     - vector
@@ -74,7 +76,6 @@ tests:
       - Blammo
       - aeson
       - envparse
-      - bytestring
       - hspec
       - mtl
       - text

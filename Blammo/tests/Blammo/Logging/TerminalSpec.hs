@@ -7,20 +7,13 @@ module Blammo.Logging.TerminalSpec
 import Prelude
 
 import Blammo.Logging
-import Blammo.Logging.Colors (noColors)
-import Blammo.Logging.LogSettings
-  ( LogSettings
-  , defaultLogSettings
-  , setLogSettingsBreakpoint
-  )
 import Blammo.Logging.Logger (LoggedMessage (..))
 import Blammo.Logging.Terminal
+import Blammo.Logging.Terminal.Doc
 import Data.Aeson (object)
 import Data.Aeson.Types (Object, Pair, Value (..))
-import Data.ByteString (ByteString)
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Char8 as BS8
 import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Time
 import Test.Hspec
 
@@ -50,7 +43,7 @@ spec = do
             , " source=app x={y: True} a=[1, 2, 3]"
             ]
 
-      reformatTerminal (settings 120) noColors LevelInfo lm `shouldBe` expected
+      renderTerminal False 120 LevelInfo lm `shouldBe` expected
 
     it "moves attributes to multi-line at the given breakpoint" $ do
       let
@@ -91,11 +84,52 @@ spec = do
             , "                                d=aaaaaaaaa"
             ]
 
-        breakpoint = BS.length single
+        breakpoint = T.length single
 
-      reformatTerminal (settings breakpoint) noColors LevelInfo lm `shouldBe` single
-      reformatTerminal (settings $ breakpoint - 1) noColors LevelInfo lm
+      renderTerminal False breakpoint LevelInfo lm `shouldBe` single
+      renderTerminal False (breakpoint - 1) LevelInfo lm
         `shouldBe` multi
+
+  it "reflows long and multi-line messages" $ do
+    let
+      lm =
+        LoggedMessage
+          { loggedMessageTimestamp =
+              UTCTime
+                { utctDay = fromGregorian 2022 1 1
+                , utctDayTime = 0
+                }
+          , loggedMessageLevel = LevelInfo
+          , loggedMessageLoc = Nothing
+          , loggedMessageLogSource = Just "app"
+          , loggedMessageThreadContext = mempty
+          , loggedMessageText =
+              "I'm a really really really long message "
+                <> "with multiple lines that are so long "
+                <> "they should get reflowed at the column "
+                <> "limit."
+                <> "\n"
+                <> "\nThey are:"
+                <> "\n"
+                <> "\n1- This"
+                <> "\n2- That"
+          , loggedMessageMeta = mempty
+          }
+
+      expected =
+        mconcat
+          [ "2022-01-01 00:00:00 [info     ] I'm a really really really long message with\n"
+          , "                                multiple lines that are so long they should get\n"
+          , "                                reflowed at the column limit.\n"
+          , "\n"
+          , "                                They are:\n"
+          , "\n"
+          , "                                1- This\n"
+          , "                                2- That                         source=app"
+          ]
+
+    stripColor (renderTerminal True 80 LevelInfo lm)
+      `shouldBe` expected
 
   it "aligns multi-line correctly even with color escapes" $ do
     let
@@ -130,22 +164,29 @@ spec = do
           , "                                d=aaaaaaaaa"
           ]
 
-    stripColor (reformatTerminal (settings 120) noColors LevelInfo lm)
+    stripColor (renderTerminal True 120 LevelInfo lm)
       `shouldBe` expected
-
-settings :: Int -> LogSettings
-settings breakpoint = setLogSettingsBreakpoint breakpoint defaultLogSettings
 
 keyMap :: [Pair] -> Object
 keyMap ps = km where Object km = object ps
 
 -- Removes from any '\ESC' Char to the next 'm' Char
-stripColor :: ByteString -> ByteString
-stripColor = snd . BS8.foldl' go (False, "")
+stripColor :: Text -> Text
+stripColor = snd . T.foldl' go (False, "")
  where
-  go :: (Bool, ByteString) -> Char -> (Bool, ByteString)
+  go :: (Bool, Text) -> Char -> (Bool, Text)
   go (dropping, acc) = \case
     '\ESC' -> (True, acc)
     'm' | dropping -> (False, acc)
     _ | dropping -> (True, acc)
-    c -> (False, BS8.snoc acc c)
+    c -> (False, T.snoc acc c)
+
+renderTerminal :: Bool -> Int -> LogLevel -> LoggedMessage -> Text
+renderTerminal c w l = renderDoc settings . reformatTerminal l
+ where
+  settings =
+    RenderSettings
+      { rsUseColor = c
+      , rsPageWidth = w
+      , rsAnnToAnsi = annToAnsi
+      }
