@@ -35,7 +35,6 @@ import Prelude
 import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
-import Text.Markdown.Unlit ()
 import Control.Lens (lens)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Reader (MonadReader, ReaderT (runReaderT))
