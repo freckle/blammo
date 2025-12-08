@@ -23,7 +23,8 @@ import Prelude
 
 import Blammo.Logging.Terminal.Doc
 import Control.Monad.Logger.Aeson
-import Data.Aeson
+import Data.Aeson (Value (..))
+import Data.Aeson.Compat
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
 import Data.Maybe (fromMaybe)
