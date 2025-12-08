@@ -65,7 +65,7 @@ library
     , lens
     , monad-logger-aeson
     , mtl
-    , prettyprinter
+    , prettyprinter >=1.7.0
     , prettyprinter-ansi-terminal
     , text
     , time

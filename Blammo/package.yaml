@@ -57,7 +57,7 @@ library:
     - lens
     - monad-logger-aeson
     - mtl
-    - prettyprinter
+    - prettyprinter >= 1.7.0 # introduces Prettyprinter module tree
     - prettyprinter-ansi-terminal
     - text
     - time
