@@ -173,7 +173,7 @@ setLogSettingsBreakpoint x ls = ls {lsBreakpoint = x}
 setLogSettingsConcurrency :: Maybe Int -> LogSettings -> LogSettings
 setLogSettingsConcurrency x ls = ls {lsConcurrency = x}
 
--- | Set a function to modify 'Colors' used in logging
+-- | Set a function to define ANSI colors used in terminal logging
 setLogSettingsColors :: (Ann -> AnsiStyle) -> LogSettings -> LogSettings
 setLogSettingsColors f ls = ls {lsColors = f}
 
