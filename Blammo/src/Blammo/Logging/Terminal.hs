@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 -- | Colorful logging for humans
 --
 -- Lines are formatted as
@@ -27,6 +25,7 @@ import Data.Aeson (Value (..))
 import Data.Aeson.Compat
 import qualified Data.Aeson.Compat as Key
 import qualified Data.Aeson.Compat as KeyMap
+import Data.List (sortOn)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text, pack)
 import qualified Data.Text as T
@@ -50,9 +49,9 @@ reformatTerminal logLevel LoggedMessage {..} =
   metas :: [Doc Ann]
   metas =
     map (uncurry prettyPair)
-      $ maybe mempty (pure . ("source",) . String) loggedMessageLogSource
-        <> KeyMap.toList loggedMessageThreadContext
-        <> KeyMap.toList loggedMessageMeta
+      $ maybe id (\s -> (("source", String s) :)) loggedMessageLogSource
+      $ sortOn fst (KeyMap.toList loggedMessageThreadContext)
+        <> sortOn fst (KeyMap.toList loggedMessageMeta)
 
 prettyTimestamp :: UTCTime -> Doc Ann
 prettyTimestamp =
