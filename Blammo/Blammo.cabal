@@ -1,11 +1,11 @@
 cabal-version: 1.18
 
--- This file has been generated from package.yaml by hpack version 0.38.1.
+-- This file has been generated from package.yaml by hpack version 0.39.1.
 --
 -- see: https://github.com/sol/hpack
 
 name:           Blammo
-version:        2.1.3.0
+version:        2.1.4.0
 synopsis:       Batteries-included Structured Logging library
 description:    Please see README.md
 category:       Logging

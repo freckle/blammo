@@ -1,5 +1,9 @@
 ## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.3.0...main)
 
+## [v2.1.4.0](https://github.com/freckle/blammo/compare/v2.1.3.0...Blammo-v2.1.4.0)
+
+- Add `logTrace` and `logTraceNS` functions
+
 ## [v2.1.3.0](https://github.com/freckle/blammo/compare/v2.1.2.0...Blammo-v2.1.3.0)
 
 - Add `setLogSettingsColors` to support customizing colors
