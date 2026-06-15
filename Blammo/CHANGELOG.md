@@ -1,4 +1,8 @@
-## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.3.0...main)
+## [_Unreleased_](https://github.com/freckle/blammo/compare/Blammo-v2.1.4.1...main)
+
+## [v2.1.4.1](https://github.com/freckle/blammo/compare/v2.1.4.0...Blammo-v2.1.4.1)
+
+- Fix `homepage`
 
 ## [v2.1.4.0](https://github.com/freckle/blammo/compare/v2.1.3.0...Blammo-v2.1.4.0)
 

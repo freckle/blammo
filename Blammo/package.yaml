@@ -1,8 +1,9 @@
 name: Blammo
-version: 2.1.4.0
+version: 2.1.4.1
 maintainer: Freckle Education
 category: Logging
 github: freckle/blammo
+homepage: https://github.com/freckle/blammo/tree/main/Blammo#readme
 synopsis: Batteries-included Structured Logging library
 description: Please see README.md
 
