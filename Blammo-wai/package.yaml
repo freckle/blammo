@@ -1,8 +1,9 @@
 name: Blammo-wai
-version: 0.0.0.2
+version: 0.0.0.3
 maintainer: Freckle Education
 category: Logging, Web
 github: freckle/blammo
+homepage: https://github.com/freckle/blammo/tree/main/Blammo-wai#readme
 synopsis: Using Blammo with WAI
 description: Please see README.md
 
