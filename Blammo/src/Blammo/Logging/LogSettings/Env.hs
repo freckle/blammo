@@ -57,8 +57,8 @@ module Blammo.Logging.LogSettings.Env
 
 import Prelude
 
-import Blammo.Logging.Colors (Colors (..))
 import Blammo.Logging.LogSettings
+import Blammo.Logging.Terminal.Doc
 import Data.Bifunctor (first)
 import Data.Bool (bool)
 import Data.Semigroup (Endo (..))
@@ -88,7 +88,7 @@ parserWith defaults =
       , endoVar readLogFormat setLogSettingsFormat "LOG_FORMAT"
       , endoSwitch (setLogSettingsColor LogColorNever) "NO_COLOR"
       , endoOn "dumb" (setLogSettingsColor LogColorNever) "TERM"
-      , endoOn "true" (setLogSettingsColors fixGitHubActions) "GITHUB_ACTIONS"
+      , endoOn "true" (setLogSettingsColors annToAnsiGHA) "GITHUB_ACTIONS"
       ]
 
 endoVar
@@ -124,11 +124,12 @@ endoWhen f = bool mempty (Endo f)
 
 -- |
 --
--- GitHub Actions doesn't support 'dim' (such content just appears white). But
--- if you use 'gray', it looks like 'dim' should. But one shouldn't just use
--- 'gray' all the time because that won't look right /not/ in GitHub Actions.
+-- GitHub Actions doesn't support 'faint' (such content just appears white). But
+-- if you use gray (@'colorDull' 'White'@), it looks like 'faint' should. But
+-- one shouldn't just use gray all the time because that won't look right /not/
+-- in GitHub Actions.
 --
--- We can help by automatically substituting 'gray' for 'dim', only in the
+-- We can help by automatically substituting gray for 'faint', only in the
 -- GitHub Actions environment. We take on this extra complexity because:
 --
 -- 1. It's trivial and zero dependency
@@ -136,5 +137,13 @@ endoWhen f = bool mempty (Endo f)
 -- 3. GitHub Actions is a very common logging environment, and
 -- 4. I suspect we'll encounter more cases where GitHub Actions can be improved
 --    though such means, increasing its usefulness
-fixGitHubActions :: Colors -> Colors
-fixGitHubActions colors = colors {dim = gray colors}
+--
+-- __NOTE__: for now, you can ignore all that. @prettyprinter-ansi-terminal@
+-- doesn't actually support 'faint' yet:
+--
+-- <https://github.com/quchen/prettyprinter/pull/224>
+--
+-- So our normal 'annToAnsi' is already using gray always (and it just looks
+-- bad) and this function uses it as-is for now.
+annToAnsiGHA :: Ann -> AnsiStyle
+annToAnsiGHA = annToAnsi

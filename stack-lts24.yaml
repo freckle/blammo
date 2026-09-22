@@ -1,0 +1,5 @@
+resolver: lts-24.23
+
+packages:
+  - Blammo
+  - Blammo-wai
