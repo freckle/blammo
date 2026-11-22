@@ -25,10 +25,11 @@ module Blammo.Logging.Logger
 
 import Prelude
 
-import Blammo.Logging.Colors (Colors, getColors)
 import Blammo.Logging.Internal.Logger
 import Blammo.Logging.LogSettings
 import Blammo.Logging.Terminal
+import Blammo.Logging.Terminal.Doc (Ann, Doc, RenderSettings (..))
+import qualified Blammo.Logging.Terminal.Doc as Doc
 import Blammo.Logging.Test hiding (getLoggedMessages)
 import qualified Blammo.Logging.Test as LoggedMessages
 import Control.Lens (view)
@@ -42,6 +43,7 @@ import Data.Either (partitionEithers, rights)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
+import Data.Text.Encoding (encodeUtf8)
 import GHC.Stack (HasCallStack)
 import System.IO (stderr, stdout)
 import System.Log.FastLogger (LoggerSet, defaultBufSize)
@@ -94,18 +96,14 @@ getLoggerReformat :: Logger -> LogLevel -> ByteString -> ByteString
 getLoggerReformat = lReformat
 
 setLoggerReformat
-  :: (LogSettings -> Colors -> LogLevel -> LoggedMessage -> ByteString)
+  :: (LogLevel -> LoggedMessage -> Doc Ann)
   -> Logger
   -> Logger
 setLoggerReformat f logger =
   logger
     { lReformat = \level bytes -> fromMaybe bytes $ do
         lm <- Aeson.decodeStrict bytes
-        let colors =
-              adjustColors (lLogSettings logger)
-                $ getColors
-                $ lShouldColor logger
-        pure $ f (lLogSettings logger) colors level lm
+        pure $ encodeUtf8 $ renderDoc logger $ f level lm
     }
 
 getLoggerShouldLog :: Logger -> LogSource -> LogLevel -> Bool
@@ -173,15 +171,15 @@ flushLogger = do
   logger <- view loggerL
   flushLogStr logger
 
-pushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => Text -> m ()
-pushLogger msg = do
+pushLogger :: (MonadIO m, MonadReader env m, HasLogger env) => Doc Ann -> m ()
+pushLogger doc = do
   logger <- view loggerL
-  pushLogStr logger $ toLogStr msg
+  pushLogStr logger $ toLogStr $ renderDoc logger doc
 
-pushLoggerLn :: (MonadIO m, MonadReader env m, HasLogger env) => Text -> m ()
-pushLoggerLn msg = do
+pushLoggerLn :: (MonadIO m, MonadReader env m, HasLogger env) => Doc Ann -> m ()
+pushLoggerLn doc = do
   logger <- view loggerL
-  pushLogStrLn logger $ toLogStr msg
+  pushLogStrLn logger $ toLogStr $ renderDoc logger doc
 
 -- | Create a 'Logger' that will capture log messages instead of logging them
 --
@@ -222,3 +220,16 @@ getLoggedMessagesUnsafe = do
           $ "Messages were logged that didn't parse as LoggedMessage:"
             : failed
       )
+
+renderDoc :: Logger -> Doc Ann -> Text
+renderDoc = Doc.renderDoc . loggerRenderSettings
+
+loggerRenderSettings :: Logger -> RenderSettings
+loggerRenderSettings logger =
+  RenderSettings
+    { rsUseColor = getLoggerShouldColor logger
+    , rsPageWidth = getLogSettingsBreakpoint settings
+    , rsAnnToAnsi = adjustColors settings
+    }
+ where
+  settings = getLoggerLogSettings logger

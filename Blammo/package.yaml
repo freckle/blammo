@@ -58,6 +58,8 @@ library:
     - lens
     - monad-logger-aeson
     - mtl
+    - prettyprinter >= 1.7.0 # introduces Prettyprinter module tree
+    - prettyprinter-ansi-terminal
     - text
     - time
     - vector
@@ -75,7 +77,6 @@ tests:
       - Blammo
       - aeson
       - envparse
-      - bytestring
       - hspec
       - mtl
       - text

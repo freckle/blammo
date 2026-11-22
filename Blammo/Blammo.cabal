@@ -26,8 +26,6 @@ source-repository head
 library
   exposed-modules:
       Blammo.Logging
-      Blammo.Logging.Colors
-      Blammo.Logging.Internal.Colors
       Blammo.Logging.Internal.Logger
       Blammo.Logging.Logger
       Blammo.Logging.LogSettings
@@ -36,7 +34,7 @@ library
       Blammo.Logging.Setup
       Blammo.Logging.Simple
       Blammo.Logging.Terminal
-      Blammo.Logging.Terminal.LogPiece
+      Blammo.Logging.Terminal.Doc
       Blammo.Logging.Test
       Blammo.Logging.ThreadContext
       Blammo.Logging.WithLogger
@@ -67,6 +65,8 @@ library
     , lens
     , monad-logger-aeson
     , mtl
+    , prettyprinter >=1.7.0
+    , prettyprinter-ansi-terminal
     , text
     , time
     , unliftio
@@ -136,7 +136,6 @@ test-suite spec
       Blammo
     , aeson
     , base <5
-    , bytestring
     , envparse
     , hspec
     , mtl
